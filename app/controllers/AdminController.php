@@ -4,6 +4,14 @@ namespace App\Controllers;
 
 class AdminController extends UserController {
 
+    public function __construct() {
+        parent::__construct();
+        if($_SESSION["role"] === "student") {
+            require("../app/views/error403.php");
+            exit();
+        }
+    }
+
     public function home() {
         echo "home Admin";
     }
@@ -43,6 +51,7 @@ class AdminController extends UserController {
     
     public function createForm(string $fName, string $lName, int $idStudent) {
         echo "Creation d'une fiche pour " . $fName . " " . $lName . " id :" . $idStudent;
+        require("../app/views/admins/fiche.php");
     }
 
     public function save_createForm() {

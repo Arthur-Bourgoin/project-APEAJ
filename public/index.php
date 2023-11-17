@@ -10,7 +10,7 @@ use App\Controllers\ {
 };
 
 session_start();
-$_SESSION["role"] = "student";
+$_SESSION["role"] = "admin";
 if(!isset($_SESSION["role"])) {
     $controller = new UserController();
     $controller->login();

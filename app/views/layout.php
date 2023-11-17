@@ -10,12 +10,12 @@
         echo '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">';
     }
     ?>
-    <?= isset($script) ? $script : "" ?>
+    <?= isset($scripts) ? $scripts : "" ?>
     <title><?= isset($title) ? $title : "Titre" ?></title>
 </head>
 <body>
-    <header>
-        <div class="container">
+    <header class="mb-2">
+        <div class="container p-0">
             <img class="w-100" src="/assets/images/BaniereAPK.bmp" alt="Image banière">
         </div>
     </header>
