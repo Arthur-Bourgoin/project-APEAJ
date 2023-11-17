@@ -17,6 +17,10 @@ ob_start(); ?>
         <p class="fw-bold fs-2">Une image test:</p>
         <img src="/assets/images/apache.png">
     </div>
+    <pre>
+    <?php var_dump($_SERVER);
+    var_dump($_GET);
+    ?>
 </div>
 
 <?php

@@ -1,0 +1,14 @@
+Accueil : / ou /accueil
+Login   : /connexion
+Consulter etudiant : /etudiants/paulin-renaud-5
+Consulter session : /sessions/7
+Creer session : /creer-session
+Info fiche (role ETUDIANT) : /fiche-9
+Info fiche (role ADMIN) : /etudiants/paulin-renaud-5/fiche-9
+Consulter fiche (role ETUDIANT) : /fiche-9/consulter
+Consulter fiche (role ADMIN) : /etudiants/paulin-renaud-5/fiche-9/consulter
+Fiche courante (ETUDIANT) : /fiche-9
+Creer Fiche : /etudiants/paulin-renaud-5/creer-fiche
+Creer utilisateur : /creer-utilisateur
+Creer formaton : /creer-formation
+Consulter formation : /formation-9

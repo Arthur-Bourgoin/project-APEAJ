@@ -16,9 +16,7 @@
 <body>
     <header>
         <div class="container">
-            <div class="row bg-secondary">
-                <h1 class="text-center">HEADER</h1>
-            </div>
+            <img class="w-100" src="/assets/images/BaniereAPK.bmp" alt="Image banière">
         </div>
     </header>
     <main>
