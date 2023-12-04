@@ -8,8 +8,10 @@ ob_start(); //On bufferise l'affichage
 
 <div class="container mt-5">
     <div class="row">
-        
-        <div class="col-10 col-xl-11 m-auto"><button type="button" class="btn btn-primary"> Ajouter une formation </button></div>
+
+
+        <div class="col-10 col-xl-11 m-auto"><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newFormation"> Ajouter une formation </button></div>
+
         <div class="col-2 col-xl-1"><a href=""><i class="bi bi-person-circle text-black" style="font-size: 3rem"></i></a></div>   
     </div>
     
@@ -111,6 +113,7 @@ ob_start(); //On bufferise l'affichage
                         <div class="row">
                             <!-- Affichage de l'image lié a la formation-->
                             <div class="col-4 text-center">
+
                                 <img src="<?= $formation['image']?>" class="card-img-top w-75 border border-black rounded" alt="Image formation">
                             </div>
                             <!-- Seletection du nom et du prenom-->
@@ -191,6 +194,76 @@ ob_start(); //On bufferise l'affichage
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="newFormation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newFormationLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newFormationLabel">Ajouter utilisateur</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+       
+                    <form action="<?= $_SERVER ["REQUEST_URI"]?>" method="POST">
+                        <div class="row">
+
+                            <!--Selection de l'image -->
+                            <div class="col-12">
+                                <div class="row mt-3">
+                                     
+                                    <input type="file" class="form-control-file" id="ImageFormation">
+                                </div>
+                            </div>
+
+                            
+                           
+                            <!--Selection du Nom de la formation -->
+                            <div class="col-12">
+                                <div class="row mt-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text " id="basic-addon1">Nom de la formation</span>
+                                        <input type="text" class="form-control" aria-label="NameFormation" aria-describedby="basic-addon1">
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+
+                            <!--Selection du niveau de la formation -->
+                            <div class="col-12">
+                                <div class="row mt-3 ">
+                                    <div class="input-group">
+                                        <span class="input-group-text " id="basic-addon3">Niveau de la formation</span>
+                                        <input type="text" class="form-control" aria-label="LevelFormation" aria-describedby="basic-addon3">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Selection de la description de la formation -->
+                            <div class="col-12">
+                                <div class="row mt-3 mb-3">
+                                    <div class="form-group">
+                                        <label for="FormDescription"> Description Formation</label>                                        
+                                        <textarea class="form-control" id="FormDescription" rows="3"></textarea> 
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                
+                            <div class="modal-footer text-center">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Valider</button>
+                            </div>
+                        </div>  
+                    </form>
+                </div>  
+            </div>
+        </div>
+    </div>
+
+
+
 
     
        
