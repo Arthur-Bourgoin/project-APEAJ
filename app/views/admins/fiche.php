@@ -6,7 +6,18 @@ $title = "Création fiche";
 ob_start();
 ?>
 
-<body class="container">
+<style>
+    .div-img {
+        height: 100px;
+    }
+
+    .div-img img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+</style>
+<div class="container">
     <div class="row m-0">
         <div class="col-md-3 col-lg-2 border d-flex flex-row flex-md-column">
             <div class="border px-2 m-1">
@@ -43,19 +54,55 @@ ob_start();
                 <legend class="float-none w-auto px-2">Intervenant</legend>
                 <div class="container">
                     <div class="row">
-                        <div id="div-studentLastName" class="col-6 py-2 position-relative" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                        <!--
+                        <div id="div-studentLastName" class="col-6 py-2 position-relative">
                             <div class="div-label">
-                                <label for="nomIntervenant" class="form-label mb-0">Nom de l'intervenant</label>
+                                <label for="nomIntervenant" class="form-label mb-0 pe-none d-flex align-items-center">Nom de l'intervenant</label>
                             </div>
                             <div class="div-input">
                                 <input id="nomIntervenant" class="form-control pe-none" type="text">
                             </div>
                         </div>
-                        <div id="div-studentFirstName" class="col-6 py-2 position-relative" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                        <img class="mb-1 me-1 border border-black rounded border-2" src="/assets/images/cable_elec.jfif" width="50%" alt="">
+                        
+                        <div id="div-studentLastName" class="col-6 py-2 position-relative">
+                            <div class="div-img d-flex justify-content-center mb-2">
+                                <img class="border border-black rounded border-2" src="/assets/images/cable_elec.jfif" width="80px" alt="">
+                            </div>
                             <div class="div-label">
-                                <label for="prenomIntervenant" class="form-label mb-0">Prénom de l'intervenant</label>
+                                <label for="nomIntervenant" class="form-label mb-0 pe-none d-flex align-items-center">Nom de l'intervenant</label>
+                            </div>
+                            <div class="div-input input-group">
+                                <input id="nomIntervenant" class="form-control pe-none" type="text">
+                            </div>
+                        </div>
+                        -->
+                        <div id="div-studentLastName" class="col-6 d-flex flex-column justify-content-end position-relative p-2">
+                            <div class="div-img d-flex justify-content-center mb-1 d-none">
+                                <img class="border border-black rounded border-2 h-auto w-auto object-fit-contain">
+                            </div>
+                            <label for="nomIntervenant" class="form-label mb-0 pe-none d-none">Nom de l'intervenant</label>
+                            <div class="div-input input-group">
+                                <input id="nomIntervenant" class="form-control pe-none" type="text">
+                            </div>
+                        </div>
+                        <!--
+                        <div id="div-studentFirstName" class="col-6 py-2 d-flex flex-column justify-content-end">
+                            <div class="div-label">
+                                <label for="prenomIntervenant" class="form-label mb-0 pe-none">Prénom de l'intervenant</label>
                             </div>
                             <div class="div-input">
+                                <input id="prenomIntervenant" class="form-control pe-none" type="text">
+                            </div>
+                        </div>
+                        style="height: 100px;"
+                        -->
+                        <div id="div-studentFirstName" class="col-6 d-flex flex-column justify-content-end position-relative p-2">
+                            <div class="div-img d-flex justify-content-center mb-1 d-none">
+                                <img class="border border-black rounded border-2 h-auto w-auto object-fit-contain">
+                            </div>
+                            <label for="prenomIntervenant" class="form-label mb-0 pe-none d-none">Prénom de l'intervenant</label>
+                            <div class="div-input input-group">
                                 <input id="prenomIntervenant" class="form-control pe-none" type="text">
                             </div>
                         </div>
@@ -730,43 +777,182 @@ ob_start();
 
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
+            <div id="modal-content-home" class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="staticBackdropLabel">Personnalisation du champ</h1>
-                <button id="btn-cross-modal" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button id="#btn-cross-modal" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <div class="container-fluid">
-                    <div class="row mb-3">
-                        <div class="d-flex">
-                            <div class="p-2 d-flex flex-column align-items-center border">
+            <div id="modal-body-home" class="modal-body">
+                <div class="container-fluid p-0">
+                    <div class="row m-0 mb-3">
+                            <div class="p-2 d-flex flex-column align-items-center border col-4">
                                 <label class="form-label mb-0" for="modal-textColor">Couleur texte</label>
-                                <input class="form-control form-control-color m-2" type="color" id="modal-textColor">
+                                <input class="form-control form-control-color m-2" type="color" id="modal-fontColor">
                             </div>
-                            <div class="p-2 form-switch d-flex flex-column align-items-center border">
-                                <label class="form-label mb-0 text-center" for="modal-tts">Text to speech</label>
+                            <div class="p-2 form-switch d-flex flex-column align-items-center border col-4">
+                                <label class="form-label mb-0 text-center" for="modal-tts">
+                                    Text to speech
+                                    <i id="modal-modiftts" class="ms-1 bi bi-pencil-square"></i>
+                                </label>
                                 <input class="form-check-input m-2" type="checkbox" role="switch" id="modal-tts">
                             </div>
-                            <div class="p-2 d-flex flex-column align-items-center border">
+                            <div class="p-2 d-flex flex-column align-items-center border col-4">
                                 <label class="form-label mb-0" for="modal-bgColor">Couleur fond</label>
                                 <input class="form-control form-control-color m-2" type="color" id="modal-bgColor">
                             </div>
+                            <div class="col-6 border p-3">
+                                <div class="row d-flex pb-2 m-0">
+                                    <label for="modal-fontSizeInput" class="my-auto form-label col-10 p-0">Taille de la police</label>
+                                    <input id="modal-fontSizeInput" type="text" class="col-2 p-0"> 
+                                </div>
+                                <input id="modal-fontSizeRange" min="8" max="50" step="0.5" type="range" class="form-range">
+                            </div>
+                            <div class="col-6 border p-3">
+                                <label for="modal-fontFamily" class="pb-3">
+                                    police
+                                </label>
+                                <select id="modal-fontFamily" class="form-select">
+                                    <option value="'Arial', sans-serif" style="font-family: 'Arial', sans-serif;">Arial</option>
+                                    <option value="'Brush Script MT', cursive" style="font-family: 'Brush Script MT', cursive;">Brush Script MT</option>
+                                    <option value="'Comic Sans MS', cursive" style="font-family: 'Comic Sans MS', cursive;">Comic Sans MS</option>
+                                    <option value="'Courier New', monospace" style="font-family: 'Courier New', monospace;">Courier New</option>
+                                    <option value="'Garamond', serif" style="font-family: 'Garamond', serif;">Garamond</option>
+                                    <option value="'Georgia', serif" style="font-family: 'Georgia', serif;">Georgia</option>
+                                    <option value="'Impact', sans-serif" style="font-family: 'Impact', sans-serif;">Impact</option>
+                                    <option value="'Lucida Console', monospace" style="font-family: 'Lucida Console', monospace;">Lucida Console</option>
+                                    <option value="'Noto Sans', sans-serif" style="font-family: 'Noto Sans', sans-serif;">Noto Sans</option>
+                                    <option value="'Palatino', serif" style="font-family: 'Palatino', serif;">Palatino</option>                                
+                                    <option value="'Segoe UI', sans-serif" style="font-family: 'Segoe UI', sans-serif;">Segoe UI</option>
+                                    <option value="'Times New Roman', serif" style="font-family: 'Times New Roman', serif;">Times New Roman</option>
+                                    <option value="'Trebuchet MS', sans-serif" style="font-family: 'Trebuchet MS', sans-serif;">Trebuchet MS</option>
+                                    <option value="'Verdana', sans-serif" style="font-family: 'Verdana', sans-serif;">Verdana</option>
+                                </select>
+                            </div>
+                            <div class="p-2 form-switch d-flex flex-column align-items-center border col-2">
+                                <label class="form-label mb-0 text-center" for="modal-bold">
+                                    <i style="font-size: 1.5rem;" class="bi bi-type-bold"></i>
+                                </label>
+                                <input class="form-check-input m-2" type="checkbox" role="switch" id="modal-bold">
+                            </div>
+                            <div class="col-8 p-2 text-center border">
+                                <label class="form-label">Niveau</label>
+                                <div id="modal-level" class="d-flex justify-content-around py-2">
+                                    <div class="form-check">
+                                        <label for="modal-level-1" class="form-check-label">1</label>
+                                        <input id="modal-level-1" type="radio" class="modal-level form-check-input" name="level">
+                                    </div>
+                                    <div class="form-check">
+                                        <label for="modal-level-2" class="form-check-label">2</label>
+                                        <input id="modal-level-2" type="radio" class="modal-level form-check-input" name="level">
+                                    </div>
+                                    <div class="form-check">
+                                        <label for="modal-level-3" class="form-check-label">3</label>
+                                        <input id="modal-level-3" type="radio" class="modal-level form-check-input" name="level">
+                                    </div>
+                                    <div class="form-check">
+                                        <label for="modal-level-4" class="form-check-label">4</label>
+                                        <input id="modal-level-4" type="radio" class="modal-level form-check-input" name="level">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-2 form-switch d-flex flex-column align-items-center border col-2">
+                                <label class="form-label mb-0 text-center" for="modal-italic">
+                                    <i style="font-size: 1.5rem;" class="bi bi-type-italic"></i>
+                                </label>
+                                <input class="form-check-input m-2" type="checkbox" role="switch" id="modal-italic">
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
+                    <div class="row m-0">
+                        <!--
                         <div class="col-12 p-3 border border-black border-2 rounded">
-
+                            <label for="currentInput" class="form-label"></label>
+                            <input id="currentInput" class="form-control" type="text">
+                        </div>
+                        -->
+                        <div class="col-12 d-flex flex-column justify-content-end p-3 border border-black border-2 rounded">
+                            <div class="div-img d-flex justify-content-center mb-1">
+                                <img class="border border-black rounded border-2 h-auto w-auto object-fit-contain">
+                            </div>
+                            <label for="currentInput2" class="form-label mb-0"></label>
+                            <div class="div-input input-group">
+                                <input id="currentInput2" class="form-control" type="text">
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal"><i class="pe-2 bi bi-x-circle"></i>Annuler</button>
-                <button type="button" class="btn btn-success" data-bs-dismiss="modal"><i class="pe-2 bi bi-check-circle"></i>Valider</button>
+                <button type="button" id="btn-modal-cancel" class="btn btn-danger" data-bs-dismiss="modal"><i class="pe-2 bi bi-x-circle"></i>Annuler</button>
+                <button type="button" id="btn-modal-confirm" class="btn btn-success" data-bs-dismiss="modal"><i class="pe-2 bi bi-check-circle"></i>Valider</button>
+            </div>
+            </div>
+            <div id="modal-content-tts" class="d-none modal-content">
+                <div id="modal-body-tts" class="modal-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <label for="textArea-modiftts" class="my-auto form-label">Modification du texte à lire</label>
+                        <button type="button" class="btn btn-primary text-light">
+                            <i class="bi bi-volume-up"></i>
+                        </button>
+                    </div>
+                    <textarea id="textArea-modiftts" class="form-control" rows="10"></textarea>
+                    <div id="div-buttons" class="mt-3 d-flex justify-content-end">
+                        <button type="button" id="btn-tts-cancel" class="me-3 btn btn-danger">
+                            Annuler
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                        <button type="button" id="btn-tts-confirm" class="btn btn-success">
+                            Valider
+                            <i class="bi bi-check-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="modal-content-pictos" class="d-none modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Modification du pictogramme</h1>
+                    <button type="button" class="btn-close" aria-label="Close"></button>
+                </div>
+                <div id="modal-body-pictos" class="modal-body">
+                    <div class="container-fluid p-0">
+                        <div class="row g-3">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+<template id="template-hover">
+    <div class="d-flex position-absolute top-50 start-50 translate-middle div-hover opacity-100">
+        <button type="button" class="m-2 text-light btn btn-sm btn-primary rounded-circle">
+            <i class="bi bi-volume-up"></i>
+        </button>
+        <button type="button" class="m-2 text-light btn btn-sm btn-primary rounded-circle">
+            <i class="bi bi-eye"></i>
+        </button>
+        <button type="button" class="m-2 text-light btn btn-sm btn-primary rounded-circle" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+            <i class="bi bi-pencil"></i>
+        </button>
+    </div>
+</template>
+<template id="template-modal">
+    <div class="d-flex flex-column justify-content-end p-3 border border-black border-2 rounded">
+        <div class="div-img d-flex justify-content-center mb-1">
+            <img class="border border-black rounded border-2  h-auto w-auto object-fit-contain">
+        </div>
+        <label for="currentInput2" class="form-label mb-0"></label>
+        <div class="div-input input-group">
+            <input id="currentInput2" class="form-control" type="text">
+        </div>
+    </div>  
+</template>
+
+<script>
+    const datas = <?= $datas ?>;
+    console.log(datas);
+    const pictos = <?= $pictos ?>;
+    console.log(pictos);
+</script>
 
 <?php
 $content = ob_get_clean();

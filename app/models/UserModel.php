@@ -1,4 +1,6 @@
 <?php
+
+namespace App\Models;
 class UserModel {
     public static function getAllUsers() {
         // Simulation de requête SQL (on récupère les données à partir de la BD)

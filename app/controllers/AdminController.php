@@ -2,64 +2,91 @@
 
 namespace App\Controllers;
 
-class AdminController extends UserController {
+use App\Models\AdminModel;
 
-    public function __construct() {
+class AdminController extends UserController
+{
+
+    public function __construct()
+    {
         parent::__construct();
-        if($_SESSION["role"] === "student") {
+        if ($_SESSION["role"] === "student") {
             require("../app/views/error403.php");
             exit();
         }
     }
 
-    public function home() {
-        echo "home Admin";
+    public function home()
+    {
+
+        $students = AdminModel::getAllStudents();
+        $sessions = AdminModel::getAllSessions();
+        $formation = AdminModel::getFormationAdmin(1);
+
+        require("../app/views/admins/home.php");
     }
 
-    public function myAccount() {
+    public function myAccount()
+    {
         echo "mon Compte";
     }
 
-    public function infoStudent(string $fName, string $lName, int $id) {
-        echo $fName . " " . $lName . "</br>";
-        echo "ID : " . $id;
+    public function infoStudent(string $fName, string $lName, int $id)
+    {
+        $student = AdminModel::getStudentById($id);
+        $fichesf = AdminModel::getFichesFiniesByStudentId($id);
+        $fichesnf = AdminModel::getFichesNonFiniesByStudentId($id);
+        require("../app/views/admins/details.php");
     }
 
-    public function save_infoStudent(string $fName, string $lName, int $id) {
-        //code
+
+    public function save_infoStudent(string $fName, string $lName, int $id)
+    {
+        var_dump($_POST);
     }
 
-    public function infoSession(int $id) {
-        if($_SESSION["role"] === "student") {
-            require("../app/views/error403.php");
-        } else {
-            echo "Session id : " . $id;
+    public function infoSession(int $id)
+    {
+            $students = AdminModel::getStudentsBySession($id);
+            $description = AdminModel::getDescription($id);
+            $fiches = AdminModel::getFichesBySession($id);
+            require("../app/views/admins/details-session.php");
         }
-    }
+    
 
-    public function save_infoSession(int $id) {
+    public function save_infoSession(int $id)
+    {
         echo "Session id : " . $id;
     }
 
-    public function addSession() {
+    public function addSession()
+    {
         echo "Ajout d'une session";
     }
 
-    public function save_addSession() {
+    public function save_addSession()
+    {
         //code
     }
-    
-    public function createForm(string $fName, string $lName, int $idStudent) {
+
+    public function createForm(string $fName, string $lName, int $idStudent)
+    {
         echo "Creation d'une fiche pour " . $fName . " " . $lName . " id :" . $idStudent;
         require("../app/views/admins/fiche.php");
     }
 
-    public function save_createForm() {
+    public function save_createForm()
+    {
         // Model::getCurrentSession();
     }
 
-    public function infoForm(string $fName, string $lName, int $idStudent, int $idForm, bool $edit = false) {
-        echo "Consultation de la fiche " . $idForm . " de l'étudiant " . $fName . " " . $lName . " " . $idStudent;
+    public function infoForm(string $fName, string $lName, int $idStudent, int $idForm, bool $edit = false)
+    {
+        $student = AdminModel::getStudentById($idStudent);
+        $form = AdminModel::getFormbyID($idForm);
+        $coms = AdminModel::getComsByFormID($idForm);
+        $pictures = AdminModel::getPicturesByFormID($idForm);
+        require("../app/views/admins/fiche-info.php");
     }
 
 

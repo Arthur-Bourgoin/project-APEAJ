@@ -72,6 +72,11 @@ $router->map("GET", "/formation-[i:id]", function ($id) {
     $controller = new SAdminController();
     $controller->consultFormation($id);
 });
+$router->map("POST", "/etudiants/[a:fName]-[a:lName]-[i:id]", function ($fName, $lName, $id) {
+    $controller = new AdminController();
+    $controller->save_infoStudent($fName, $lName, $id);
+});
+
 
 
 $match = $router->match();

@@ -5,11 +5,11 @@ namespace Config;
 class Database {
 
     private static $server = "localhost";
-    private static $db = "tp3";
+    private static $db = "carnetadresse";
     //private static $login = "userTP3";
     //private static $pwd = "iutinfo";
     private static $login = "root";
-    private static $pwd = "iutinfoROOT";
+    private static $pwd = "";
     private static $linkpdo = null;
 
     private function __contruct() {}
