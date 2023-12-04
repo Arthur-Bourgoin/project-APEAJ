@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 use Config\Database;
+use App\Models\AdminModel;
 
 class UserController {
 
@@ -18,15 +19,23 @@ class UserController {
         } elseif($_SESSION["role"] === "student") {
             $controller = new StudentController();
             $controller->home();
-        } 
+        } elseif($_SESSION["role"] === "sadmin") {
+            $controller = new SAdminController();
+            $controller->home();
+        }
     } 
 
     public function login() {
-        echo "connexion";
+        require("../app/models/AdminModel.php");
+        $students = AdminModel::getAllStudents();
+        require("../app/views/connexion.php");
     }
 
     public function verif_login() {
         echo "connexion";
+        $_SESSION["id"]="6";
+        header('Location: ../app/views/student/home_student.php');
+        
     }
 
 

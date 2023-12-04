@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Controllers;
+use App\Models\StudentModel;
+use App\Models\AdminModel;
 
 class StudentController extends UserController {
 
@@ -13,7 +15,10 @@ class StudentController extends UserController {
     }
 
     public function home() {
-        echo "home Student";
+        $finishedSheets = StudentModel::getFinishedSheets();
+        $currentSheet = StudentModel::getCurrentSheet();
+        $student = AdminModel::getStudentById($_SESSION['id']);
+        require("../app/views/students/home_student.php");
     }
 
     public function infoForm(int $idF, bool $edit = false) {

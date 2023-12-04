@@ -11,6 +11,7 @@ use App\Controllers\ {
 
 session_start();
 $_SESSION["role"] = "admin";
+$_SESSION['id'] = 3;
 if(!isset($_SESSION["role"])) {
     $controller = new UserController();
     $controller->login();
@@ -71,6 +72,10 @@ $router->map("GET", "/creer-formation", function () {
 $router->map("GET", "/formation-[i:id]", function ($id) {
     $controller = new SAdminController();
     $controller->consultFormation($id);
+});
+$router->map("POST", "/etudiants/[a:fName]-[a:lName]-[i:id]", function ($fName, $lName, $id) {
+    $controller = new AdminController();
+    $controller->save_infoStudent($fName, $lName, $id);
 });
 
 
