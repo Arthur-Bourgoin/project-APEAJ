@@ -1,6 +1,6 @@
 <?php
 
-namespace App\CLass;
+namespace App\Class;
 
 class User {
 

@@ -8,13 +8,14 @@ class AdminModel
     public static function getAllSessions(): array
     {
         $sessions = [
-            ["session" => "Session 1", "ID" => 1],
-            ["session" => "Session 2", "ID" => 2],
-            ["session" => "Session 3", "ID" => 3],
-            ["session" => "Session 4", "ID" => 4],
-            ["session" => "Session 5", "ID" => 5],
-            ["session" => "Session 6", "ID" => 6],
-            ["session" => "Session 7", "ID" => 7]
+            ["ID" => 1, "name" => "Session 1", "Theme" => "Theme_test", "date_creation" => "2023-01-15T08:30", "date_fin" => "2023-01-30T17:00","desc"=> "test description"],
+            ["ID" => 2, "name" => "Session 2", "Theme" => "Theme_test", "date_creation" => "2023-03-20T13:45", "date_fin" => "2023-04-05T16:30","desc"=> "test description"],
+            ["ID" => 3, "name" => "Session 3", "Theme" => "Theme_test", "date_creation" => "2023-05-10T10:00", "date_fin" => "","desc"=> "test description"],
+            ["ID" => 4, "name" => "Session 4", "Theme" => "Theme_test", "date_creation" => "2023-07-08T09:15", "date_fin" => "2023-07-25T14:00","desc"=> "test description"],
+            ["ID" => 5, "name" => "Session 5", "Theme" => "Theme_test", "date_creation" => "2023-09-25T11:30", "date_fin" => "2023-10-10T18:00","desc"=> "test description"],
+            ["ID" => 6, "name" => "Session 6", "Theme" => "Theme_test", "date_creation" => "2023-11-12T14:20", "date_fin" => "2023-11-30T12:30","desc"=> "test description"],
+            ["ID" => 7, "name" => "Session 7", "Theme" => "Theme_test", "date_creation" => "2023-12-30T16:00", "date_fin" => "2024-01-15T15:30","desc"=> "test description"],
+            ["ID" => 8, "name" => "Session 8", "Theme" => "Theme_test", "date_creation" => "2024-02-05T10:45", "date_fin" => "2024-01-15T15:30","desc"=> "test description"],
         ];
         return $sessions;
     }
@@ -97,13 +98,13 @@ class AdminModel
         ];
         return $fiches;
     }
-    public static function getDescription($sessionId)
-    {
-        $description = [
-            ["ID" => 1, "Desc" => "Ceci est la description de la session sélectionnée", "Nom" => "Session n°1"]
-        ];
-        return $description;
-
+    public static function getSessionById($id){
+        $sessions=self::getAllSessions();
+        foreach ($sessions as $session) {
+            if ($session["ID"] == $id) {
+                return $session;
+            }
+        }
     }
     public static function getFormbyID($formID){
         $form=[
@@ -127,4 +128,5 @@ class AdminModel
         ];
         return $pictures;
     }
+    
 }
