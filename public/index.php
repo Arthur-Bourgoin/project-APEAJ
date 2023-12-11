@@ -41,10 +41,6 @@ $router->map("GET", "/sessions/[i:id]", function ($id) {
     $controller = new AdminController();
     $controller->infoSession($id);
 });
-$router->map("GET", "/creer-session", function () {
-    $controller = new AdminController();
-    $controller->addSession();
-});
 $router->map("GET", "/fiche-[i:id]", function ($id) {
     $controller = new StudentController();
     $controller->infoForm($id);
@@ -77,7 +73,15 @@ $router->map("POST", "/etudiants/[a:fName]-[a:lName]-[i:id]", function ($fName, 
     $controller = new AdminController();
     $controller->save_infoStudent($fName, $lName, $id);
 });
+$router->map("POST", "/", function () {
+    $controller = new AdminController();
+    $controller->save_addSession();
+});
 
+$router->map("POST", "/sessions/[i:id]", function ($id) {
+    $controller = new AdminController();
+    $controller->save_infoSession($id);
+});
 
 $match = $router->match();
 if($match != null) {
@@ -85,6 +89,7 @@ if($match != null) {
 } else {
     require("../app/views/error404.php");
 }
+
 
 /*
 Test sur le role dans routeur, constructeur controller ou fonction controlleur

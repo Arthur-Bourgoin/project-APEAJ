@@ -1,9 +1,8 @@
 <?php $title = "Page Information Elève";
 $bsIcons = true;
-$scripts = "<script src='/assets/js/modif_student.js' type='module'></script>";
-
-
-?>
+$scripts = "<script src='/assets/js/modif_student.js' type='module'></script>
+<script src='/assets/js/class/alert.js' type='module'></script>;"
+    ?>
 
 
 <?php ob_start(); ?>
@@ -28,11 +27,35 @@ $scripts = "<script src='/assets/js/modif_student.js' type='module'></script>";
                     </h5>
                 </div>
 
-                <div class="col-12 ">
-                    <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal"
-                        data-bs-target="#ModalModifie" data-id="<?= $student["ID"] ?>">
-                        Modifier les informations
-                    </button>
+                <div class="row">
+                    <div class="col-12 col-sm-12 col-md-12">
+                        <a
+                            href="/etudiants/<?= htmlentities($student["nom"]) ?>-<?= htmlentities($student["prenom"]) ?>-<?= htmlentities($student["ID"]) ?>/creer-fiche"><button
+                                type="button" class="btn btn-primary mt-3 me-2">Créer une fiche</button></a>
+                        <button type="button" class="btn btn-primary mt-3 " data-bs-toggle="modal"
+                            data-bs-target="#ModalModifie" data-id="<?= $student["ID"] ?>">
+                            Modifier les informations
+                        </button>
+                    </div>
+                </div>
+                <div class="col-12 mt-4">
+                    <?php
+                    if (isset($error)) {
+                        if ($error === 0) {
+                            ?>
+                            <div class="alert alert-success" role="alert">
+                                A simple success alert—check it out!
+                            </div>
+                            <?php
+                        } else if ($error === 1) {
+                            ?>
+                                <div class="alert alert-danger" role="alert">
+                                    A simple danger alert—check it out!
+                                </div>
+                            <?php
+                        }
+                    }
+                    ?>
                 </div>
             </div>
         </div>
@@ -51,21 +74,21 @@ $scripts = "<script src='/assets/js/modif_student.js' type='module'></script>";
             </div>
             <div class="col-9">
             </div>
-            
-                <?php
-                foreach ($fichesnf as $fichenf) { ?>
-                    <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-3">
-                        <a
-                            href="/etudiants/<?= htmlentities($fichenf["NomEtu"]) ?>-<?= htmlentities($fichenf["PrenomEtu"]) ?>-<?= htmlentities($fichenf["IDstu"]) ?>/fiche-<?= htmlentities($fichenf["ID"]) ?>"><i
-                                class="bi bi-file-earmark-text" style="font-size: 5rem"></i></a>
-                        <div class= "col-12">
-                            Session
-                            <?= htmlentities($fichenf["ID"]) ?>
-                        </div>
+
+            <?php
+            foreach ($fichesnf as $fichenf) { ?>
+                <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-3">
+                    <a
+                        href="/etudiants/<?= htmlentities($fichenf["NomEtu"]) ?>-<?= htmlentities($fichenf["PrenomEtu"]) ?>-<?= htmlentities($fichenf["IDstu"]) ?>/fiche-<?= htmlentities($fichenf["ID"]) ?>"><i
+                            class="bi bi-file-earmark-text" style="font-size: 5rem"></i></a>
+                    <div class="col-12">
+                        Session
+                        <?= htmlentities($fichenf["ID"]) ?>
                     </div>
-                    <?php
-                }
-                ?>
+                </div>
+                <?php
+            }
+            ?>
         </div>
         <div class="row">
             <div class="col-3">
@@ -111,11 +134,12 @@ $scripts = "<script src='/assets/js/modif_student.js' type='module'></script>";
                         <div class="col-7">
                             <div class="  col-12 ">
                                 <label for="FormName" class="form-label pe-none"></label>
-                                <input class=" form-control" id="FormName" value="<?= $student['nom'] ?>"name="name">
+                                <input class=" form-control" id="FormName" value="<?= $student['nom'] ?>" name="name">
                             </div>
                             <div class=" col-12 ">
                                 <label for="FormFirstName" class="form-label pe-none"></label>
-                                <input class=" form-control" id="FormFirstName" value="<?= $student['prenom'] ?>" name="firstname">
+                                <input class=" form-control" id="FormFirstName" value="<?= $student['prenom'] ?>"
+                                    name="firstname">
                             </div>
 
                         </div>
@@ -150,7 +174,8 @@ $scripts = "<script src='/assets/js/modif_student.js' type='module'></script>";
                                             passe :</label>
                                     </div>
                                     <div class="col-7">
-                                        <input class="form-control champ-form" id="FormPasswd" type="password" name="password">
+                                        <input class="form-control champ-form" id="FormPasswd" type="password"
+                                            name="password">
                                     </div>
                                 </div>
                                 <div class="row align-items-center mt-4">
@@ -159,7 +184,8 @@ $scripts = "<script src='/assets/js/modif_student.js' type='module'></script>";
                                             :</label>
                                     </div>
                                     <div class="col-7">
-                                        <input class="form-control" id="FormPasswdConfirm" type="password" name="password-confirm">
+                                        <input class="form-control" id="FormPasswdConfirm" type="password"
+                                            name="password-confirm">
                                     </div>
                                 </div>
                             </div>
@@ -182,7 +208,8 @@ $scripts = "<script src='/assets/js/modif_student.js' type='module'></script>";
                                         <label for="codeFieldConfirm" class="form-label pe-none">Confirmer le code :</label>
                                     </div>
                                     <div class="col-7">
-                                        <input class="form-control champ-form" id="codeFieldConfirm" type="text" name="code-confirm">
+                                        <input class="form-control champ-form" id="codeFieldConfirm" type="text"
+                                            name="code-confirm">
                                     </div>
                                 </div>
                             </div>
