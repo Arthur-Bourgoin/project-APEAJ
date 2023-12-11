@@ -4,21 +4,22 @@ namespace Config;
 
 class Database {
 
-    private static $server = "localhost";
-    private static $db = "tp3";
-    //private static $login = "userTP3";
-    //private static $pwd = "iutinfo";
-    private static $login = "root";
-    private static $pwd = "iutinfoROOT";
+    const SERVER = "localhost";
+    const DB = "apeaj";
+    const LOGIN = "rootAPEAJ";
+    const PWD = "pwdroot";
     private static $linkpdo = null;
 
     private function __contruct() {}
 
     public static function getInstance() : \PDO {
-        if(self::$linkpdo === null)
-            self::$linkpdo = new \PDO("mysql:host=" . self::$server . ";dbname=" . self::$db, self::$login, self::$pwd);
+        if(self::$linkpdo === null) {
+            self::$linkpdo = new \PDO("mysql:host=" . self::SERVER . ";dbname=" . self::DB, self::LOGIN, self::PWD);
+            self::$linkpdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            self::$linkpdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
+        }
         return self::$linkpdo;
     }
 
-
+// tets git
 }
