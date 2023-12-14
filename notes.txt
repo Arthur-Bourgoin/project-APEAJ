@@ -1,3 +1,4 @@
+#########################################   ANCIEN   ####################################
 Accueil : / ou /accueil
 Login   : /connexion
 Consulter etudiant : /etudiants/paulin-renaud-5
@@ -12,7 +13,15 @@ Creer Fiche : /etudiants/paulin-renaud-5/creer-fiche
 Creer utilisateur : /creer-utilisateur
 Creer formaton : /creer-formation
 Consulter formation : /formation-9
+########################################################################################
 
+
+
+
+
++ Gérer l'audio pour les commentaires
++ La partie connexion
++ Exporter en excel
 
 STUDENT
 / ou /accueil
@@ -20,8 +29,10 @@ STUDENT
 
 /fiche-id, ex: fiche-9
 --> GET --> affichage des informations sur la fiche
+--> POST + action=finishForm --> passer l'état de la fiche à fini // ou réservé admin
 --> POST + action=addComment --> ajout d'un commentaire à la fiche
 --> POST + action=modifComment --> modification du commentaire
+--> POST + action=deleteComment --> suppression du commentaire
 --> POST + action=addNote --> ajout d'une note 
 --> POST + action=modifNote --> modification d'une note
 --> POST + action=deleteNote --> suppression d'une note
@@ -44,23 +55,24 @@ ADMIN
 --> POST + action=modifAccount --> modification de son compte
 --> POST + action=modifSession --> modification de la session
 --> POST + action=closeSession --> mettre fin à la session courante
---> POST + action=addForm --> ajouter une fiche à la session
 
 /etudiants/nom-prenom-id, ex: /etudiants/max-chevalier-5
 --> GET --> affichage des informations de l'étudiants
 --> POST + action=modifAccount --> modification de son compte
---> POST + action=modifUser --> modification d'un utilisateur
+--> POST + action=modifUser --> modification des informations de l'élève
 --> POST + action=addComment --> ajout d'un commentaire sur l'étudiant
---> POST + action=addForm --> ajouter une fiche à l'étudiant
+--> POST + action=updateComment --> modification du commentaire
+--> POST + action=deleteComment --> suppression du commentaire
 
 /etudiants/nom-prenom-id/fiche-numero, ex: /etudiants/max-chevalier-5/fiche-5
 --> GET --> affichage des informations sur la fiche
+--> POST + action=finishForm --> passer l'état de la fiche à fini
 --> POST + action=deleteForm --> suppression de la fiche
 --> POST + action=addComment --> ajout d'un commentaire à la fiche
 --> POST + action=addPicture --> ajout d'une photo à la fiche
 --> POST + action=deleteComment --> suppression d'un commentaire
 --> POST + action=deletePicture --> suppression d'une photo
---> POST + action=modifComment --> modifcation d'un commentaire
+--> POST + action=modifComment --> modification du commentaire
 --> POST + action=addNote --> ajout d'une note 
 --> POST + action=modifNote --> modification d'une note
 --> POST + action=deleteNote --> suppression d'une note
@@ -68,6 +80,9 @@ ADMIN
 /etudiants/nom-prenom-id/creer-fiche, ex: /etudiants/max-chevalier-5/creer-fiche
 --> GET --> affichage interface création fiche
 --> POST --> enregistrement de la nouvelle fiche
+
+/modeles-fiches
+--> GET --> affichage de la liste des modèles de fiches
 
 /etudiants/nom-prenom-id/fiche-numero/consultation, ex: /etudiants/max-chevalier-5/fiche-5/consultationtion
 --> GET --> affichage de la fiche (lecture seule)

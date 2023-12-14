@@ -12,6 +12,9 @@ class DisplayElementModel {
             return $res->fetchAll();
         } catch (\Exception $e) {
             return 2; // query error
+        } finally {
+            if(!empty($res))
+                $res->closeCursor();
         }
     }
 

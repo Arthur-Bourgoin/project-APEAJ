@@ -44,8 +44,29 @@ class SessionModel {
         }
     }
 
+    public static function updateSession(array $args) {
+        try {
+            if(!self::existSession($args["idSession"]))
+                return 2; // session not exist
+            Database::getInstance()
+                ->prepare("UPDATE session
+                           SET wording = :wording,
+                               theme = :theme,
+                               description = :description,
+                               timeBegin = :timeBegin,
+                               timeEnd = :timeEnd
+                           WHERE idSession = :idSession")
+                ->execute(array_intersect_key($args, array_flip(["wording", "theme", "description", "timeBegin", "timeEnd", "idSession"])));
+            return 0;
+        } catch (\Exception $e) {
+            return 1; // query error
+        }
+    }
+
     public static function closeSession(int $idSession) {
         try {
+            if(!self::existSession($idSession))
+                return 2; // session not exist
             Database::getInstance()
                 ->prepare("UPDATE session SET timeEnd = :timeEnd WHERE idSession = :id")
                 ->execute(array("id" => $idSession, "timeEnd" => date('Y-m-d H:i:s')));

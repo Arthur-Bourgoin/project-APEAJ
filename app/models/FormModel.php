@@ -94,6 +94,19 @@ class FormModel {
         }
     }
 
+    public static function finishForm(int $numero, int $idStudent) {
+        try {
+            if(!self::existForm($numero, $idStudent))
+                return 2; // form not exist
+            Database::getInstance()
+                ->prepare("UPDATE form SET finish = true WHERE numero = :numero AND idStudent = :idStudent")
+                ->execute(array("numero" => $numero, "idStudent" => $idStudent));
+            return 0; // success
+        } catch (\Exception $e) {
+            return 1; // query error
+        }
+    }
+
     public static function existForm(int $numero, int $idStudent) {
         $res = Database::getInstance()->prepare("SELECT * FROM form WHERE numero = :numero AND idStudent = :id");
         $res->execute(array("id" => $idStudent, "numero" => $numero));
