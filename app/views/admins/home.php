@@ -1,8 +1,8 @@
 <?php $title = "Page Accueil Admin";
 $bsIcons = true;
+$scripts = "<script src='/assets/js/class/alert.js' type='module'></script>";
 
 ob_start(); ?>
-
 <div class="container">
     <div class="row">
         <h2 class="text-center mt-3"> Formation
@@ -11,7 +11,7 @@ ob_start(); ?>
     </div>
     <div class="row">
         <div class="col-10 col-lg-11">
-            <button type="button" class="btn btn-primary m-3" data-bs-toggle="modal"
+            <button type="button" class="btn btn-primary my-3" data-bs-toggle="modal"
                 data-bs-target="#ModalAjouterSession">
                 Ajouter une session +
             </button>
@@ -24,7 +24,23 @@ ob_start(); ?>
             </a>
         </div>
     </div>
-
+    <?php
+    if (isset($error)) {
+        if ($error === 0) {
+            ?>
+            <div class="alert alert-success" role="alert">
+                A simple success alert—check it out!
+            </div>
+            <?php
+        } else if ($error === 1) {
+            ?>
+                <div class="alert alert-danger" role="alert">
+                    A simple danger alert—check it out!
+                </div>
+            <?php
+        }
+    }
+    ?>
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="sessions-tab" data-bs-toggle="tab" data-bs-target="#sessions"
@@ -50,7 +66,7 @@ ob_start(); ?>
                         ?>
                         <tr>
                             <td><span class='font-large'>
-                                    <?= htmlentities($session["session"]) ?>
+                                    <?= htmlentities($session["name"]) ?>
                                 </span></td>
                             <td><a href="sessions/<?= $session["ID"] ?>"><i class='bi bi-eye text-black'></i></a></td>
                         </tr>
@@ -85,8 +101,10 @@ ob_start(); ?>
             </div>
         </div>
     </div>
+
 </div>
-<div class="modal fade" id="ModalAjouterSession" tabindex="-1" aria-labelledby="ModalAjouterSessionLabel" aria-hidden="true">
+<div class="modal fade" id="ModalAjouterSession" tabindex="-1" aria-labelledby="ModalAjouterSessionLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -94,7 +112,7 @@ ob_start(); ?>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="URL_de_votre_traitement_PHP" method="POST">
+                <form action="/" method="POST">
                     <div class="mb-3">
                         <label for="sessionName" class="form-label">Nom de la session</label>
                         <input type="text" class="form-control" id="sessionName" name="sessionName" required>
@@ -104,16 +122,12 @@ ob_start(); ?>
                         <input type="text" class="form-control" id="theme" name="theme" required>
                     </div>
                     <div class="mb-3">
-                        <label for="course" class="form-label">Cours</label>
-                        <input type="text" class="form-control" id="course" name="course" required>
+                        <label for="startTime" class="form-label">Date/Heure de début</label>
+                        <input type="datetime-local" class="form-control" id="startTime" name="startTime" required>
                     </div>
                     <div class="mb-3">
-                        <label for="startTime" class="form-label">Heure de début</label>
-                        <input type="time" class="form-control" id="startTime" name="startTime" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="endTime" class="form-label">Heure de fin</label>
-                        <input type="time" class="form-control" id="endTime" name="endTime" required>
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description"></textarea>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
@@ -121,6 +135,7 @@ ob_start(); ?>
                     </div>
                 </form>
             </div>
+
         </div>
     </div>
 </div>

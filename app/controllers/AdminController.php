@@ -38,41 +38,52 @@ class AdminController extends UserController
         $student = AdminModel::getStudentById($id);
         $fichesf = AdminModel::getFichesFiniesByStudentId($id);
         $fichesnf = AdminModel::getFichesNonFiniesByStudentId($id);
-        $lName = $student["nom"];
-        $fName = $student["prenom"];
         require("../app/views/admins/details.php");
     }
 
 
     public function update_infoStudent(string $fName, string $lName, int $id)
     {
-        var_dump($_POST);
+        $student = AdminModel::getStudentById($id);
+        $fichesf = AdminModel::getFichesFiniesByStudentId($id);
+        $fichesnf = AdminModel::getFichesNonFiniesByStudentId($id);
+        $error=1;
+        require("../app/views/admins/details.php");
     }
 
     public function infoSession(int $id)
     {
+        $allstudents=AdminModel::getAllStudents();
         $students = AdminModel::getStudentsBySession($id);
-        $description = AdminModel::getDescription($id);
+        $session=AdminModel::getSessionById($id);
         $fiches = AdminModel::getFichesBySession($id);
         require("../app/views/admins/details-session.php");
     }
 
     public function update_infoSession(int $id)
     {
-        echo "Session id : " . $id;
+        $students = AdminModel::getStudentsBySession($id);
+        $session=AdminModel::getSessionById($id);
+        $fiches = AdminModel::getFichesBySession($id);
+        $error=1;
+        require("../app/views/admins/details-session.php");
     }
 
-    public function add_session()
-    {
+    public function add_session() {
         echo "Ajout d'une session";
     }
 
     public function save_addSession()
     {
-        //code
+        $students = AdminModel::getAllStudents();
+        $sessions = AdminModel::getAllSessions();
+        $formation = AdminModel::getFormationAdmin(1);
+        $error = 0;
+        require("../app/views/admins/home.php");
     }
 
-    public function createForm(string $fName, string $lName, int $idStudent) {
+    public function createForm(string $fName, string $lName, int $idStudent)
+    {
         //echo "Creation d'une fiche pour " . $fName . " " . $lName . " id :" . $idStudent;
         $array = [
             [
@@ -108,7 +119,7 @@ class AdminController extends UserController
                 "active" => true
             ]
         ];
-        $datas = json_encode($array); 
+        $datas = json_encode($array);
         $dir = opendir("./assets/images/pictos");
         while (false !== ($filename = readdir($dir))) {
             $files[] = $filename;
