@@ -12,3 +12,86 @@ Creer Fiche : /etudiants/paulin-renaud-5/creer-fiche
 Creer utilisateur : /creer-utilisateur
 Creer formaton : /creer-formation
 Consulter formation : /formation-9
+
+
+STUDENT
+/ ou /accueil
+--> GET --> affichage de l'accueil
+
+/fiche-id, ex: fiche-9
+--> GET --> affichage des informations sur la fiche
+--> POST + action=addComment --> ajout d'un commentaire à la fiche
+--> POST + action=modifComment --> modification du commentaire
+--> POST + action=addNote --> ajout d'une note 
+--> POST + action=modifNote --> modification d'une note
+--> POST + action=deleteNote --> suppression d'une note
+
+/fiche-id/completer, ex: fiche-9/completer
+--> GET --> affichage de la fiche à compléter
+--> POST --> enregistrement des infos de la fiche
+
+
+ADMIN
+/ ou /accueil
+--> GET --> page d'accueil
+--> POST + action=addSession --> ajout d'une session
+--> POST + action=modifUser --> modification d'un utilisateur
+--> POST + action=modifAccount --> modification de son compte
+--> POST + action=addModel --> Ajout d'un modèle de fiche
+
+/session-id, ex: /session-9
+--> GET --> affichage des infos sur la session
+--> POST + action=modifAccount --> modification de son compte
+--> POST + action=modifSession --> modification de la session
+--> POST + action=closeSession --> mettre fin à la session courante
+--> POST + action=addForm --> ajouter une fiche à la session
+
+/etudiants/nom-prenom-id, ex: /etudiants/max-chevalier-5
+--> GET --> affichage des informations de l'étudiants
+--> POST + action=modifAccount --> modification de son compte
+--> POST + action=modifUser --> modification d'un utilisateur
+--> POST + action=addComment --> ajout d'un commentaire sur l'étudiant
+--> POST + action=addForm --> ajouter une fiche à l'étudiant
+
+/etudiants/nom-prenom-id/fiche-numero, ex: /etudiants/max-chevalier-5/fiche-5
+--> GET --> affichage des informations sur la fiche
+--> POST + action=deleteForm --> suppression de la fiche
+--> POST + action=addComment --> ajout d'un commentaire à la fiche
+--> POST + action=addPicture --> ajout d'une photo à la fiche
+--> POST + action=deleteComment --> suppression d'un commentaire
+--> POST + action=deletePicture --> suppression d'une photo
+--> POST + action=modifComment --> modifcation d'un commentaire
+--> POST + action=addNote --> ajout d'une note 
+--> POST + action=modifNote --> modification d'une note
+--> POST + action=deleteNote --> suppression d'une note
+
+/etudiants/nom-prenom-id/creer-fiche, ex: /etudiants/max-chevalier-5/creer-fiche
+--> GET --> affichage interface création fiche
+--> POST --> enregistrement de la nouvelle fiche
+
+/etudiants/nom-prenom-id/fiche-numero/consultation, ex: /etudiants/max-chevalier-5/fiche-5/consultationtion
+--> GET --> affichage de la fiche (lecture seule)
+
+
+SUPER-ADMIN
+/ ou /accueil
+--> GET --> affichage accueil (liste formations)
+--> POST + action=modifAccount --> modification de son compte
+--> POST + action=deleteFormation --> suppression de la formation (excel)
+--> POST + action=addFormation --> ajout d'une formation
+--> POST + action=addUser --> ajout d'un utilisateur
+
+/formation-id, ex: formation-9
+--> GET --> affichage des informations de la formation
+--> POST + action=modifAccount --> modification de son compte
+--> POST + action=deleteFormation --> suppression de la formation (excel)
+--> POST + action=modifFormation --> modification de la formation
+--> POST + action=addUser --> ajout d'un utilisateur
+--> POST + action=modifUser --> modification d'un utilisateur
+--> POST + action=deleteUser --> suppression d'un utilisateur
+
+
+
+
+CREATE USER 'rootAPEAJ'@'localhost' IDENTIFIED BY 'pwdroot';
+GRANT ALL PRIVILEGES ON apeaj.* TO 'rootAPEAJ'@'localhost';

@@ -45,14 +45,14 @@ INSERT INTO Users (idUser,login, lastName, firstName, picture, typePwd, pwd, rol
 VALUES
     (10,'pascal.fernandez', 'Fernandez', 'Pascal', '/assets/images/Utilisateurs/admins/fernandez.png', 2, '122333', 'educator-admin', 1),
     (11,'romain.laborde', 'Laborde', 'Romain', '/assets/images/Utilisateurs/admins/laborde.png', 1, 'labordeMooonstre', 'educator-admin', 1),
-    (12,'patrick.magnaux', 'Magnaux', 'Patrick', '/assets/images/Utilisateurs/admins/magnaux.png', 2, '817425', 'educator-admin', 2);
+    (12,'patrick.magnaux', 'Magnaux', 'Patrick', '/assets/images/Utilisateurs/admins/magnaux.png', 2, '817425', 'educator-admin', 1);
 
 /* Insertion d'utilisateurs éducateurs simples */
 INSERT INTO Users (idUser,login, lastName, firstName, picture, typePwd, pwd, role, idTraining)
 VALUES
     (13,'olivier.marquie', 'Marquie', 'Olivier', '/assets/images/Utilisateurs/admins/marquie.png', 2, '000000', 'educator', 1),
-    (14,'pascale.raspaud', 'Raspaud', 'Pascale', '/assets/images/Utilisateurs/admins/raspaud.png', 1, 'jesautaisauplafond', 'educator', 2),
-    (15,'nathalie.neptune', 'Neptune', 'Nathalie', '/assets/images/Utilisateurs/admins/neptune.png', 2, '123123', 'educator', 2);
+    (14,'pascale.raspaud', 'Raspaud', 'Pascale', '/assets/images/Utilisateurs/admins/raspaud.png', 1, 'jesautaisauplafond', 'educator', 1),
+    (15,'nathalie.neptune', 'Neptune', 'Nathalie', '/assets/images/Utilisateurs/admins/neptune.png', 2, '123123', 'educator', 1);
 
 /* Insertion d'utilisateur CIP */
 INSERT INTO Users (idUser,login, lastName, firstName, picture, typePwd, pwd, role, idTraining)

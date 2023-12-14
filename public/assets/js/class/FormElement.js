@@ -221,5 +221,3 @@ function toHexa(rgb) {
     const b = parseInt(matches[2], 10).toString(16).padStart(2, '0');
     return `#${r}${g}${b}`;
 }
-
-

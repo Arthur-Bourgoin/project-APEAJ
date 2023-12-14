@@ -28,6 +28,7 @@ CREATE TABLE Users(
     pwd VARCHAR(50),
     role VARCHAR(50),
     idTraining INT,
+    UNIQUE(login),
     PRIMARY KEY(idUser),
     FOREIGN KEY(idTraining) REFERENCES Training(idTraining)
 ) ENGINE = InnoDB;

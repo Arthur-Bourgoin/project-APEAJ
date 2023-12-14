@@ -25,6 +25,10 @@ $router->map("GET", "/", function () {
     $controller = new UserController();
     $controller->home();
 });
+$router->map("POST", "/", function () {
+    $controller = new UserController();
+    $controller->homePOST();
+});
 $router->map("GET", "/accueil", function () {
     $controller = new UserController();
     $controller->home();

@@ -2,14 +2,16 @@
 
 namespace App\Controllers;
 
-use App\Models\AdminModel;
+use App\Models\ {
+    AdminModel,
+    SessionModel
+};
 
 class AdminController extends UserController
 {
 
     public function __construct()
     {
-        parent::__construct();
         if ($_SESSION["role"] === "student") {
             require("../app/views/error403.php");
             exit();
@@ -42,7 +44,7 @@ class AdminController extends UserController
     }
 
 
-    public function save_infoStudent(string $fName, string $lName, int $id)
+    public function update_infoStudent(string $fName, string $lName, int $id)
     {
         var_dump($_POST);
     }
@@ -55,12 +57,12 @@ class AdminController extends UserController
         require("../app/views/admins/details-session.php");
     }
 
-    public function save_infoSession(int $id)
+    public function update_infoSession(int $id)
     {
         echo "Session id : " . $id;
     }
 
-    public function addSession()
+    public function add_session()
     {
         echo "Ajout d'une session";
     }

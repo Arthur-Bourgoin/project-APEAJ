@@ -24,7 +24,7 @@ class SAdminController extends AdminController {
         require("../app/views/sadmins/home.php");
         }
 
-    public function addUser() {
+    public function add_user() {
         echo "Créer un Utilisateur";
     }
 
@@ -32,7 +32,7 @@ class SAdminController extends AdminController {
         //code
     }
 
-    public function addFormation() {
+    public function add_formation() {
         echo "Créer une formation";
     }
 
@@ -59,7 +59,7 @@ class SAdminController extends AdminController {
         require("../app/views/sadmins/formation.php");
     }
 
-    public function exportFormation(int $id) {
+    public function delete_formation(int $id) {
         
     }
 
