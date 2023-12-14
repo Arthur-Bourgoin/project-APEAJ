@@ -48,7 +48,7 @@ class UserModel {
         try {
             if(!self::userExist($args["idUser"]))
                 return 1; // user not exist
-            $keys = ["login", "lastName", "firstName", "picture", "typePwd", "pwd", "role", "idUser"];
+            $keys = ["login", "lastName", "firstName", "picture", "typePwd", "pwd", "idUser"];
             $args["login"] = self::generateLogin($args["firstName"], $args["lastName"]);
             Database::getInstance()
                 ->prepare("UPDATE users 
