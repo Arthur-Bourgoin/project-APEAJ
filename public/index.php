@@ -65,21 +65,40 @@ $router->map("GET", "/creer-utilisateur", function () {
     $controller = new SAdminController();
     $controller->addUser();
 });
-$router->map("GET", "/creer-formation", function () {
-    $controller = new SAdminController();
-    $controller->addFormation();
-});
 $router->map("GET", "/formation-[i:id]", function ($id) {
     $controller = new SAdminController();
     $controller->consultFormation($id);
 });
+$router->map("POST", "/formation-[i:id]", function ($id) {
+    $controller = new SAdminController();
+    if(isset($_POST["action"])) {
+        switch($_POST["action"]) {
+            case "updateAccount":
+                $controller->update_account();
+                break;
+            case "deleteTraining":
+                $controller->delete_training();
+                break;
+            case "updateTraining":
+                $controller->update_training();
+                break;
+            case "addUser":
+                $controller->add_user();
+                break;
+            case "updateAdmin":
+                $controller->update_admin();
+                break;
+            case "deleteUser":
+                $controller->delete_user();
+                break;
+        }
+    } else {
+        $controller->infoTraining($id);
+    }
+});
 $router->map("POST", "/etudiants/[a:fName]-[a:lName]-[i:id]", function ($fName, $lName, $id) {
     $controller = new AdminController();
     $controller->save_infoStudent($fName, $lName, $id);
-});
-$router->map("POST", "/", function () {
-    $controller = new AdminController();
-    $controller->save_addSession();
 });
 
 $router->map("POST", "/sessions/[i:id]", function ($id) {

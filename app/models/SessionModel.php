@@ -19,7 +19,7 @@ class SessionModel {
 
     public static function getSession(int $idSession) {
         try {
-            if(!self::sessionExist($idSession))
+            if(!self::existSession($idSession))
                 return 1; // session not exist
             $res = Database::getInstance()->prepare("SELECT * FROM session WHERE idSession = :id");
             $res->execute(array("id" => $idSession));
@@ -35,9 +35,9 @@ class SessionModel {
     public static function addSession(array $args) {
         try {
             Database::getInstance()
-                ->prepare("INSERT INTO session (wording, theme, description, timeBegin) 
-                           VALUES (:wording, :theme, :description, :timeBegin)")
-                ->execute(array_intersect_key($args, array_flip(["wording", "theme", "description", "timeBegin"])));
+                ->prepare("INSERT INTO session (wording, theme, description, timeBegin, idTraining) 
+                           VALUES (:wording, :theme, :description, :timeBegin, :idTraining)")
+                ->execute(array_intersect_key($args, array_flip(["wording", "theme", "description", "timeBegin", "idTraining"])));
             return 0; //success
         } catch (\Exception $e) {
             return 1; // query error;
@@ -77,7 +77,7 @@ class SessionModel {
     }
     
 
-    public static function sessionExist(int $idSession) {
+    public static function existSession(int $idSession) {
         $res = Database::getInstance()->prepare("SELECT * FROM session WHERE idSession = :id");
         $res->execute(array("id" => $idSession));
         return $res->rowCount() === 1;

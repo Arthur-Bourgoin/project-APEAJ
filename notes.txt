@@ -48,7 +48,6 @@ ADMIN
 --> POST + action=addSession --> ajout d'une session
 --> POST + action=modifUser --> modification d'un utilisateur
 --> POST + action=modifAccount --> modification de son compte
---> POST + action=addModel --> Ajout d'un modèle de fiche
 
 /session-id, ex: /session-9
 --> GET --> affichage des infos sur la session

@@ -22,7 +22,14 @@ class UserController {
     public function homePOST() {
         if($_SESSION["role"] === "admin") {
             $controller = new AdminController();
-            $controller->home();
+            if(isset($_POST["action"])) {
+                switch($_POST["action"]) {
+                    case "updateUser":
+                    case "updateAccount":
+                        $controller->update_user();
+                        break;
+                }
+            }
         } elseif($_SESSION["role"] === "student") {
             $controller = new StudentController();
             $controller->home();

@@ -15,6 +15,21 @@ class TrainingModel {
         }
     }
 
+    public static function getTraining(int $idTraining) {
+        try {
+            $res = Database::getInstance()->prepare("SELECT * FROM training WHERE idTraining = :id");
+            $res->execute(array("id" => $idTraining));
+            if($res->rowCount() === 0)
+                return 2; // training not exist
+            return $res->fetch();
+        } catch (\Exception $e) {
+            return 7; // query error
+        } finally {
+            if(!empty($res))
+                $res->closeCursor();
+        }
+    }
+
     public static function addTraining(array $args) {
         try {
             Database::getInstance()
