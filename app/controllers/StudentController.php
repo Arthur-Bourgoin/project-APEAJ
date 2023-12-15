@@ -7,7 +7,6 @@ use App\Models\AdminModel;
 class StudentController extends UserController {
 
     public function __construct() {
-        parent::__construct();
         if($_SESSION["role"] !== "student") {
             require("../app/views/error403.php");
             exit();

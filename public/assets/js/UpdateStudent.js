@@ -1,10 +1,30 @@
 // Pour cacher tous les éléments .champ au début
-var champs = document.querySelectorAll('#champTexte,#champSchéma,#champCode');
+const divText
+const divCode
+const divSchema
+
+
+function resetInput(div) {
+    div.querySelectorAll("input").foreach(input => {
+        input.value = "";
+    });
+}
+
+(function removeAllDivPwd() {
+    divText.remove();
+    divCode.remove();
+    divSchema.remove();
+})();
+
+/*
+let champs = document.querySelectorAll('#champTexte,#champSchéma,#champCode');
 champs.forEach(function(champ) {
-    champ.style.display = 'none';
+    champ.classList.add("d-none");
 });
+*/
 
 var selectedValue = document.querySelector('#passwdSelect').value;
+
 var champToShow = document.querySelector('#champ' + selectedValue);
 if (champToShow) {
     champToShow.style.display = 'block'; 
@@ -23,10 +43,21 @@ if (champToShow) {
 
 // Pour afficher l'élément correspondant à la sélection
 document.querySelector('#passwdSelect').addEventListener('change', function() {
+    removeAllDivPwd();
+    switch(e.currentTarget.value) {
+        case 1:
+            resetInput(divText);
+            e.currentTarget.insertAdjacentElement('afterend', divText);
+            break;
+        case 2:
+        case 3:
+
+    }
+
     var selectedValue = this.value;
 
     champs.forEach(function(champ) {
-        champ.style.display = 'none';
+        champ.classList.add("d-none");
     });
 
     var champToShow = document.querySelector('#champ' + selectedValue);

@@ -29,27 +29,21 @@ $scripts = "<script src='/assets/js/class/alert.js' type='module'></script>
         </div>
     </div>
     <?php
-    if (isset($result)) {
-        if ($result === 0) {
-            ?>
-            <div class="alert alert-success" role="alert">
-               Modification de la session réussie
-            </div>
-            <?php
-        } else if ($result === 1) {
-            ?>
-                <div class="alert alert-danger" role="alert">
-                   Querry Error
-                </div>
-            <?php
-        }
-        else if ($result === 2) {
-            ?>
-                <div class="alert alert-danger" role="alert">
-                   Session n'existe pas
-                </div>
-            <?php
-        }
+    switch($error){
+        case 1: 
+            echo "<div class='alert alert-danger'> Les données ne sont pas valides </div>"; break;
+        case 2: 
+            echo "<div class='alert alert-danger'> Erreur de requête ! </div>"; break;
+        case 3: 
+            echo "<div class='alert alert-danger'> Une erreur s'est produite lors de l'affichage </div>"; break;
+    }
+    switch($success){
+        case 1: 
+            echo "<div class='alert alert-success'> Modification de la session réussie ! </div>"; break;
+        case 2: 
+            echo "<div class='alert alert-success'>  </div>"; break;
+        case 3: 
+            echo "<div class='alert alert-success'>  </div>"; break;
     }
     ?>
     <div class="row  my-3">
@@ -103,6 +97,7 @@ $scripts = "<script src='/assets/js/class/alert.js' type='module'></script>
                 <div class="modal-body">
                     <form action="/sessions/<?= $session->idSession ?>" method="POST">
                         <div class="mb-3">
+                        <input type="hidden" class="form-control" id="action" name="action" value= "updateSession">
                         <input type="hidden" class="form-control" id="idSession" name="idSession" value= "<?=$session->idSession?>">
                         <input type="hidden" class="form-control" id="idTraining" name="idTraining" value= 1>
                             <label for="sessionName" class="form-label">Nom de la session</label>

@@ -25,7 +25,7 @@ class FormModel {
             }
             return $forms;
         } catch (\Exception $e) {
-            return 1; // query error
+            return 3; // query error
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -43,7 +43,7 @@ class FormModel {
             $student = UserModel::getUser($form->idStudent);
             return new Form($form, null, null, null, null, $session, $student, null);
         } catch (\Exception $e) {
-            return 1; // query error
+            return 3; // query error
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -52,7 +52,7 @@ class FormModel {
 
     public static function getFormsBySession(int $idSession) {
         try {
-            if(!SessionModel::sessionExist($idSession))
+            if(!SessionModel::existSession($idSession))
                 return 2; // session not exist
             $forms = [];
             $res = Database::getInstance()->prepare("SELECT * FROM form WHERE idSession = :id");

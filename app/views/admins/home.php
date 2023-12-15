@@ -24,20 +24,21 @@ ob_start(); ?>
         </div>
     </div>
     <?php
-    if (isset($result)) {
-        if ($result === 0) {
-            ?>
-            <div class="alert alert-success" role="alert">
-                Ajout de la session réussie
-            </div>
-            <?php
-        } else if ($result === 1) {
-            ?>
-                <div class="alert alert-danger" role="alert">
-                   Erreur de requête
-                </div>
-            <?php
-        }
+    switch($error){
+        case 1: 
+            echo "<div class='alert alert-danger'> Les données ne sont pas valides </div>"; break;
+        case 2: 
+            echo "<div class='alert alert-danger'> Une erreur s'est produite lors de l'affichage </div>"; break;
+        case 3: 
+            echo "<div class='alert alert-danger'> Une erreur s'est produite lors de l'affichage </div>"; break;
+    }
+    switch($success){
+        case 1: 
+            echo "<div class='alert alert-success'> Création de la session réussie ! </div>"; break;
+        case 2: 
+            echo "<div class='alert alert-success'> Modification de l'utilisateur réussie ! </div>"; break;
+        case 3: 
+            echo "<div class='alert alert-success'>  </div>"; break;
     }
     ?>
     <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -90,8 +91,19 @@ ob_start(); ?>
                                 <p class="card-text">
                                     <?= htmlentities($student->firstName) ?>
                                 </p>
-                                <a href="etudiants/<?= $student->lastName ?>-<?= $student->firstName ?>-<?= $student->idUser ?>"
-                                    class="btn btn-primary">Informations</a>
+                                <div class="row">
+                                    <div class="col-8">
+                                        <a href="etudiants/<?= $student->lastName ?>-<?= $student->firstName ?>-<?= $student->idUser ?>"
+                                        class="btn btn-primary">Informations</a>
+                                    </div>
+                                    <div class="col-2">
+                                        <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal"
+                                        data-bs-target="#ModalModifie" data-id="<?= $student->idUser ?>">
+                                        <i class="bi bi-pencil"></i> 
+                                     
+                                    </button>
+                                    </div> 
+                                </div>
                             </div>
 
                         </div>
@@ -113,6 +125,7 @@ ob_start(); ?>
             <div class="modal-body">
                 <form action="/" method="POST">
                     <div class="mb-3">
+                    <input type="hidden" class="form-control" id="action" name="action" value= "addSession">
                     <input type="hidden" class="form-control" id="idTraining" name="idTraining" value= 1>
                     <label for="sessionName" class="form-label">Nom de la session</label>
                         <input type="text" class="form-control" id="sessionName" name="wording" required>

@@ -14,7 +14,6 @@ class AdminController extends UserController
 
     public function __construct()
     {
-        parent::__construct();
         if ($_SESSION["role"] === "student") {
             require("../app/views/error403.php");
             exit();
@@ -23,11 +22,7 @@ class AdminController extends UserController
 
     public function home()
     {
-        $formation = 1;
-        $students = UserModel::getStudents($formation);
-        $sessions = SessionModel::getSessions($formation);
-
-        require("../app/views/admins/home.php");
+      $this->displayTemplatehome(0,0);
     }
 
     public function myAccount()
@@ -37,83 +32,54 @@ class AdminController extends UserController
 
     public function infoStudent(string $fName, string $lName, int $id)
     {
-        $student = UserModel::getUser($id);
-        $currentForm = FormModel::getCurrentForm($id);
-        $finishedForms = FormModel::getFinishedForms($id);
-        require("../app/views/admins/details.php");
+        $this->displayTemplateInfoStudent(0,0,$id);
     }
 
 
-    public function save_infoStudent(string $fName, string $lName, int $id)
+    public function update_student(string $fName, string $lName, int $id)
     {
-        $student = UserModel::getUser($id);
-        $currentForm = FormModel::getCurrentForm($id);
-        $finishedForms = FormModel::getFinishedForms($id);
-        $typePwd = 0; // Valeur par défaut ou gestion d'une valeur non conforme
-        if (isset($_POST["typePwd"])) {
-            $typePwdValue = $_POST["typePwd"];
-            if ($typePwdValue === "Texte") {
-                $typePwd = 1;
-            } elseif ($typePwdValue === "Schéma") {
-                $typePwd = 3;
-            } elseif ($typePwdValue === "Code") {
-                $typePwd = 2;
-            }
+        if(!$this->verifStudent($_POST)){
+            $error=1;
         }
-        $result = UserModel::updateUser([
-            "login" => $_POST["login"],
-            "lastName" => $_POST["lastName"],
-            "firstName" => $_POST["firstName"],
-            "picture" => $_POST["picture"],
-            "typePwd" => $typePwd,
-            "pwd" => $_POST["pwd"],
-            "role" => $_POST["role"],
-            "idUser" => intval($_POST["idUser"]),
-        ]);
-        require("../app/views/admins/details.php");
+        else  {
+                switch ($_POST["typePwd"]) {
+                    case "Texte":
+                        $_POST["typePwd"] = 1;
+                    case "Schéma":
+                        $_POST["typePwd"] = 3;
+                    case "Code":
+                        $_POST["typePwd"] = 2;
+                    
+                }
+            $error = UserModel::updateUser($_POST);
+            }
+       $this->displayTemplateInfoStudent($error,$error===0 ? 1 : 0,$id);
     }
 
     public function infoSession(int $idSession)
     {
-        $students = UserModel::getStudents(1);
-        $forms = FormModel::getFormsBySession($idSession);
-        $session = SessionModel::getSession($idSession);
-        require("../app/views/admins/details-session.php");
+        $this->displayTemplateInfoSession(0,0,$idSession);
     }
 
-    public function save_infoSession(int $idSession)
+    public function update_session(int $idSession)
     {
-        $students = UserModel::getStudents(1);
-        $forms = FormModel::getFormsBySession($idSession);
-        $session = SessionModel::getSession($idSession);
-        $result = SessionModel::updateSession([
-            "wording" => $_POST["wording"],
-            "theme" => $_POST["theme"],
-            "description" => $_POST["description"],
-            "timeBegin" => $_POST["timeBegin"],
-            "idSession" => $_POST["idSession"]
-        ]);
-
-        require("../app/views/admins/details-session.php");
+        if(!$this->verifSession($_POST))
+            $error=1;
+        else
+            $error = SessionModel::updateSession($_POST);
+        $this->displayTemplateInfoSession($error,$error===0 ? 1 : 0,$idSession);
     }
 
 
 
-    public function save_addSession()
-{
-    $formation = 1;
-    $students = UserModel::getStudents($formation);
-    $sessions = SessionModel::getSessions($formation);
-    $result = SessionModel::addSession([
-        "wording" => $_POST["wording"],
-        "theme" => $_POST["theme"],
-        "description" =>  $_POST["description"],
-        "timeBegin" => $_POST["timeBegin"],
-        "idTraining" => $_POST["idTraining"]
-    ]);
-
-    require("../app/views/admins/home.php");
-}
+    public function add_session()
+    {   
+        if(!$this->verifSession($_POST))
+            $error=1;
+        else
+            $error = SessionModel::addSession($_POST);
+        $this->displayTemplatehome($error,$error===0 ? 1 : 0);
+    }
 
     public function createForm(string $fName, string $lName, int $idStudent)
     {
@@ -178,5 +144,62 @@ class AdminController extends UserController
         require("../app/views/admins/fiche-info.php");
     }
 
+    private function displayTemplatehome(int $p_error, int $p_success) {
+        $error = $p_error;
+        $success = $p_success;
+        $formation = 1;
+        $students = UserModel::getStudents($formation);
+        $sessions = SessionModel::getSessions($formation);
+        if(!is_array($students) || !is_array($sessions)) 
+            $error = 1;
+        require("../app/views/admins/home.php");
+    }
+    private function displayTemplateInfoStudent(int $p_error, int $p_success,int $id){
+        $error = $p_error;
+        $success = $p_success;
+        $student = UserModel::getUser($id);
+        $currentForm = FormModel::getCurrentForm($id);
+        $finishedForms = FormModel::getFinishedForms($id);
+        if(is_int($currentForm) || !is_array($finishedForms) || is_int($student)) 
+            $error = 1;
+        require("../app/views/admins/details.php");
 
+    }
+    private function displayTemplateInfoSession(int $p_error, int $p_success,int $id){
+        $error = $p_error;
+        $success = $p_success;
+        $students = UserModel::getStudents(1);
+        $forms = FormModel::getFormsBySession($id);
+        $session = SessionModel::getSession($id);
+        if(!is_array($students) || !is_array($forms) || is_int($session)) 
+            $error = 1;
+        require("../app/views/admins/details-session.php");
+
+    }
+    private function verifSession(array $args){
+        if(
+            empty($args["wording"]) ||
+            empty($args["theme"]) ||
+            empty($args["description"]) ||
+            empty($args["timeBegin"]) ||
+            empty($args["idTraining"]) 
+        )
+            return false;
+        return true;
+    }
+    private function verifStudent(array $args){
+        if(
+            empty($args["idUser"]) ||
+            empty($args["lastName"]) ||
+            empty($args["firstName"]) ||
+            //empty($args["picture"]) ||
+            empty($args["typePwd"]) ||
+            empty($args["pwd"]) ||
+            empty($args["role"]) 
+        )
+            return false;
+        return true;
+    }
+
+    
 }

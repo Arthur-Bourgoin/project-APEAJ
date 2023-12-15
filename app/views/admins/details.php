@@ -41,28 +41,25 @@ $scripts = "<script src='/assets/js/updateStudent.js' type='module'></script>
                 </div>
                 <div class="col-12 mt-4">
                     <?php
-                    if (isset($result)) {
-                        if ($result === 0) {
-                            ?>
-                            <div class="alert alert-success" role="alert">
-                                Modification réussie !
-                            </div>
-                            <?php
-                        } else if ($result === 1) {
-                            ?>
-                                <div class="alert alert-danger" role="alert">
-                                    L'utilisateur n'existe pas !
-                                </div>
-                            <?php
-                        } else if ($result === 2) {
-                            ?>
-                                    <div class="alert alert-danger" role="alert">
-                                        Erreur de requête !
-                                    </div>
-                            <?php
-                        }
+                     
+                    switch($error){
+                        case 1: 
+                            echo "<div class='alert alert-danger'> Les données ne sont pas valides </div>"; break;
+                        case 2: 
+                            echo "<div class='alert alert-danger'> Une erreur s'est produite lors de l'affichage </div>"; break;
+                        case 3: 
+                            echo "<div class='alert alert-danger'> Une erreur s'est produite lors de l'affichage </div>"; break;
                     }
-                    ?>
+                    switch($success){
+                        case 1: 
+                            echo "<div class='alert alert-success'> Modification de l'étudiant réussie ! </div>"; break;
+                        case 2: 
+                            echo "<div class='alert alert-success'>  </div>"; break;
+                        case 3: 
+                            echo "<div class='alert alert-success'>  </div>"; break;
+                     }
+                     ?>
+                    
                 </div>
             </div>
         </div>
@@ -124,6 +121,7 @@ $scripts = "<script src='/assets/js/updateStudent.js' type='module'></script>
             </div>
             <div class="modal-body">
                 <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
+                    <input type="hidden" name="action" value="updateAccount" />
                     <input type="hidden" name="role" value="<?= $student->role ?>" />
                     <input type="hidden" name="idUser" value="<?= $student->idUser ?>" />
                     <div class="row">
@@ -147,12 +145,6 @@ $scripts = "<script src='/assets/js/updateStudent.js' type='module'></script>
                         </div>
                     </div>
                     <div class="row mt-2">
-                        <div class="col-5 text-center m-auto">
-                            <label for="test" class="form-label pe-none">Login :</label>
-                        </div>
-                        <div class="col-7 ">
-                            <input class=" form-control" id="test" value="<?= $student->login ?>" name="login">
-                        </div>
                         <div class="col-5 text-center mt-4">
                             <label for="passwdSelect" class="form-label pe-none">Type de mdp :</label>
                         </div>
@@ -181,7 +173,7 @@ $scripts = "<script src='/assets/js/updateStudent.js' type='module'></script>
                             </div>
                         </div>
 
-                        <div id="champSchéma" class="champ col-12 mt-4">
+                        <div id="champSchema" class="champ col-12 mt-4">
                             <div>blabla</div>
                         </div>
 
