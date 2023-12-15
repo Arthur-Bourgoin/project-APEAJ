@@ -4,7 +4,7 @@ use Config\Database;
 use App\Models\FormModel;
 
 class CommentFormModel {
-
+//verif info student
     public static function getComments(int $numero, int $idStudent) {
         try {
             if(!FormModel::existForm($numero, $idStudent))

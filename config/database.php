@@ -6,10 +6,8 @@ class Database {
 
     const SERVER = "localhost";
     const DB = "apeaj";
-    //const LOGIN = "rootAPEAJ";
-    //const PWD = "pwdroot";
-    const LOGIN = "root";
-    const PWD = "iutinfoROOT";
+    const LOGIN = "rootAPEAJ";
+    const PWD = "pwdroot";
     private static $linkpdo = null;
 
     private function __contruct() {}

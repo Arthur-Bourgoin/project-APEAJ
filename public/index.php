@@ -25,10 +25,6 @@ $router->map("GET", "/", function () {
     $controller = new UserController();
     $controller->home();
 });
-$router->map("POST", "/", function () {
-    $controller = new UserController();
-    $controller->homePOST();
-});
 $router->map("GET", "/accueil", function () {
     $controller = new UserController();
     $controller->home();
@@ -75,16 +71,16 @@ $router->map("GET", "/formation-[i:id]", function ($id) {
 });
 $router->map("POST", "/etudiants/[a:fName]-[a:lName]-[i:id]", function ($fName, $lName, $id) {
     $controller = new AdminController();
-    $controller->save_infoStudent($fName, $lName, $id);
+    $controller->update_student($fName, $lName, $id);
 });
 $router->map("POST", "/", function () {
     $controller = new AdminController();
-    $controller->save_addSession();
+    $controller->add_session();
 });
 
 $router->map("POST", "/sessions/[i:id]", function ($id) {
     $controller = new AdminController();
-    $controller->save_infoSession($id);
+    $controller->update_session($id);
 });
 
 $match = $router->match();
