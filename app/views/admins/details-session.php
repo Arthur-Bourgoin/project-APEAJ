@@ -10,7 +10,7 @@ $scripts = "<script src='/assets/js/class/alert.js' type='module'></script>
     <div class="row">
         <div class="col-12 text-center mt-4">
             <h1>
-                <?= htmlentities($session["name"]) ?>
+                <?= htmlentities($session->wording) ?>
             </h1>
         </div>
     </div>
@@ -29,49 +29,50 @@ $scripts = "<script src='/assets/js/class/alert.js' type='module'></script>
         </div>
     </div>
     <?php
-    if (isset($error)) {
-        if ($error === 0) {
-            ?>
-            <div class="alert alert-success" role="alert">
-                A simple success alert—check it out!
-            </div>
-            <?php
-        } else if ($error === 1) {
-            ?>
-                <div class="alert alert-danger" role="alert">
-                    A simple danger alert—check it out!
-                </div>
-            <?php
-        }
+    switch($error){
+        case 1: 
+            echo "<div class='alert alert-danger'> Les données ne sont pas valides </div>"; break;
+        case 2: 
+            echo "<div class='alert alert-danger'> Erreur de requête ! </div>"; break;
+        case 3: 
+            echo "<div class='alert alert-danger'> Une erreur s'est produite lors de l'affichage </div>"; break;
+    }
+    switch($success){
+        case 1: 
+            echo "<div class='alert alert-success'> Modification de la session réussie ! </div>"; break;
+        case 2: 
+            echo "<div class='alert alert-success'>  </div>"; break;
+        case 3: 
+            echo "<div class='alert alert-success'>  </div>"; break;
     }
     ?>
     <div class="row  my-3">
         <div class="col-12">
             <div class="form-floating">
                 <div class="form-control" id="descriptionSession">
-                    <?= htmlentities($session["desc"]) ?>
+                    <?= htmlentities($session->description) ?>
                 </div>
                 <label for="descriptionSession">Description</label>
             </div>
         </div>
     </div>
     <div class="row">
-        <?php foreach ($fiches as $fiche) { ?>
+        <?php foreach ($forms as $form) { ?>
             <div class="col-6 col-lg-3 col-md-4 col-sm-6 mb-4">
                 <div class="card">
                     <div class="card-body text-center">
                         <a
-                            href="/etudiants/<?= htmlentities($fiche["NomEtu"]) ?>-<?= htmlentities($fiche["PrenomEtu"]) ?>-<?= htmlentities($fiche["IDstu"]) ?>/fiche-<?= htmlentities($fiche["ID"]) ?>">
+                            href="/etudiants/<?= htmlentities($form->student->lastName) ?>-<?= htmlentities($form->student->firstName) ?>-<?= htmlentities($form->student->idUser) ?>/fiche-<?= htmlentities($form->form->numero) ?>">
                             <i class="bi bi-file-earmark-text" style="font-size: 5rem;"></i>
                         </a>
                         <h5 class="card-title mt-3">
-                            <?= htmlentities($fiche["NomEtu"] . " " . $fiche["PrenomEtu"]) ?>
+                            <?= htmlentities($form->student->lastName . " " . $form->student->firstName) ?>
                         </h5>
                     </div>
                 </div>
             </div>
         <?php } ?>
-        <?php if ($session['date_fin'] === '') { ?>
+        <?php if ($session->timeEnd == NULL) { ?>
             <div class="col-6 col-lg-3 col-md-4 col-sm-6 mb-4">
                 <div class="card">
                     <div class="card-body text-center">
@@ -94,44 +95,47 @@ $scripts = "<script src='/assets/js/class/alert.js' type='module'></script>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="/sessions/<?= $session["ID"] ?>" method="POST">
+                    <form action="/sessions/<?= $session->idSession ?>" method="POST">
                         <div class="mb-3">
+                        <input type="hidden" class="form-control" id="action" name="action" value= "updateSession">
+                        <input type="hidden" class="form-control" id="idSession" name="idSession" value= "<?=$session->idSession?>">
+                        <input type="hidden" class="form-control" id="idTraining" name="idTraining" value= 1>
                             <label for="sessionName" class="form-label">Nom de la session</label>
-                            <input type="text" class="form-control" id="sessionName" name="sessionName"
-                                value="<?= htmlentities($session["name"]) ?>" required>
+                            <input type="text" class="form-control" id="sessionName" name="wording"
+                                value="<?= htmlentities($session->wording) ?>" required>
                         </div>
                         <div class="mb-3">
                             <label for="theme" class="form-label">Thème</label>
                             <input type="text" class="form-control" id="theme" name="theme"
-                                value="<?= htmlentities($session["Theme"]) ?>" required>
+                                value="<?= htmlentities($session->theme) ?>" required>
                         </div>
-                        <?php if ($session['date_fin'] === '') { ?>
+                        <?php if ($session->timeEnd == NULL) { ?>
                             <div class="mb-3">
                                 <label for="startTime" class="form-label">Date/Heure de début</label>
-                                <input type="datetime-local" class="form-control" id="startTime" name="startTime"
-                                    value="<?= htmlentities($session["date_creation"]) ?>" required>
+                                <input type="datetime-local" class="form-control" id="startTime" name="timeBegin"
+                                    value="<?= htmlentities($session->timeBegin) ?>" required>
                                 <!-- Affichage de la date de début modifiable si la date de fin n'est pas définie -->
                             </div>
                         <?php } else { ?>
                             <div class="mb-3">
                                 <label for="startTime-readonly" class="form-label">Date/Heure de début</label>
-                                <input type="datetime-local" class="form-control" id="startTime-readonly" name="startTime"
-                                    value="<?= htmlentities($session["date_creation"]) ?>" readonly required>
+                                <input type="datetime-local" class="form-control" id="startTime-readonly" name="timeBegin"
+                                    value="<?= htmlentities($session->timeBegin) ?>" readonly required>
                                 <!-- Rendre la date de début non modifiable si la date de fin est définie -->
                             </div>
                         <?php } ?>
-                        <?php if ($session['date_fin'] !== '') { ?>
+                        <?php if ($session->timeEnd !== NULL) { ?>
                             <div class="mb-3">
                                 <label for="endTime-readonly" class="form-label">Date/Heure de fin</label>
-                                <input type="datetime-local" class="form-control" id="endTime-readonly" name="endTime"
-                                    value="<?= htmlentities($session["date_fin"]) ?>" readonly>
+                                <input type="datetime-local" class="form-control" id="endTime-readonly" name="timeEnd"
+                                    value="<?= htmlentities($session->timeEnd) ?>" readonly>
                                 <!-- Affichage de la date de fin dans un champ 'readonly' si elle est définie -->
                             </div>
                         <?php } ?>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
                             <textarea class="form-control" id="description"
-                                name="description"><?= htmlentities($session["desc"]) ?></textarea>
+                                name="description"><?= htmlentities($session->description) ?></textarea>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
@@ -161,13 +165,13 @@ $scripts = "<script src='/assets/js/class/alert.js' type='module'></script>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($allstudents as $student) { ?>
-                                <tr class="tr-body" data-id="<?= $student["ID"] ?>">
+                            <?php foreach ($students as $student) { ?>
+                                <tr class="tr-body" data-id="<?= $student->idUser ?>">
                                     <td>
-                                        <?= htmlentities($student['nom']) ?>
+                                        <?= htmlentities($student->lastName) ?>
                                     </td>
                                     <td>
-                                        <?= htmlentities($student['prenom']) ?>
+                                        <?= htmlentities($student->firstName) ?>
                                     </td>
                                 </tr>
                             <?php } ?>
@@ -176,7 +180,6 @@ $scripts = "<script src='/assets/js/class/alert.js' type='module'></script>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                    <button type="button" class="btn btn-primary">Créer fiche </button>
                 </div>
             </div>
         </div>

@@ -40,7 +40,7 @@ class SessionModel {
                 ->execute(array_intersect_key($args, array_flip(["wording", "theme", "description", "timeBegin", "idTraining"])));
             return 0; //success
         } catch (\Exception $e) {
-            return 1; // query error;
+            return 2; // query error;
         }
     }
 
@@ -53,13 +53,13 @@ class SessionModel {
                            SET wording = :wording,
                                theme = :theme,
                                description = :description,
-                               timeBegin = :timeBegin,
-                               timeEnd = :timeEnd
+                               timeBegin = :timeBegin
                            WHERE idSession = :idSession")
-                ->execute(array_intersect_key($args, array_flip(["wording", "theme", "description", "timeBegin", "timeEnd", "idSession"])));
+                ->execute(array_intersect_key($args, array_flip(["wording", "theme", "description", "timeBegin", "idSession"])));
             return 0;
         } catch (\Exception $e) {
-            return 1; // query error
+            throw($e);
+            //return 1; // query error
         }
     }
 

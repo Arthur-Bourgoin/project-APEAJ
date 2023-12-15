@@ -4,24 +4,23 @@ namespace App\Class;
 
 class Form {
 
-    private $idStudent;
-    private $idForm;
-    private $etatFiche;
-    private $dateCreation;
-    //.....
-    private $newIntervention;
+   public $form;
+   public $comments;
+   public $pictures;
+   public $elements;
+   public $materials;
+   public $session;
+   public $student;
+   public $educator;
 
-    private $elements;
-
-    public function __construct($tab) {
-        $this->elements = [
-            "studentLastName" => new FormElement($tab[0]),
-            "studentFirstName" => new FormElement($tab[1])
-        ];
+    public function __construct(object $form,?array $comments,?array $pictures,?array $elements,?array $materials,?object $session,?object $student,?object $educator) {
+        $this->form = $form;
+        $this->comments = $comments;
+        $this->pictures = $pictures;
+        $this->elements = $elements;
+        $this->materials = $materials;
+        $this->session = $session;
+        $this->student = $student;
+        $this->educator = $educator;
     }
-
-    public function getPreview() {
-
-    }
-
 }

@@ -1,6 +1,6 @@
 <?php
 namespace App\Models;
-
+use Config\Database;
 class DisplayElementModel {
 
     public static function getDisplayElements(int $numero, int $idStudent) {

@@ -25,7 +25,7 @@ class FormModel {
             }
             return $forms;
         } catch (\Exception $e) {
-            return 1; // query error
+            return 3; // query error
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -43,7 +43,7 @@ class FormModel {
             $student = UserModel::getUser($form->idStudent);
             return new Form($form, null, null, null, null, $session, $student, null);
         } catch (\Exception $e) {
-            return 1; // query error
+            return 3; // query error
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -52,7 +52,7 @@ class FormModel {
 
     public static function getFormsBySession(int $idSession) {
         try {
-            if(!Session::sessionExist($idSession))
+            if(!SessionModel::existSession($idSession))
                 return 2; // session not exist
             $forms = [];
             $res = Database::getInstance()->prepare("SELECT * FROM form WHERE idSession = :id");
@@ -78,9 +78,9 @@ class FormModel {
             $form = $res->fetch();
             $comments = CommentFormModel::getComments($numero, $idStudent);
             $pictures = PictureModel::getPictures($numero, $idStudent);
-            $elements = DisplayElementModel::getElements($numero, $idStudent);
+            $elements = DisplayElementModel::getDisplayElements($numero, $idStudent);
             $materials = MaterialModel::getMaterials($numero, $idStudent);
-            $session = SessionModel::getSession($form);
+            $session = SessionModel::getSession($form->idSession);
             $student = UserModel::getUser($idStudent);
             $educator = UserModel::getUser($form->idEducator);
             if(!is_array($comments) || !is_array($pictures) || !is_array($elements) || !is_array($materials))
