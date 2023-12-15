@@ -6,19 +6,6 @@ $bsIcons = true?>
 
 <?php ob_start(); ?>
 
-<script>
-    const students = new Map();
-    <?= json_encode($students) ?>.forEach(student => {
-        students.set(student.id, new Student(student));
-    });
-
-    document.querySelectorAll(".card").forEach(card => {
-        card.addEventListener("click", e => {
-            students.get(e.currentTarget.dataset.id).updateModalConnection();
-        });
-    });
-</script>
-
 <div class="container mt-5">
     <div class="row mb-5 align-items-center">
         <h1 class="col-md-11 col-5">Sélectionner un profil</h1>

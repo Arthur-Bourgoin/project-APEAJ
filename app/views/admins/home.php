@@ -6,7 +6,6 @@ ob_start(); ?>
 <div class="container">
     <div class="row">
         <h2 class="text-center mt-3"> Formation
-            <?= htmlentities($formation[0]["Formation"]) ?>
         </h2>
     </div>
     <div class="row">
@@ -25,17 +24,17 @@ ob_start(); ?>
         </div>
     </div>
     <?php
-    if (isset($error)) {
-        if ($error === 0) {
+    if (isset($result)) {
+        if ($result === 0) {
             ?>
             <div class="alert alert-success" role="alert">
-                A simple success alert—check it out!
+                Ajout de la session réussie
             </div>
             <?php
-        } else if ($error === 1) {
+        } else if ($result === 1) {
             ?>
                 <div class="alert alert-danger" role="alert">
-                    A simple danger alert—check it out!
+                   Erreur de requête
                 </div>
             <?php
         }
@@ -66,9 +65,9 @@ ob_start(); ?>
                         ?>
                         <tr>
                             <td><span class='font-large'>
-                                    <?= htmlentities($session["name"]) ?>
+                                    <?= htmlentities($session->wording) ?>
                                 </span></td>
-                            <td><a href="sessions/<?= $session["ID"] ?>"><i class='bi bi-eye text-black'></i></a></td>
+                            <td><a href="sessions/<?= $session->idSession ?>"><i class='bi bi-eye text-black'></i></a></td>
                         </tr>
                         <?php
                     }
@@ -83,15 +82,15 @@ ob_start(); ?>
                 foreach ($students as $student) { ?>
                     <div class="col-lg-3 col-md-4 col-6">
                         <div class="card mb-4">
-                            <img src="<?= $student["picture"] ?>" class="img-thumbnail" alt="Photo de l\'étudiant 1">
+                            <img src="<?= $student->picture ?>" class="img-thumbnail" alt="Photo de l'étudiant 1">
                             <div class="card-body text-center">
                                 <h5 class="card-title">
-                                    <?= htmlentities($student["nom"]) ?>
+                                    <?= htmlentities($student->lastName) ?>
                                 </h5>
                                 <p class="card-text">
-                                    <?= htmlentities($student["prenom"]) ?>
+                                    <?= htmlentities($student->firstName) ?>
                                 </p>
-                                <a href="etudiants/<?= $student["nom"] ?>-<?= $student["prenom"] ?>-<?= $student["ID"] ?>"
+                                <a href="etudiants/<?= $student->lastName ?>-<?= $student->firstName ?>-<?= $student->idUser ?>"
                                     class="btn btn-primary">Informations</a>
                             </div>
 
@@ -114,8 +113,9 @@ ob_start(); ?>
             <div class="modal-body">
                 <form action="/" method="POST">
                     <div class="mb-3">
-                        <label for="sessionName" class="form-label">Nom de la session</label>
-                        <input type="text" class="form-control" id="sessionName" name="sessionName" required>
+                    <input type="hidden" class="form-control" id="idTraining" name="idTraining" value= 1>
+                    <label for="sessionName" class="form-label">Nom de la session</label>
+                        <input type="text" class="form-control" id="sessionName" name="wording" required>
                     </div>
                     <div class="mb-3">
                         <label for="theme" class="form-label">Thème</label>
@@ -123,7 +123,7 @@ ob_start(); ?>
                     </div>
                     <div class="mb-3">
                         <label for="startTime" class="form-label">Date/Heure de début</label>
-                        <input type="datetime-local" class="form-control" id="startTime" name="startTime" required>
+                        <input type="datetime-local" class="form-control" id="startTime" name="timeBegin" required>
                     </div>
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>

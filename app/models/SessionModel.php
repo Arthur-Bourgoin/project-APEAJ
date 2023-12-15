@@ -35,9 +35,9 @@ class SessionModel {
     public static function addSession(array $args) {
         try {
             Database::getInstance()
-                ->prepare("INSERT INTO session (wording, theme, description, timeBegin) 
-                           VALUES (:wording, :theme, :description, :timeBegin)")
-                ->execute(array_intersect_key($args, array_flip(["wording", "theme", "description", "timeBegin"])));
+                ->prepare("INSERT INTO session (wording, theme, description, timeBegin, idTraining) 
+                           VALUES (:wording, :theme, :description, :timeBegin, :idTraining)")
+                ->execute(array_intersect_key($args, array_flip(["wording", "theme", "description", "timeBegin","idTraining"])));
             return 0; //success
         } catch (\Exception $e) {
             return 1; // query error;
@@ -46,26 +46,26 @@ class SessionModel {
 
     public static function updateSession(array $args) {
         try {
-            if(!self::existSession($args["idSession"]))
+            if(!self::sessionExist($args["idSession"]))
                 return 2; // session not exist
             Database::getInstance()
                 ->prepare("UPDATE session
                            SET wording = :wording,
                                theme = :theme,
                                description = :description,
-                               timeBegin = :timeBegin,
-                               timeEnd = :timeEnd
+                               timeBegin = :timeBegin
                            WHERE idSession = :idSession")
-                ->execute(array_intersect_key($args, array_flip(["wording", "theme", "description", "timeBegin", "timeEnd", "idSession"])));
+                ->execute(array_intersect_key($args, array_flip(["wording", "theme", "description", "timeBegin", "idSession"])));
             return 0;
         } catch (\Exception $e) {
-            return 1; // query error
+            throw($e);
+            //return 1; // query error
         }
     }
 
     public static function closeSession(int $idSession) {
         try {
-            if(!self::existSession($idSession))
+            if(!self::sessionExist($idSession))
                 return 2; // session not exist
             Database::getInstance()
                 ->prepare("UPDATE session SET timeEnd = :timeEnd WHERE idSession = :id")

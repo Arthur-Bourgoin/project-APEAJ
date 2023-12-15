@@ -2,9 +2,11 @@
 
 namespace App\Controllers;
 
-use App\Models\ {
+use App\Models\{
     AdminModel,
-    SessionModel
+    SessionModel,
+    UserModel,
+    FormModel
 };
 
 class AdminController extends UserController
@@ -12,6 +14,7 @@ class AdminController extends UserController
 
     public function __construct()
     {
+        parent::__construct();
         if ($_SESSION["role"] === "student") {
             require("../app/views/error403.php");
             exit();
@@ -20,10 +23,9 @@ class AdminController extends UserController
 
     public function home()
     {
-
-        $students = AdminModel::getAllStudents();
-        $sessions = AdminModel::getAllSessions();
-        $formation = AdminModel::getFormationAdmin(1);
+        $formation = 1;
+        $students = UserModel::getStudents($formation);
+        $sessions = SessionModel::getSessions($formation);
 
         require("../app/views/admins/home.php");
     }
@@ -35,52 +37,83 @@ class AdminController extends UserController
 
     public function infoStudent(string $fName, string $lName, int $id)
     {
-        $student = AdminModel::getStudentById($id);
-        $fichesf = AdminModel::getFichesFiniesByStudentId($id);
-        $fichesnf = AdminModel::getFichesNonFiniesByStudentId($id);
+        $student = UserModel::getUser($id);
+        $currentForm = FormModel::getCurrentForm($id);
+        $finishedForms = FormModel::getFinishedForms($id);
         require("../app/views/admins/details.php");
     }
 
 
-    public function update_infoStudent(string $fName, string $lName, int $id)
+    public function save_infoStudent(string $fName, string $lName, int $id)
     {
-        $student = AdminModel::getStudentById($id);
-        $fichesf = AdminModel::getFichesFiniesByStudentId($id);
-        $fichesnf = AdminModel::getFichesNonFiniesByStudentId($id);
-        $error=1;
+        $student = UserModel::getUser($id);
+        $currentForm = FormModel::getCurrentForm($id);
+        $finishedForms = FormModel::getFinishedForms($id);
+        $typePwd = 0; // Valeur par défaut ou gestion d'une valeur non conforme
+        if (isset($_POST["typePwd"])) {
+            $typePwdValue = $_POST["typePwd"];
+            if ($typePwdValue === "Texte") {
+                $typePwd = 1;
+            } elseif ($typePwdValue === "Schéma") {
+                $typePwd = 3;
+            } elseif ($typePwdValue === "Code") {
+                $typePwd = 2;
+            }
+        }
+        $result = UserModel::updateUser([
+            "login" => $_POST["login"],
+            "lastName" => $_POST["lastName"],
+            "firstName" => $_POST["firstName"],
+            "picture" => $_POST["picture"],
+            "typePwd" => $typePwd,
+            "pwd" => $_POST["pwd"],
+            "role" => $_POST["role"],
+            "idUser" => intval($_POST["idUser"]),
+        ]);
         require("../app/views/admins/details.php");
     }
 
-    public function infoSession(int $id)
+    public function infoSession(int $idSession)
     {
-        $allstudents=AdminModel::getAllStudents();
-        $students = AdminModel::getStudentsBySession($id);
-        $session=AdminModel::getSessionById($id);
-        $fiches = AdminModel::getFichesBySession($id);
+        $students = UserModel::getStudents(1);
+        $forms = FormModel::getFormsBySession($idSession);
+        $session = SessionModel::getSession($idSession);
         require("../app/views/admins/details-session.php");
     }
 
-    public function update_infoSession(int $id)
+    public function save_infoSession(int $idSession)
     {
-        $students = AdminModel::getStudentsBySession($id);
-        $session=AdminModel::getSessionById($id);
-        $fiches = AdminModel::getFichesBySession($id);
-        $error=1;
+        $students = UserModel::getStudents(1);
+        $forms = FormModel::getFormsBySession($idSession);
+        $session = SessionModel::getSession($idSession);
+        $result = SessionModel::updateSession([
+            "wording" => $_POST["wording"],
+            "theme" => $_POST["theme"],
+            "description" => $_POST["description"],
+            "timeBegin" => $_POST["timeBegin"],
+            "idSession" => $_POST["idSession"]
+        ]);
+
         require("../app/views/admins/details-session.php");
     }
 
-    public function add_session() {
-        echo "Ajout d'une session";
-    }
+
 
     public function save_addSession()
-    {
-        $students = AdminModel::getAllStudents();
-        $sessions = AdminModel::getAllSessions();
-        $formation = AdminModel::getFormationAdmin(1);
-        $error = 0;
-        require("../app/views/admins/home.php");
-    }
+{
+    $formation = 1;
+    $students = UserModel::getStudents($formation);
+    $sessions = SessionModel::getSessions($formation);
+    $result = SessionModel::addSession([
+        "wording" => $_POST["wording"],
+        "theme" => $_POST["theme"],
+        "description" =>  $_POST["description"],
+        "timeBegin" => $_POST["timeBegin"],
+        "idTraining" => $_POST["idTraining"]
+    ]);
+
+    require("../app/views/admins/home.php");
+}
 
     public function createForm(string $fName, string $lName, int $idStudent)
     {
@@ -140,12 +173,8 @@ class AdminController extends UserController
 
     public function infoForm(string $fName, string $lName, int $idStudent, int $idForm, bool $edit = false)
     {
-        $student = AdminModel::getStudentById($idStudent);
-        $lName = $student["nom"];
-        $fName = $student["prenom"];
-        $form = AdminModel::getFormbyID($idForm);
-        $coms = AdminModel::getComsByFormID($idForm);
-        $pictures = AdminModel::getPicturesByFormID($idForm);
+        $student = UserModel::getUser($idStudent);
+        $form = FormModel::getForm($idForm, $idStudent);
         require("../app/views/admins/fiche-info.php");
     }
 
