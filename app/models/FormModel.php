@@ -13,7 +13,7 @@ class FormModel {
 
     public static function getFinishedForms(int $idStudent) {
         try {
-            if(!UserModel::userExist($idStudent))
+            if(!UserModel::existUser($idStudent))
                 return 2; // student not exist
             $forms = [];
             $res = Database::getInstance()->prepare("SELECT * FROM form WHERE idStudent = :id AND finish = true");
@@ -34,11 +34,13 @@ class FormModel {
 
     public static function getCurrentForm(int $idStudent) {
         try {
-            if(!UserModel::userExist($idStudent))
+            if(!UserModel::existUser($idStudent))
                 return 2; // student not exist
             $res = Database::getInstance()->prepare("SELECT * FROM form WHERE idStudent = :id AND finish = false");
             $res->execute(array("id" => $idStudent));
             $form = $res->fetch();
+            if(!$form)
+                return 1; // no current form
             $session = SessionModel::getSession($form->idSession);
             $student = UserModel::getUser($form->idStudent);
             return new Form($form, null, null, null, null, $session, $student, null);

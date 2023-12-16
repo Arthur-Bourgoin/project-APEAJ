@@ -37,7 +37,7 @@ class PictureModel {
 
     public static function deletePicture(int $idPicture) { 
         try {
-            if(!sel::existPicture($iPicture))
+            if(!self::existPicture($iPicture))
                 return 2; // picture not exist
             Database::getInstance()
                 ->prepare("DELETE FROM picture WHERE idPicture = :idPicture")

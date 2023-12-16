@@ -1,8 +1,9 @@
 <?php
 namespace App\Models;
+use Config\Database;
 use App\Models\UserModel;
 
-class CommentStudent {
+class CommentStudentModel {
 
     public static function getComments(int $idStudent) {
         try {

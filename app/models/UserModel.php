@@ -1,14 +1,43 @@
 <?php
 namespace App\Models;
 use Config\Database;
+use App\Class\User;
+use App\Models\CommentStudentModel;
 
 class UserModel {
 
+    public static function getUsers(int $idTraining) {
+        try {
+            $users = [];
+            $res = Database::getInstance()->prepare("SELECT * FROM users WHERE idTraining = :id ORDER BY role DESC");
+            $res->execute(array("id" => $idTraining));
+            while($user = $res->fetch()) {
+                $comments = CommentStudentModel::getComments($user->idUser);
+                if(!is_array($comments))
+                    return 14; // Error on CommentStudensModel::getComments() method
+                $users[] = new User($user, $comments);
+            }
+            return $users;
+        } catch (\Exception $e) {
+            return 1; // query error
+        } finally {
+            if(!empty($res))
+                $res->closeCursor();
+        }
+    }
+
     public static function getStudents(int $idTraining) {
         try {
+            $users = [];
             $res = Database::getInstance()->prepare("SELECT * FROM users WHERE idTraining = :id AND role = 'student'");
             $res->execute(array("id" => $idTraining));
-            return $res->fetchAll();
+            while($user = $res->fetch()) {
+                $comments = CommentStudentModel::getComments($user->idUser);
+                if(!is_array($comments))
+                    return 14; // Error on CommentStudensModel::getComments() method
+                $users[] = new User($user, $comments);
+            }
+            return $users;
         } catch (\Exception $e) {
             return 1; // query error
         } finally {
@@ -19,7 +48,7 @@ class UserModel {
 
     public static function getAdmins() {
         try {
-            $res = Database::getInstance()->query("SELECT * FROM users WHERE role in ('educator-admin', 'educator', 'CIP', 'super-admin')");
+            $res = Database::getInstance()->query("SELECT * FROM users WHERE role in ('educator-admin', 'educator', 'CIP')");
             return $res->fetchAll();
         } catch (\Exception $e) {
             return 1; // query error
@@ -35,7 +64,11 @@ class UserModel {
             $res->execute(array("id" => $idUser));
             if($res->rowCount() === 0)
                 return 2; // user not exist
-            return $res->fetch();
+            $user = $res->fetch();
+            $comments = CommentStudentModel::getComments($user->idUser);
+            if(!is_array($comments))
+                    return 73; // Error on CommentStudensModel::getComments() method
+            return new User($user, $comments);
         } catch (\Exception $e) {
             return 1; // query error
         } finally {
@@ -46,7 +79,27 @@ class UserModel {
 
     public static function updateUser(array $args) {
         try {
-            if(!self::userExist($args["idUser"]))
+            if(!self::existUser($args["idUser"]))
+                return 1; // user not exist
+            $keys = ["login", "lastName", "firstName", "picture", "idUser"];
+            $args["login"] = self::generateLogin($args["firstName"], $args["lastName"]);
+            Database::getInstance()
+                ->prepare("UPDATE users 
+                        SET login = :login,
+                            lastName = :lastName,
+                            firstName = :firstName,
+                            picture = :picture
+                        WHERE idUser = :idUser")
+                ->execute(array_intersect_key($args, array_flip($keys)));
+                return 0; // success
+        } catch (\Exception $e) {
+            return 2; // query error
+        }
+    }
+
+    public static function updateUserAndPwd(array $args) {
+        try {
+            if(!self::existUser($args["idUser"]))
                 return 1; // user not exist
             $keys = ["login", "lastName", "firstName", "picture", "typePwd", "pwd", "idUser"];
             $args["login"] = self::generateLogin($args["firstName"], $args["lastName"]);
@@ -81,7 +134,22 @@ class UserModel {
         }
     }
 
-    public static function userExist(int $idUser) {
+    public function getHashPwd(int $idUser) {
+        try {
+            if(!$this->existUser($idUser))
+                return 2; // user not exist
+            $res = Database::getInstance()->prepare("SELECT * FROM users WHERE idUser = :id");
+            $res->execute(array("id" => $idUser));
+            return $res->fetch()->pwd;
+        } catch (\Exception $e) {
+            return 3; // query error
+        } finally {
+            if(!empty($res))
+                $res->closeCursor();
+        }
+    }
+
+    public static function existUser(int $idUser) {
         $res = Database::getInstance()->prepare("SELECT * FROM users WHERE idUser = :id");
         $res->execute(array("id" => $idUser));
         return $res->rowCount() === 1;

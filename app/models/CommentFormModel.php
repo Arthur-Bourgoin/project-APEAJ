@@ -28,8 +28,8 @@ class CommentFormModel {
             $args["idAuthor"] = $idAuthor;
             $args["lastModif"] = date('Y-m-d H:i:s');
             Database::getInstance()
-                ->prepare("INSERT INTO commentForm (wording, text, audio, admin, lastModif, numero, idAuthor)
-                           VALUES (:wording, :text, :audio, :admin, :lastModif, :numero, :idAuthor)")
+                ->prepare("INSERT INTO commentForm (wording, text, audio, admin, lastModif, numero, , idStudent, idAuthor)
+                           VALUES (:wording, :text, :audio, :admin, :lastModif, :numero, :idStudent, :idAuthor)")
                 ->execute(array_intersect_key($args, array_flip($keys)));
             return 0;
         } catch (\Exception $e) {
@@ -39,7 +39,7 @@ class CommentFormModel {
 
     public static function updateComment(array $args) {
         try {
-            if(!self::idCommentForm($args["idCommentForm"]))
+            if(!self::existCommentForm($args["idCommentForm"]))
                 return 1; // commentForm not exist
             $args["lastModif"] = date('Y-m-d H:i:s');
             Database::getInstance()
@@ -59,7 +59,7 @@ class CommentFormModel {
 
     public static function deleteComment(int $idCommentForm) {
         try {
-            if(!self::idCommentForm($idCommentForm))
+            if(!self::existCommentForm($idCommentForm))
                 return 2; // comment not exist
             Database::getInstance()
                 ->prepare("DELETE FROM commentForm WHERE idCommentForm = :id")
@@ -70,7 +70,7 @@ class CommentFormModel {
         }
     }
 
-    public static function idCommentForm(int $idCommentForm) {
+    public static function existCommentForm(int $idCommentForm) {
         $res = Database::getInstance()->prepare("SELECT * FROM commentForm WHERE idCommentForm = :id");
         $res->execute(array("id" => $idCommentForm));
         return $res->rowCount() !== 0;

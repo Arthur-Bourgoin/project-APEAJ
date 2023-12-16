@@ -9,11 +9,35 @@ use App\Models\{
     FormModel
 };
 
+/*
+TODO
+1) pour tout les controllers qui ne sont pas "d'affichage" (ceux qui sont en POST)
+   pense à tester tous les codes de retour possibles avant de faire fonctionner le modèle
+2) Si les méthodes n'ont pas de paramètres soit:
+    - Elles n'en ont pas besoin
+    - Il faut utiliser les valeurs dans $_POST
+    - J'ai fait une erreur
+3) Marque en haut du fichier tous les codes d'erreurs et à quoi ils correspondent
+4) Documente les fonctions si besoin
+
+Le paramère $id de la méthode update_user() correspond soit à l'id de la session 
+(pour la page infoSession), soit à l'id de l'étudiant (pour la page infoStudent),
+soit "null" (pour la page home). L'id de l'utilisateur à modifier (soit l'id d'un 
+étudiant soit l'id de l'éducateur lui même) doit se trouver dans $_POST.
+
+Il faudrait modifier la page infoForm afin de mettre en place une note par commentaire,
+l'éducateur qui ajouter un commentaire ajoutera aussi une note (modal). Note qu'on
+divise pas 5 pour pouvoir afficher un des 5 smileys en haut à droite de chaque commentaire.
+
+Les modèles contiennent surement pas mal de petites erreurs, demande moi avant de modifier.
+*/
+
 class AdminController extends UserController
 {
 
     public function __construct()
     {
+        parent::__construct();
         if ($_SESSION["role"] === "student") {
             require("../app/views/error403.php");
             exit();
@@ -25,52 +49,48 @@ class AdminController extends UserController
       $this->displayTemplatehome(0,0);
     }
 
-    public function myAccount()
-    {
-        echo "mon Compte";
-    }
-
-    public function infoStudent(string $fName, string $lName, int $id)
+    public function infoStudent(int $id)
     {
         $this->displayTemplateInfoStudent(0,0,$id);
     }
 
-
-    public function update_student(string $fName, string $lName, int $id)
+    /**
+     * @param string $page --> the page to display
+     * @param integer $id --> idSession OR idStudent OR null (depending on the page to display)
+     *                    --> != $_POST["idUser"]
+     */
+    public function update_user(string $page, ?int $id)
     {
-        if(!$this->verifStudent($_POST)){
+        if(!$this->verifUser($_POST)){
             $error=1;
         }
         else  {
-                switch ($_POST["typePwd"]) {
-                    case "Texte":
-                        $_POST["typePwd"] = 1;
-                    case "Schéma":
-                        $_POST["typePwd"] = 3;
-                    case "Code":
-                        $_POST["typePwd"] = 2;
-                    
-                }
             $error = UserModel::updateUser($_POST);
+        }
+        if($_POST["action"] === "updateStudent") {
+            switch($page) {
+                case "home":
+                    $this->displayTemplateHome($error,$error===0 ? 1 : 0); break;
+                case "infoStudent":
+                    $this->displayTemplateInfoStudent($error,$error===0 ? 1 : 0, $id); break;
             }
-       $this->displayTemplateInfoStudent($error,$error===0 ? 1 : 0,$id);
+        }
+        else {
+            switch($page) {
+                case "home":
+                    $this->displayTemplateHome($error,$error===0 ? 1 : 0); break;
+                case "infoStudent":
+                    $this->displayTemplateInfoStudent($error,$error===0 ? 1 : 0, $id); break;
+                case "infoSession":
+                    $this->displayTemplateInfoSession($error,$error===0 ? 1 : 0, $id); break;
+            }
+        }
     }
 
     public function infoSession(int $idSession)
     {
         $this->displayTemplateInfoSession(0,0,$idSession);
     }
-
-    public function update_session(int $idSession)
-    {
-        if(!$this->verifSession($_POST))
-            $error=1;
-        else
-            $error = SessionModel::updateSession($_POST);
-        $this->displayTemplateInfoSession($error,$error===0 ? 1 : 0,$idSession);
-    }
-
-
 
     public function add_session()
     {   
@@ -80,6 +100,44 @@ class AdminController extends UserController
             $error = SessionModel::addSession($_POST);
         $this->displayTemplatehome($error,$error===0 ? 1 : 0);
     }
+
+    public function update_session()
+    {
+        if(!$this->verifSession($_POST))
+            $error=1;
+        else
+            $error = SessionModel::updateSession($_POST);
+        $this->displayTemplateInfoSession($error, $error===0 ? 1 : 0, $_POST["idSession"]);
+    }
+
+    public function closeSession() {}
+
+    public function add_commentStudent() {}
+
+    public function update_commentStudent() {}
+
+    public function delete_commentStudent() {}
+
+    public function infoForm(int $idStudent, int $idForm)
+    {
+        $student = UserModel::getUser($idStudent);
+        $form = FormModel::getForm($idForm, $idStudent);
+        require("../app/views/admins/fiche-info.php");
+    }
+
+    public function finishForm() {}
+
+    public function deleteForm() {}
+
+    public function add_commentForm() {}
+
+    public function update_commentForm() {}
+
+    public function delete_commentForm() {}
+
+    public function add_picture() {}
+
+    public function delete_picture() {}
 
     public function createForm(string $fName, string $lName, int $idStudent)
     {
@@ -132,18 +190,6 @@ class AdminController extends UserController
         require("../app/views/admins/fiche.php");
     }
 
-    public function save_createForm()
-    {
-        // Model::getCurrentSession();
-    }
-
-    public function infoForm(string $fName, string $lName, int $idStudent, int $idForm, bool $edit = false)
-    {
-        $student = UserModel::getUser($idStudent);
-        $form = FormModel::getForm($idForm, $idStudent);
-        require("../app/views/admins/fiche-info.php");
-    }
-
     private function displayTemplatehome(int $p_error, int $p_success) {
         $error = $p_error;
         $success = $p_success;
@@ -154,6 +200,7 @@ class AdminController extends UserController
             $error = 1;
         require("../app/views/admins/home.php");
     }
+
     private function displayTemplateInfoStudent(int $p_error, int $p_success,int $id){
         $error = $p_error;
         $success = $p_success;
@@ -165,6 +212,7 @@ class AdminController extends UserController
         require("../app/views/admins/details.php");
 
     }
+    
     private function displayTemplateInfoSession(int $p_error, int $p_success,int $id){
         $error = $p_error;
         $success = $p_success;
@@ -187,7 +235,7 @@ class AdminController extends UserController
             return false;
         return true;
     }
-    private function verifStudent(array $args){
+    private function verifUser(array $args){
         if(
             empty($args["idUser"]) ||
             empty($args["lastName"]) ||

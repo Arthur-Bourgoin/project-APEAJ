@@ -1,12 +1,19 @@
 <?php
 namespace App\Models;
+use Config\Database;
+use App\Class\Training;
+use App\Class\ExportExcel;
 
 class TrainingModel {
 
     public static function getTrainings() {
         try {
+            $trainings = [];
             $res = Database::getInstance()->query("SELECT * FROM training");
-            return $res->fetchAll();
+            while($training = $res->fetch()) {
+                $trainings[] = new Training($training);
+            }
+            return $trainings;
         } catch (\Exception $e) {
             return 1; // query error
         } finally {
@@ -42,10 +49,27 @@ class TrainingModel {
         }
     }
 
+    public static function updateTraining(array $args) {
+        try {
+            if(!$this->existTraining($args["idTraining"]))
+                return 14; // training not exist
+            Database::getInstance()
+                ->prepare("UPDATE training
+                           SET wording = :wording, description = :description, qualifLevel = :qualifLevel
+                           WHERE idTraining = :idTraining")
+                ->execute(array_intersect_key($args, array_flip(["wording", "description", "qualifLevel", "idTraining"])));
+            return 0;
+        } catch (\Exception $e) {
+            return 3; // query error
+        }
+    }
+
     public static function deleteTraining(int $idTraining) {
         try {
+            if(!$this->existTraining($idTraining))
+                return 47; // training not exist
             Database::getInstance()
-                ->prepare("DELETE FROM session WHERE idSession = :id")
+                ->prepare("DELETE FROM training WHERE idTraining = :id")
                 ->execute(array("id" => $idTraining));
             return 0;
         } catch (\Exception $e) {

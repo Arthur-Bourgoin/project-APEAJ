@@ -2,41 +2,68 @@
 
 namespace App\Controllers;
 use Config\Database;
-use App\Models\AdminModel;
+use App\Models\UserModel;
+
 
 class UserController {
 
+    public function __construct() {
+        if(!isset($_SESSION["training"])) {
+            header("Location: /choix-formation");
+            exit();
+        }
+        if(!isset($_SESSION["role"])) {
+            header("Location: /connexion");
+            exit();
+        }
+    }
+
     public function home() {
-        if($_SESSION["role"] === "admin") {
-            $controller = new AdminController();
-            $controller->home();
-        } elseif($_SESSION["role"] === "student") {
+        if($_SESSION["role"] === "student") {
             $controller = new StudentController();
             $controller->home();
-        } elseif($_SESSION["role"] === "sadmin") {
+        } elseif(in_array($_SESSION["role"], ["educator", "educator-admin", "CIP"])) {
+            $controller = new AdminController();
+            $controller->home();
+        } elseif($_SESSION["role"] === "super-admin") {
             $controller = new SAdminController();
             $controller->home();
+        } else {
+            echo "Erreur normalement impossible";
+            exit();
         }
     }
     
     public function homePOST() {
-        if($_SESSION["role"] === "admin") {
+        if ($_SESSION["role"] === "student") 
+        {
+            $controller = new StudentController();
+            $controller->home();
+        } 
+        elseif (in_array($_SESSION["role"], ["educator", "educator-admin", "CIP"]) )
+        {
             $controller = new AdminController();
             if(isset($_POST["action"])) {
                 switch($_POST["action"]) {
-                    case "updateUser":
+                    case "addSession":
+                        $controller->add_session();
+                        break;
+                    case "updateStudent":
                     case "updateAccount":
-                        $controller->update_user();
+                        $controller->update_user("home", null);
                         break;
                 }
+            } else {
+                $controller->home();
             }
-        } elseif($_SESSION["role"] === "student") {
-            $controller = new StudentController();
-            $controller->home();
-        } elseif($_SESSION["role"] === "sadmin") {
+        } 
+        elseif($_SESSION["role"] === "super-admin") 
+        {
             $controller = new SAdminController();
             if(isset($_POST["action"])) {
                 switch($_POST["action"]) {
+                    case "updateAccount":
+                        $controller->update_user();
                     case "addTraining":
                         $controller->add_training();
                         break;
@@ -52,21 +79,5 @@ class UserController {
             }
         }
     }
-
-    public function login() {
-        require("../app/models/AdminModel.php");
-        $students = AdminModel::getAllStudents();
-        require("../app/views/connexion.php");
-    }
-
-    public function verif_login() {
-        echo "connexion";
-        $_SESSION["id"]="6";
-        header('Location: ../app/views/student/home_student.php');
-        
-    }
-
-
-
 
 }
