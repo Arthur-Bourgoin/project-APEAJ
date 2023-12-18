@@ -14,7 +14,7 @@
     <title><?= isset($title) ? $title : "Titre" ?></title>
 </head>
 <body>
-    <header class="mb-2">
+    <header class="mb-4">
         <div class="container p-0">
             <img class="w-100" src="/assets/images/BaniereAPK.bmp" alt="Image banière">
         </div>

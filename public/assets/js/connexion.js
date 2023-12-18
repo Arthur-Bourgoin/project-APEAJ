@@ -1,88 +1,99 @@
-import { SelectedStudent } from "./class/SelectedStudent.js";
+import { User } from "./class/User.js";
 
-
-const cards = document.querySelectorAll('.card');
-let selectedStudent = {};
-cards.forEach(card => {
-    card.addEventListener('click', function() {
-        let student = new SelectedStudent(
-            card.getAttribute('data-login-etu'),
-            card.querySelector('.card-title').textContent,
-            card.querySelector('.card-text').textContent,
-            card.querySelector('img').src,
-            card.getAttribute('data-typemdp'))
-        if (student.typeMDP === 'texte') {
-            const modalTexte = document.getElementById('modalConnexionTexte');
-            modalTexte.querySelector('.modal-title').textContent =student.lastName+' '+student.name;
-            modalTexte.querySelector('#mdpTexte').value="";
-            const studentPicture = modalTexte.querySelector('#etudiantPhoto');
-            studentPicture.setAttribute('src', student.picture);
-        }else if (student.typeMDP === 'code') {
-            const modalCode = document.getElementById('modalConnexionCode');
-            clearCode();
-            modalCode.querySelector('.modal-title').textContent =student.lastName+' '+student.name;
-            const studentPictureCode = modalCode.querySelector('#etudiantPhotoCode');
-            studentPictureCode.setAttribute('src', student.picture);
-        }
-    });
-});
-
-//Vider les champs de la connexion admin
-const btn_admin = document.querySelector('#btn-admin');
-btn_admin.addEventListener('click',function(){
-    const modalAdmin = document.querySelector('#modalConnexionAdmin');
-    modalAdmin.querySelector("#loginAdmin").value="";
-    modalAdmin.querySelector("#mdpAdmin").value="";
-});
-
-// Fonction pour ajouter un digit au mdp
-function appendDigit(digit) {
-    const codeNumerique = document.getElementById('codeNumerique');
-    if (codeNumerique.value.length + digit.length <= 6) {
-        // Ajouter le chiffre à la fin de la valeur actuelle
-        codeNumerique.value += digit;
-    }
+const divAlert = document.querySelector(".alert");
+if(divAlert) {
+    setTimeout(() => {
+        divAlert.style.opacity = 1;
+        const interval = setInterval(() => {
+            divAlert.style.opacity -= 0.01;
+            if(divAlert.style.opacity <= 0) {
+                clearInterval(interval);
+                divAlert.remove();
+            }
+        }, 10);
+    }, 5000);
 }
-// Ajoutez un gestionnaire de clic à chaque bouton chiffre
-const buttons = document.querySelectorAll('.btn-chiffre');
-buttons.forEach(button => {
-    button.addEventListener('click', function() {
-        const digit = button.textContent;
-        appendDigit(digit);
+
+document.querySelectorAll('.btn-number').forEach(btn => {
+    btn.addEventListener('click', e => {
+        btn.closest("form").querySelector(".login-code").value += btn.textContent;
     });
 });
 
-
-// Regarder le mot de passe
-function lookPassword(buttonId, passwordType) {
-    let eye = document.getElementById(buttonId);
-    let password = document.getElementById(passwordType);
-
-    eye.onclick = function () {
-        if (password.type == "password") {
-            password.type = "text";
-            eye.innerHTML = '<i class="bi bi-eye-slash"></i>';
+document.querySelectorAll(".btn-show").forEach(btn => {
+    btn.addEventListener("click", e => {
+        const input = e.currentTarget.previousElementSibling;
+        if(input.type === "text") {
+            input.type = "password";
+            e.currentTarget.innerHTML = "<i class='bi bi-eye'></i>";
         } else {
-            password.type = "password";
-            eye.innerHTML = '<i class="bi bi-eye"></i>';
+            input.type = "text";
+            e.currentTarget.innerHTML = "<i class='bi bi-eye-slash'></i>"
         }
-    };
+    });
+});
+
+document.querySelectorAll(".btn-eraser").forEach(btn => {
+    btn.addEventListener("click",e => {
+        e.currentTarget.closest("form").querySelector(".login-code").value = ""; 
+    });
+});
+
+
+
+
+const students = new Map();
+studentsTab.forEach(student => {
+    students.set(student.idUser, new User(student));
+});
+document.querySelectorAll(".divStudent").forEach(card => {
+    card.addEventListener("click", e => {
+        console.log(students.get(parseInt(e.currentTarget.dataset.id)));
+        students.get(parseInt(e.currentTarget.dataset.id)).updateConnexionModal();
+    });
+});
+
+const admins = new Map();
+adminsTab.forEach(admin => {
+    admins.set(admin.login, new User(admin));
+});
+
+document.querySelector("#loginAdmin").addEventListener("input", e => {
+    let admin = admins.get(e.currentTarget.value);
+    if(admin) {
+        document.querySelector('#modalConnexionAdmin img').src = admin.picture;
+        switch(admin.typePwd) {
+            case 1:
+                visibleDivAdmin(".divAdminText");
+                break;
+            case 2:
+                visibleDivAdmin(".divAdminCode");
+                break;
+            case 3:
+                break;
+        }
+    } else {
+        visibleDivAdmin(null);
+        document.querySelector('#modalConnexionAdmin img').src =  '/assets/images/Utilisateurs/user.png';
+    }
+});
+
+function visibleDivAdmin(div) {
+    document.querySelectorAll(".divChange").forEach(div => {
+        div.classList.add("d-none");
+    });
+    if(div === null)
+        return;
+    document.querySelector(div).classList.remove("d-none");
 }
 
-// Appliquer la fonction à chaque modal
-lookPassword("btn-show-text", "mdpTexte");
-lookPassword("btn-show-code", "codeNumerique");
-lookPassword("btn-show-admin", "mdpAdmin");
-
-
-// Supprimer le mdp saisi pour le moment
-function clearCode(){
-    const codeNumerique = document.querySelector('#codeNumerique');
-    codeNumerique.value ="";
-}
-const buttonsClear = document.querySelectorAll('.btn-clear');
-buttonsClear.forEach(button => {
-    button.addEventListener('click', function() {
-        clearCode();
+document.querySelector("#btn-admin").addEventListener("click", e => {
+    visibleDivAdmin(null);
+    document.querySelector("#loginAdmin").value="";
+    document.querySelector('#modalConnexionAdmin img').src =  '/assets/images/Utilisateurs/user.png';
+    document.querySelectorAll("#modalConnexionAdmin .divChange .input-group input").forEach(input => {
+        input.type = "password";
+        input.value = "";
+        input.nextElementSibling.innerHTML = "<i class='bi bi-eye'></i>";
     });
 });

@@ -11,9 +11,22 @@ use App\Controllers\ {
 };
 
 session_start();
+/*
 $_SESSION["training"] = 1;
 $_SESSION["idUser"] = 11; // romain laborde
 $_SESSION["role"] = "educator-admin";
+*/
+
+
+if(!in_array($_SERVER["REQUEST_URI"], ["/choix-formation", "/connexion"])) {
+    if(!isset($_SESSION["training"])) {
+        header("Location: /choix-formation");
+        exit();
+    } elseif(!isset($_SESSION["role"])) {
+        header("Location: /connexion");
+        exit();
+    }
+}
 
 $router = new AltoRouter();
 //$router->setBasePath("/public/");

@@ -2,60 +2,59 @@
 
 $title = "Page de connexion";
 $scripts = "<script src='/assets/js/connexion.js' type='module'></script>";
-$bsIcons = true?>
+$bsIcons = true ?>
 
 <?php ob_start(); ?>
 
-<div class="container mt-5">
-    <div class="row mb-5 align-items-center">
-        <h1 class="col-md-11 col-5">Sélectionner un profil</h1>
-        <button class="btn btn-dark col-1 text-white" id="btn-admin" data-bs-toggle="modal" data-bs-target="#modalConnexionAdmin">Admin</button>
+<div class="container">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h1 class="m-0">Sélectionner un profil</h1>
+        <button class="btn btn-primary" id="btn-admin" data-bs-toggle="modal" data-bs-target="#modalConnexionAdmin">Éducateur</button>
     </div>
-    <div class="row mb-3 align-items-centerd-flex justify-content-around">   
-    <?php 
-    foreach ($students as $student) { 
-        if($student["typemdp"] == "code") {
-            $target = "modalConnexionCode";
-        }else if($student["typemdp"]=="texte"){
-            $target="modalConnexionTexte";
+<?php
+    if(isset($error)) {
+        switch($error) {
+            case 1:
+                echo "<div class='alert alert-danger'>Une erreur s'est produite lors de l'affichage de la liste des utilisateurs.</div>"; break;
+            case 2:
+                echo "<div class='alert alert-danger'>Identifiant ou mot de passe incorrect.</div>"; break;
+            case 3:
+                echo "<div class='alert alert-danger'>Une erreur s'est produite lors de la requête d'authentification.</div>"; break;
         }
-        ?>
-        <div class="card mb-4 mx-2 col-lg-3 col-md-4 col-6 border-dark" data-typemdp="<?= $student["typemdp"] ?>" data-login-student="<?= $student["login"] ?>" data-bs-toggle="modal" data-bs-target="#<?=$target?>">
-            <img src="<?= htmlentities($student["picture"])?>" class="img-thumbnail border-0 mt-4" alt="Photo de l\'étudiant 1">
-            <div class="card-body text-center">'
-                <h5 class="card-title"><?=htmlentities($student["nom"])?></h5>
-                <p class="card-text"><?= htmlentities($student["prenom"])?></p>
-            </div>
-        </div>
-    <?php } ?>
+    }
+    ?>
+    <div class="row g-4">   
+    <?php 
+    if(is_array($students)) {
+        foreach ($students as $student) { 
+            echo $student->getCardConnexion();
+        } 
+    }
+    ?>
     </div>
 </div>
 
 <!-- Modal de connexion de type "texte" -->
-<div class="modal fade" id="modalConnexionTexte" tabindex="-1" role="dialog" aria-labelledby="modalConnexionTexteLabel" aria-hidden="true">
+<div class="modal fade" id="modalConnexionTexte" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalConnexionTexteLabel"></h5>
+                <h5 class="modal-title"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center">
-                <!-- Photo de l'étudiant -->
-                <img id="etudiantPhoto" class="img-thumbnail" style="max-width: 50%; max-height: 50%;" alt="Photo de l'étudiant">
-                <h5 id="etudiantNom" class="card-title"></h5>
-                <p id="etudiantPrenom" class="card-text"></p>
-                <form id="formTexte">
-                    <div class="form-group d-flex flex-column align-items-center">
-                        <div class="col-10">
-                            <div class="input-group">
-                                <span class="input-group-text" style="height: 38px;"><i class="bi bi-lock-fill"></i></span>
-                                <input type="password" class="form-control mb-4" id="mdpTexte" placeholder="Votre mot de passe" aria-label="Username" aria-describedby="addon-wrapping">
-                                <button type="button" id="btn-show-text" class="btn btn-show btn-dark text-white" style="height: 38px;"><i class="bi bi-eye"></i></button>
-                            </div>
+            <div class="modal-body d-flex flex-column align-items-center">
+                <img class="studentPicture img-thumbnail w-50" alt="Photo de l'étudiant">
+                <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST" class="d-flex flex-column align-items-center w-100">
+                    <input type="hidden" name="inputLogin" class="loginStudent">
+                        <div class="input-group my-4 w-75">
+                            <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                            <input type="password" class="form-control" name="inputPwd" placeholder="Votre mot de passe">
+                            <button type="button" class="btn btn-dark btn-show"><i class="bi bi-eye"></i></button>
                         </div>
+                    <div class="row d-flex justify-content-center w-100">
+                        <button type="button" class="btn btn-danger col-4 me-2" data-bs-dismiss="modal"><i class="pe-2 bi bi-x-circle"></i>Annuler</button>
+                        <button type="submit" class="btn btn-success col-4 ms-2"><i class="pe-2 bi bi-check-circle"></i>Se connecter</button>
                     </div>
-                    <button type="submit" class="btn col-4 btn-dark text-white me-2">Se connecter</button>
-                    <button type="button" class="btn col-4 btn-dark text-white" data-bs-dismiss="modal" aria-label="Close">Annuler</button>
                 </form>
             </div>
         </div>
@@ -68,45 +67,38 @@ $bsIcons = true?>
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalConnexionCodeLabel"></h5>
+                <h5 class="modal-title"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center">
-                <!-- Photo de l'étudiant -->
-                <img id="etudiantPhotoCode" class="img-thumbnail mb-3" style="max-width: 50%; max-height: 50%;" alt="Photo de l'étudiant">
-                <h5 id="etudiantNomCode" class="card-title"></h5>
-                <form id="formCode">
-                    <div class="form-group text-center">
-                        <div class="form-group d-flex flex-column align-items-center">
-                            <div class="col-6">
-                                <div class="input-group">
-                                    <span class="input-group-text" style="height: 38px;"><i class="bi bi-lock-fill"></i></span>
-                                    <input type="password" class="form-control pe-none mb-4 text-center" id="codeNumerique" placeholder="Code numérique" maxlength="6" />
-                                    <button type="button" id="btn-show-code" class="btn btn-show btn-dark text-white" style="height: 38px;"><i class="bi bi-eye"></i></button>
-                                </div>
-                            </div>
-                        </div>
+                <img class="studentPicture img-thumbnail w-50" alt="Photo de l'étudiant">
+                <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST" class="d-flex flex-column align-items-center">
+                    <input type="hidden" name="inputLogin" class="loginStudent">
+                    <div class="input-group my-4 w-75">
+                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                        <input type="password" class="form-control text-center login-code" placeholder="Code numérique" name="inputPwd" pattern="[0-9]{4,6}"/>
+                        <button type="button" class="btn btn-show btn-dark"><i class="bi bi-eye"></i></button>
                     </div>
-                    <div class="row">
-                        <div class="col-12 mb-2">
-                            <button type="button" class="btn-chiffre col-3 btn btn-dark text-white btn-block">1</button>
-                            <button type="button" class="btn-chiffre col-3 btn btn-dark text-white btn-block">2</button>
-                            <button type="button" class="btn-chiffre col-3 btn btn-dark text-white btn-block">3</button>
+                    <div class="row g-2">
+                        <div>
+                            <button type="button" class="btn-number col-3 btn btn-dark">1</button>
+                            <button type="button" class="btn-number col-3 btn btn-dark">2</button>
+                            <button type="button" class="btn-number col-3 btn btn-dark">3</button>
                         </div>
-                        <div class="col-12 mb-2">
-                            <button type="button" class="btn-chiffre col-3 btn btn-dark text-white btn-block">4</button>
-                            <button type="button" class="btn-chiffre col-3 btn btn-dark text-white btn-block">5</button>
-                            <button type="button" class="btn-chiffre col-3 btn btn-dark text-white btn-block">6</button>
+                        <div>
+                            <button type="button" class="btn-number col-3 btn btn-dark">4</button>
+                            <button type="button" class="btn-number col-3 btn btn-dark">5</button>
+                            <button type="button" class="btn-number col-3 btn btn-dark">6</button>
                         </div>
-                        <div class="col-12 mb-2">
-                            <button type="button" class="btn-chiffre col-3 btn btn-dark text-white btn-block">7</button>
-                            <button type="button" class="btn-chiffre col-3 btn btn-dark text-white btn-block">8</button>
-                            <button type="button" class="btn-chiffre col-3 btn btn-dark text-white btn-block">9</button>
+                        <div>
+                            <button type="button" class="btn-number col-3 btn btn-dark">7</button>
+                            <button type="button" class="btn-number col-3 btn btn-dark">8</button>
+                            <button type="button" class="btn-number col-3 btn btn-dark">9</button>
                         </div>
-                        <div class="col-md-12 mb-2">
-                            <button type="button" class="btn-clear btn-danger col-3 btn btn-block"><i class="bi bi-eraser text-white"></i></button>
-                            <button type="button" class="btn-chiffre col-3 btn btn-dark text-white ml-2 mr-2 btn-block">0</button>
-                            <button type="submit" class="btn btn-success col-3 btn-block"><i class="bi bi-check text-white"></i></button>
+                        <div>
+                            <button type="button" class="btn-eraser btn btn-danger col-3"><i class="bi bi-eraser text-white"></i></button>
+                            <button type="button" class="btn-number col-3 btn btn-dark">0</button>
+                            <button type="submit" class="btn btn-success col-3"><i class="bi bi-check text-white"></i></button>
                         </div>
                     </div>
                 </form>
@@ -115,42 +107,75 @@ $bsIcons = true?>
     </div>
 </div>
 
-<!--Modal de connexion Amdin-->
+<!--Modal de connexion Admin-->
 <div class="modal fade" id="modalConnexionAdmin" tabindex="-1" role="dialog" aria-labelledby="modalConnexionAdminLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalConnexionTexteLabel"></h5>
+                <h5 class="modal-title"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center">
                 <!-- Photo de l'étudiant -->
-                <img id="AdminPhoto" class="img-thumbnail" style="max-width: 50%; max-height: 50%;" src="/assets/images/Utilisateurs/user.png" alt="Icone de l'admint">
-                <h5 id="etudiantNom" class="card-title"></h5>
-                <p id="etudiantPrenom" class="card-text"></p>
-                <form id="formAdmin">
-                    <div class="form-group d-flex flex-column align-items-center">
-                        <div class="row col-10">
-                            <div class="input-group">
-                                <span class="input-group-text" style="height: 38px;"><i class="bi bi-person-fill"></i></span>
-                                <input type="texte" class="form-control mb-4" id="loginAdmin" placeholder="Votre login" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>  
-                        </div>
-                        <div class="row col-10">
-                            <div class="input-group">
-                                <span class="input-group-text" style="height: 38px;"><i class="bi bi-lock-fill"></i></span>
-                                <input type="password" class="form-control mb-4" id="mdpAdmin" placeholder="Votre mot de passe" aria-label="Username" aria-describedby="addon-wrapping">
-                                <button type="button" id="btn-show-admin" class="btn btn-dark text-white" style="height: 38px;"><i class="bi bi-eye"></i></button>
-                            </div>
-                        </div>    
+                <img class="adminPicture img-thumbnail w-50" src="/assets/images/Utilisateurs/user.png" alt="Icone de l'admin">
+                <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST" class="d-flex flex-column align-items-center w-100">
+                    <div class="input-group w-75 my-3">
+                        <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                        <input id="loginAdmin" type="texte" class="form-control" placeholder="Votre login" name="inputLogin">
                     </div>
-                    <button type="submit" class="btn btn btn-dark text-white">Se connecter</button>
+
+                    <div class="divChange divAdminText d-flex flex-column align-items-center w-100 d-none">
+                        <div class="input-group w-75 mb-3">
+                            <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                            <input type="password" class="form-control" placeholder="Votre mot de passe" name="inputPwd" aria-label="Username" aria-describedby="addon-wrapping">
+                            <button type="button" class="btn btn-show btn-dark"><i class="bi bi-eye"></i></button>
+                        </div>
+                        <div class="row d-flex justify-content-center w-100">
+                            <button type="button" class="btn btn-danger col-4 me-2" data-bs-dismiss="modal"><i class="pe-2 bi bi-x-circle"></i>Annuler</button>
+                            <button type="submit" class="btn btn-success col-4 ms-2"><i class="pe-2 bi bi-check-circle"></i>Se connecter</button>
+                        </div>
+                    </div>
+
+                    <div class="divChange divAdminCode d-flex flex-column align-items-center d-none">
+                        <div class="input-group w-75 mb-3">
+                            <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                            <input type="password" class="form-control pe-none text-center login-code" name="inputPwd" placeholder="Code numérique" maxlength="6" />
+                            <button type="button" class="btn btn-show btn-dark"><i class="bi bi-eye"></i></button>
+                        </div>
+                        <div class="row g-2">
+                            <div>
+                                <button type="button" class="btn-number col-3 btn btn-dark">1</button>
+                                <button type="button" class="btn-number col-3 btn btn-dark">2</button>
+                                <button type="button" class="btn-number col-3 btn btn-dark">3</button>
+                            </div>
+                            <div>
+                                <button type="button" class="btn-number col-3 btn btn-dark">4</button>
+                                <button type="button" class="btn-number col-3 btn btn-dark">5</button>
+                                <button type="button" class="btn-number col-3 btn btn-dark">6</button>
+                            </div>
+                            <div>
+                                <button type="button" class="btn-number col-3 btn btn-dark">7</button>
+                                <button type="button" class="btn-number col-3 btn btn-dark">8</button>
+                                <button type="button" class="btn-number col-3 btn btn-dark">9</button>
+                            </div>
+                            <div>
+                                <button type="button" class="btn-eraser btn-danger col-3 btn"><i class="bi bi-eraser text-white"></i></button>
+                                <button type="button" class="btn-number col-3 btn btn-dark">0</button>
+                                <button type="submit" class="btn btn-success col-3"><i class="bi bi-check text-white"></i></button>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
+<script>
+    const studentsTab = <?= json_encode($students) ?>;
+    console.log(studentsTab);
+    const adminsTab = <?= json_encode($admins) ?>;
+</script>
 
 <?php 
 $content = ob_get_clean();

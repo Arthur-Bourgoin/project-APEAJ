@@ -27,7 +27,6 @@ class ConnexionController {
 
     public function login() {
         if(!isset($_SESSION["training"])) {
-            unset($_SESSION["training"]);
             header("Location: /choix-formation");
         } else {
             try {
@@ -37,6 +36,8 @@ class ConnexionController {
                 } else {
                     $admins = UserModel::getAdmins();
                     $students = UserModel::getStudents($_SESSION["training"]);
+                    if(!is_array($admins) || !is_array($students))
+                        $error = 1;
                     require("../app/views/connexion.php");
                 }
             } catch (\Exception $e) {
@@ -47,8 +48,26 @@ class ConnexionController {
     }
 
     public function verifLogin() {
-        var_dump($_POST); exit();
-        require("../app/views/connexion.php");
+        $user = UserModel::getUserByLogin($_POST["inputLogin"]);
+        if(is_int($user)) {
+            $error = $user;
+            $admins = UserModel::getAdmins();
+            $students = UserModel::getStudents($_SESSION["training"]);
+            if(!is_array($admins) || !is_array($students))
+                $error = 1;
+            require("../app/views/connexion.php");
+        } elseif($user->pwd !== $_POST["inputPwd"]) {
+            $error = 2;
+            $admins = UserModel::getAdmins();
+            $students = UserModel::getStudents($_SESSION["training"]);
+            if(!is_array($admins) || !is_array($students))
+                $error = 1;
+            require("../app/views/connexion.php");
+        } else {
+            $_SESSION["id"] = $user->idUser;
+            $_SESSION["role"] = $user->role;
+            header("Location: /");
+        }
     }
 
 }

@@ -3,7 +3,7 @@ $title = "Page Information Elève";
 $bsIcons = true;
 $scripts = "<script src='/assets/js/updateStudent.js' type='module'></script>
 <script src='/assets/js/class/alert.js' type='module'></script>;"
-    ?>
+?>
 
 
 <?php ob_start(); ?>
@@ -111,6 +111,7 @@ $scripts = "<script src='/assets/js/updateStudent.js' type='module'></script>
         </div>
     </div>
 </div>
+
 <div class="modal fade" id="ModalModifie" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="editformationLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -150,12 +151,12 @@ $scripts = "<script src='/assets/js/updateStudent.js' type='module'></script>
                         </div>
                         <div class="col-7 mt-4">
                             <select id="passwdSelect" class="form-select" name="typePwd">
-                                <option <?= $student->typePwd === 1 ? 'selected' : "" ?>> Texte </option>
-                                <option <?= $student->typePwd === 3 ? "selected" : "" ?>> Schéma </option>
-                                <option <?= $student->typePwd === 2 ? "selected" : "" ?>> Code </option>
+                                <option value="1" <?= $student->typePwd === 1 ? 'selected' : "" ?>> Texte </option>
+                                <option value="2" <?= $student->typePwd === 2 ? "selected" : "" ?>> Code </option>
+                                <option value="3" <?= $student->typePwd === 3 ? "selected" : "" ?>> Schéma </option>
                             </select>
                         </div>
-                        <div id="champTexte" class="champ col-12 mt-4">
+                        <div id="champText" class="champ col-12 mt-4">
                             <div class="row">
                                 <div class="col-5 text-center">
                                     <label for="FormPasswd" class="form-label">Mot de passe :</label>
@@ -183,13 +184,13 @@ $scripts = "<script src='/assets/js/updateStudent.js' type='module'></script>
                                     <label for="codeField" class="form-label pe-none">Code:</label>
                                 </div>
                                 <div class="col-7">
-                                    <input class="form-control" id="codeField" type="text">
+                                    <input class="form-control" id="codeField" type="text" pattern="[0-9]{4,6}">
                                 </div>
                                 <div class="col-5 text-center">
                                     <label for="codeFieldConfirm" class="form-label pe-none">Confirmer le code :</label>
                                 </div>
                                 <div class="col-7">
-                                    <input class="form-control champ-form" id="codeFieldConfirm" type="text">
+                                    <input class="form-control champ-form" id="codeFieldConfirm" type="text" pattern="[0-9]{4,6}">
                                 </div>
                             </div>
                         </div>

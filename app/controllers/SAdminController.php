@@ -6,7 +6,7 @@ class SAdminController extends AdminController {
 
     public function __construct() {
         parent::__construct();
-        if($_SESSION["role"] !== "sadmin") {
+        if($_SESSION["role"] !== "super-admin") {
             require("../app/views/error403.php");
             exit();
         }

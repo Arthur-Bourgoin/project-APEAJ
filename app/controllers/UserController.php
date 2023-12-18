@@ -40,7 +40,7 @@ class UserController {
             $controller = new StudentController();
             $controller->home();
         } 
-        elseif (in_array($_SESSION["role"], ["educator", "educator-admin", "CIP"]) )
+        elseif (in_array($_SESSION["role"], ["educator", "educator-admin", "CIP"]))
         {
             $controller = new AdminController();
             if(isset($_POST["action"])) {

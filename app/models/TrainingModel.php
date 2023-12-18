@@ -51,7 +51,7 @@ class TrainingModel {
 
     public static function updateTraining(array $args) {
         try {
-            if(!$this->existTraining($args["idTraining"]))
+            if(!self::existTraining($args["idTraining"]))
                 return 14; // training not exist
             Database::getInstance()
                 ->prepare("UPDATE training
@@ -66,7 +66,7 @@ class TrainingModel {
 
     public static function deleteTraining(int $idTraining) {
         try {
-            if(!$this->existTraining($idTraining))
+            if(!self::existTraining($idTraining))
                 return 47; // training not exist
             Database::getInstance()
                 ->prepare("DELETE FROM training WHERE idTraining = :id")

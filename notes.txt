@@ -72,9 +72,6 @@ ADMIN
 --> POST + action=deleteComment --> suppression d'un commentaire
 --> POST + action=deletePicture --> suppression d'une photo
 --> POST + action=modifComment --> modification du commentaire
---> POST + action=addNote --> ajout d'une note 
---> POST + action=modifNote --> modification d'une note
---> POST + action=deleteNote --> suppression d'une note
 
 /etudiants/nom-prenom-id/creer-fiche, ex: /etudiants/max-chevalier-5/creer-fiche
 --> GET --> affichage interface création fiche

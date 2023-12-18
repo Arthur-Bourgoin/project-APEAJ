@@ -47,11 +47,13 @@ class User {
                 $target = "modalConnexionSchema";break;
         }
         ob_start();?>
-        <div class="card mb-4 mx-2 col-lg-3 col-md-4 col-6 border-dark" data-id="<?= $this->idUser ?>" data-bs-toggle="modal" data-bs-target="#<?=$target?>">
-            <img src="<?= htmlentities($this->picture)?>" class="img-thumbnail border-0 mt-4" alt="Photo de l'étudiant <?= htmlentities($this->idUser)?>">
-            <div class="card-body text-center">'
-                <h5 class="card-title"><?=htmlentities($this->lastName)?></h5>
-                <p class="card-text"><?= htmlentities($this->firstName)?></p>
+        <div class="col-lg-3 col-md-4 col-6">
+            <div class="divStudent border border-3 border-dark rounded" data-id="<?= $this->idUser ?>" data-bs-toggle="modal" data-bs-target="#<?=$target?>">
+                <img src="<?= htmlentities($this->picture)?>" class="w-100 p-1 my-2" alt="Photo de l'étudiant <?= htmlentities($this->idUser)?>">
+                <div class="text-center">
+                    <h5><?=htmlentities($this->lastName)?></h5>
+                    <p><?= htmlentities($this->firstName)?></p>
+                </div>
             </div>
         </div>
         <?php

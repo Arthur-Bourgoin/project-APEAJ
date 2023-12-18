@@ -48,7 +48,7 @@ class UserModel {
 
     public static function getAdmins() {
         try {
-            $res = Database::getInstance()->query("SELECT * FROM users WHERE role in ('educator-admin', 'educator', 'CIP')");
+            $res = Database::getInstance()->query("SELECT * FROM users WHERE role in ('educator-admin', 'educator', 'CIP', 'super-admin')");
             return $res->fetchAll();
         } catch (\Exception $e) {
             return 1; // query error
@@ -71,6 +71,22 @@ class UserModel {
             return new User($user, $comments);
         } catch (\Exception $e) {
             return 1; // query error
+        } finally {
+            if(!empty($res))
+                $res->closeCursor();
+        }
+    }
+
+    public static function getUserByLogin(string $login) {
+        try {
+            $res = Database::getInstance()->prepare("SELECT * FROM users WHERE login = :login");
+            $res->execute(array("login" => $login));
+            if(!$user = $res->fetch())
+                return 2; // user not exist
+            else
+                return $user;
+        } catch (\Exception $e) {
+            return 3; // query error
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -131,21 +147,6 @@ class UserModel {
             return 0;
         } catch (\Exception $e) {
             return 1; // query error
-        }
-    }
-
-    public function getHashPwd(int $idUser) {
-        try {
-            if(!$this->existUser($idUser))
-                return 2; // user not exist
-            $res = Database::getInstance()->prepare("SELECT * FROM users WHERE idUser = :id");
-            $res->execute(array("id" => $idUser));
-            return $res->fetch()->pwd;
-        } catch (\Exception $e) {
-            return 3; // query error
-        } finally {
-            if(!empty($res))
-                $res->closeCursor();
         }
     }
 

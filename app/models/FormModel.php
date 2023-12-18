@@ -70,6 +70,24 @@ class FormModel {
         }
     }
 
+    public static function getFormsByTraining(int $idTraining) {
+        try {
+            if(!TrainingModel::existTraining($idTraining))
+                return 2; // session not exist
+            $forms = [];
+            $res = Database::getInstance()->prepare("SELECT * FROM form, session WHERE form.idSession = session.idSession AND session.idTraining = :id");
+            $res->execute(array("id" => $idTraining));
+            while ($form = $res->fetch())
+                $forms[] = new Form($form, null, null, null, null, null, null, null);
+            return $forms;
+        } catch (\Exception $e) {
+            return 1; // query error
+        } finally {
+            if(!empty($res))
+                $res->closeCursor();
+        }
+    }
+
     public static function getForm(int $numero, int $idStudent) {
         try {
             $res = Database::getInstance()->prepare("SELECT * FROM form WHERE numero = :numero AND idStudent = :idStudent");

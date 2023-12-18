@@ -1,14 +1,22 @@
 <?php
 namespace App\Models;
 use Config\Database;
+use App\Class\Session;
+use App\Models\TrainingModel;
 
 class SessionModel {
 
     public static function getSessions(int $idTraining) {
         try {
+            if(!TrainingModel::existTraining($idTraining))
+                return 2; // training not exist
+            $sessions = [];
             $res = Database::getInstance()->prepare("SELECT * FROM session WHERE idTraining = :id");
             $res->execute(array("id" => $idTraining));
-            return $res->fetchAll();
+            while($session = $res->fetch()) {
+                $sessions[] = new Session($session);
+            }
+            return $sessions;
         } catch (\Exception $e) {
             return 1; // query error
         } finally {
