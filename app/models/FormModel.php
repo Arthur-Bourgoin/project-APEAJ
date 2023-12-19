@@ -11,6 +11,26 @@ use App\Class\Form;
 
 class FormModel {
 
+    public static function getAllForms(int $idStudent){
+        try {
+            if(!UserModel::existUser($idStudent))
+                return 2; // student not exist
+            $forms = [];
+            $res = Database::getInstance()->prepare("SELECT * FROM form WHERE idStudent = :id");
+            $res->execute(array("id" => $idStudent));
+            while ($form = $res->fetch()) {
+                $comments = CommentFormModel::getComments($form->numero, $form->idStudent);
+                $forms[] = new Form($form, $comments, null, null, null, null, null, null);
+            }
+            return $forms;
+        } catch (\Exception $e) {
+            return 3; // query error
+        } finally {
+            if(!empty($res))
+                $res->closeCursor();
+        }
+    }
+
     public static function getFinishedForms(int $idStudent) {
         try {
             if(!UserModel::existUser($idStudent))
@@ -77,8 +97,10 @@ class FormModel {
             $forms = [];
             $res = Database::getInstance()->prepare("SELECT * FROM form, session WHERE form.idSession = session.idSession AND session.idTraining = :id");
             $res->execute(array("id" => $idTraining));
-            while ($form = $res->fetch())
-                $forms[] = new Form($form, null, null, null, null, null, null, null);
+            while ($form = $res->fetch()) {
+                $comments = CommentFormModel::getComments($form->numero, $form->idStudent);
+                $forms[] = new Form($form, $comments, null, null, null, null, null, null);
+            }
             return $forms;
         } catch (\Exception $e) {
             return 1; // query error

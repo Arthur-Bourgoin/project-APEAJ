@@ -9,6 +9,7 @@ use App\Controllers\ {
     AdminController,
     SAdminController
 };
+use App\Class\ExportExcel;
 
 session_start();
 /*
@@ -31,10 +32,15 @@ if(!in_array($_SERVER["REQUEST_URI"], ["/choix-formation", "/connexion"])) {
 $router = new AltoRouter();
 //$router->setBasePath("/public/");
 
-$router->map("GET", "test-export", function () {
+$router->map("GET", "/test-export-formation", function () {
     $xls = new ExportExcel();
-    $xls->exportTraining($idTraining);
-    $xls->getFileXLS("testFile.xls");
+    $xls->exportTraining(1);  
+    $xls->getFileXLS("testFile.xlsx"); 
+});
+$router->map("GET", "/test-export-user", function () {
+    $xls = new ExportExcel();
+    $xls->exportUser(1);  
+    $xls->getFileXLS("testFile.xlsx"); 
 });
 
 /*######################################################################################
