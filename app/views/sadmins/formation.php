@@ -1,132 +1,182 @@
 <?php
 $bsIcons = true; //Si on veut utiliser les icones de bootstrap j'inclue le fichier nécessaire
-
+$scripts = "<script src='/assets/js/formation.js' type='module'></script>";
 $title = "Consultation Formation"; //Définir le titre de la page
 
 ob_start(); //On bufferise l'affichage
 ?>
 <div class="container mt-5">
-  <form action="" method="">
-    <div class="row">
-      <div class="col-10 col-xl-11 m-auto fw-bold fs-2">Formation <?= $formation['Libelle']?></div>  
-      <div class="col-2 col-xl-1"><a href=""><i class="bi bi-person-circle text-black" style="font-size: 3rem"></i></a></div>
-    </div>        
-    <!-- Affichage de l'image de la formation -->
-    <div class="row">
-      <div class="col-4 text-center">
-        <img src="<?= $formation['image']?>" class="card-img-top w-75" alt="Image formation">
-      </div>
+  <?php
+    switch ($error) {
+        case 1 :
+          echo '<div class="alert alert-danger my-3" role="alert">Une erreur s\'est produite lors de l\'initialisation de la page.</div>';
+          $content = ob_get_clean();
+          require("../app/views/layout.php");
+          exit();
+        case 2 :
+          echo '<div class="alert alert-danger my-3" role="alert"> La formation n\'existe pas.</div>'; break;
+        case 3:
+          echo '<div class="alert alert-danger my-3" role="alert">Une erreur s\'est produite lors de la mise à jour de la formation.</div>'; break;
+        case 4:
+          echo '<div class="alert alert-danger my-3" role="alert">Ajout impossible d\'un utilisateur, les valeurs rentrées ne sont pas valides.</div>'; break;
+        case 5:
+          echo '<div class="alert alert-danger my-3" role="alert">Une erreur s\'est produite lors de la suppression de l\'utilisateur.</div>'; break; 
+        case 6:
+          echo '<div class="alert alert-danger my-3" role="alert">Une erreur s\'est produite lors de l\'ajout d\'un utilisateur à une formation.</div>'; break;
+        case 7:
+          echo '<div class="alert alert-danger my-3" role="alert">Modification de l\utilisateur avec succès</div>'; break;
+        case 8:
+          echo '<div class="alert alert-danger my-3" role="alert">Une erreur s\'est produite lors de la suppression de la formation.</div>'; break;
+        case 26:
+            echo '<div class="alert alert-danger my-3" role="alert">L\'utilisateur n\'existe pas</div>'; break;
+  
+    }
 
-      <!-- Affichage de des information de la formation -->
-
-
-
-      <div class="col-8">  
-        <div class="col-12 mt-2">
-          <div class="">Description de la formation
-            <div class="border rounded px-3 py-2">
-              <?= $formation['Description']?>
-            </div>
-          </div>
-        </div>
+    switch ($success) {
+      case 1 :
+        echo '<div class="alert alert-success my-3" role="alert">La formation a bien été modifié.</div>'; break;
+      case 2 :
+        echo '<div class="alert alert-success my-3" role="alert">Suppression de l\'utilisateur enregistrée.</div>'; break;
+      case 3 :
+        echo '<div class="alert alert-success my-3" role="alert">Ajout de l\'utilisateur enregistré.</div>'; break;
       
-        <div class="mt-2 col-12">
 
-          <div class="">Niveau de qualification
-            <div class="border rounded px-3 py-2">
-              <?= $formation['NiveauQual']?>
+    }
+    ?>
+
+
+    <h2 class="text-center fw-bold"><?= htmlentities($training->wording)?></h2>
+    <div class="d-flex align-items-center justify-content-end">
+      <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
+        <input type="hidden" name="action" value="disconnect">
+        <button type="submit" class="btn btn-danger">
+          <i class="bi bi-power me-2"></i>Se déconnecter  
+        </button>
+      </form> 
+      <div class="ms-3"><i class="bi bi-person-circle p-0" style="font-size: 3rem"></i></div>
+    </div>
+
+    <!-- Affichage de l'image de la formation A CHANGER -->
+    <div class="row">
+      <div class="col-6">
+        <img src="assets/images/formation/ampoules.jpg" class="w-100 border" alt="Image formation">
+      </div>
+      <div class="col-6 d-flex flex-column justify-content-evenly">
+        <div>
+          <span class="mb-2">Niveau de qualification</span>
+          <div class="border rounded"><?= htmlentities($training->qualifLevel)?></div>
+        </div>
+        <div class="d-flex flex-column justify-content-evenly">
+          <button class="btn btn-primary"><i class="bi bi-pencil-square me-2"></i>Modification de la formation</button>
+          <button class="btn btn-primary"><i class="bi bi-trash me-2"></i>Suppression de la formation</button>
+        </div>
+      </div>
+      <div class="col-12">
+        <span>Description de la formation</span>  
+        <div class="border rounded"><?= htmlentities($training->description)?></div>
+      </div>
+    </div>
+
+    <div class="row mt-2">
+      <div class="col-12 col-lg-6 m-auto fw-bold fs-4 mb-3"> 
+        Liste des Educateurs de la formation
+      </div>  
+
+      <div class="col-6 col-lg-3 mb-3 text-lg-end">
+        <!--Création d'un nouvel utlisateur -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newUser"> 
+          <i class="bi bi-person-plus-fill me-2"></i> Ajouter un utilisateur 
+        </button>
+      </div>
+      <div class="col-6 col-lg-3 text-end mb-3">
+        <!--Création d'un nouvel utlisateur -->
+        <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
+          <input type="hidden" name="action" value="deleteTraining">
+          <input type="hidden" name="idTraining" value="<?= htmlentities($training->idTraining) ?>">
+          <button type="submit" class="btn btn-primary btn-removed">
+            <i class="bi bi-trash-fill me-2"></i>Supprimer une formation
+          </button>
+        </form>      
+        
+      </div>
+             
+    </div>
+    <!-- Liste des educateur de la formation -->
+    <div class="row g-5">
+      <!-- Tableau pour parcourir la liste des éducateur de la formation-->
+      <?php
+      if(is_array($admins)){
+        foreach($admins as $admin){?>
+          <div class="col-6 col-lg-4">
+            <div class="card mt-3 d-flex flex-column align-items-center" >
+              <img src="<?= htmlentities($admin->picture)?>" class="img-thumbnail w-50 mt-3" alt="Image Educateur">
+              <div class="card-body">
+                <p class="card-title text-center fs-4 fw-bold"><?= htmlentities($admin->lastName)?></p>
+                <p class="card-text text-center fs-4 fw-bold"><?= htmlentities($admin->firstName)?></p>
+              </div>
+              <div class="card-body d-flex justify-content-evenly w-100">
+                <button type="button" class=" btn btn-primary" data-bs-toggle="modal" data-bs-target="#ConsEducator">
+                  <i class="bi bi-eye" style="font-size: 1.5rem"></i>
+                </button>
+                <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
+                  <input type="hidden" name="action" value="deleteUser">
+                  <input type="hidden" name="idUser" value="<?= htmlentities($admin->idUser) ?>">
+                  <input type="hidden" name="idTraining" value="<?= htmlentities($admin->idTraining) ?>">
+
+                  <button class=" btn btn-primary btn-removed">
+                    <i class="bi bi-trash-fill" style="font-size: 1.5rem"></i>
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
-        </div>
-      </div> 
+        <?php 
+        }
+      }
+      ?>
+    </div>
+    <!-- Liste des étudiants de la formation -->
+    <div class="row mt-2">
+      <div class="col-12 m-auto fw-bold mt-5 fs-4"> 
+        Liste des Etudiants de la formation
+      </div>         
+    </div>
 
-
-
-
-
+    <div class="row g-5 ">
+      <!-- Tableau pour parcourir la liste des étudiants de la formation-->
+      <?php
+      if(is_array($students)){
+        foreach($students as $student){?>
+          <div class="col-6 col-lg-4">
+            <div class="card mt-3 d-flex flex-column align-items-center" >
+              <img src="<?= htmlentities($student->picture)?>" class="img-thumbnail w-50 mt-3" alt="Image Eleve">
+              <div class="card-body">
+                <p class="card-title text-center fs-4 fw-bold"><?= htmlentities($student->lastName)?></p>
+                <p class="card-title text-center fs-4 fw-bold"><?= htmlentities($student->firstName)?></p>
+              </div>
+            
+              <div class="card-body d-flex justify-content-evenly w-100">
+                <a href=" <?='/etudiants' . '/' .  htmlentities($student->firstName) . '-' . htmlentities($student->lastName) . '-' . htmlentities($student->idUser)?>">
+                  <button class=" btn btn-primary">
+                    <i class="bi bi-eye" style="font-size: 1.5rem"></i>
+                  </button>
+                </a>
+                <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
+                  <input type="hidden" name="action" value="deleteUser">
+                  <input type="hidden" name="idUser" value="<?= htmlentities($student->idUser) ?>">
+                  <input type="hidden" name="idTraining" value="<?= htmlentities($student->idTraining) ?>">
+                  <button class=" btn btn-primary btn-removed">
+                    <i class="bi bi-trash-fill" style="font-size: 1.5rem"></i>
+                  </button>
+                </form>
+              </div>
+           </div>
+          </div>
+        <?php 
+        }
+      }
+      ?>
     </div> 
-  </form>
-  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editformation">
-      Modifier la formation
-  </button>
-
-
-  <div class="row mt-2">
-    <div class="col-10 m-auto fw-bold fs-4"> 
-      Liste des Educateurs de la formation
-    </div>  
-    <div class="col-2">
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newUser"> 
-        Ajouter un utilisateur 
-      </button>
-    </div>       
-  </div>
-  <!-- Liste des educateur de la formation -->
-  <div class="row g-5">
-    <!-- Tableau pour parcourir la liste des éducateur de la formation-->
-    <?php
-      foreach($educators as $educator)
-      {?>
-      <div class="col-6 col-lg-4">
-        <!-- -->
-        <div class="card mt-3" >
-          <img src="<?= $educator['image']?>" class="img-top" alt="Image élève">
-          <div class="card-body">
-            <p class="card-title text-center fs-4 fw-bold"><?= $educator['Nom']?> <?= $educator['Prenom']?></p>
-          </div>
-          <div class="card-body d-flex justify-content-around">
-            <button type="button" class=" btn btn-primary" data-bs-toggle="modal" data-bs-target="#ConsEducator">
-              <i class="bi bi-eye" style="font-size: 1.5rem"></i>
-            </button>
-            <a href=" <?='/' . $educator['Prenom'] . '-' . $educator['Nom'] . '-' . $educator['Id_utilisateur'] . '/supprimer'?> ">
-              <button class="btn btn-primary btn-removed">
-                <i class="bi bi-trash-fill" style="font-size: 1.5rem"></i>
-              </button>
-            </a>
-          </div>
-        </div>
-      </div>
-    <?php 
-    }
-    ?>
-  </div>
-  <!-- Liste des étudiants de la formation -->
-  <div class="row mt-2">
-    <div class="col-12 m-auto fw-bold mt-5 fs-4"> 
-      Liste des Etudiants de la formation
-    </div>         
-  </div>
-
-  <div class="row g-5 ">
-    <!-- Tableau pour parcourir la liste des étudiants de la formation-->
-    <?php
-      foreach($students as $student)
-      {?>
-      <div class="col-6 col-lg-4">
-        <div class="card mt-3" >
-          <img src="<?= $student['image']?>" class="card-img-top" alt="Image élève">
-          <div class="card-body">
-            <p class="card-title text-center fs-4 fw-bold"><?= $student['Nom']?> <?= $student['Prenom']?></p>
-          </div>
-          
-          <div class="card-body d-flex justify-content-around">
-            <a href=" <?='/etudiants' . '/' .  $student['Prenom'] . '-' . $student['Nom'] . '-' . $student['Id_utilisateur']?>">
-              <button class=" btn btn-primary">
-                <i class="bi bi-eye" style="font-size: 1.5rem"></i>
-              </button>
-            </a>
-            <a href=" <?='/' . $student['Prenom'] . '-' . $student['Nom'] . '-' . $student['Id_utilisateur'] . '/supprimer'?>">
-              <button class=" btn btn-primary btn-removed">
-                <i class="bi bi-trash-fill" style="font-size: 1.5rem"></i>
-              </button>
-            </a>
-          </div>
-        </div>
-      </div>
-    <?php 
-    }
-    ?>
-  </div> 
 
 
 
@@ -138,237 +188,203 @@ ob_start(); //On bufferise l'affichage
     <!-- Modal edit formation -->
     <div class="modal fade" id="editformation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editformationLabel" aria-hidden="true">
       <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="editformationLabel">Modification formation</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form action="<?= $_SERVER ["REQUEST_URI"]?>" method="POST">
+        <form action="<?= $_SERVER ["REQUEST_URI"]?>" method="POST">
+          <input type="hidden" name="action" value="updateTraining">
+          <input type="hidden" name="idTraining" value="<?=htmlentities($training->idTraining)?>">
+
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editTrainingLabel">Modification formation</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
               <div class="row">
                 <div class="col-6 text-center">
-                  <img src="<?= $formation['image']?>" class="img-top w-50" alt="Image formation">
+                  <label for="imgTraining"><img src="/assets/images/formation/ampoules.jpg" class="w-50 text-center" alt="Image de l'utilisateur"></label>
+                  <input id="imgTraining" type="text" class="d-none" name="picture" value="azerty">
                 </div>
-                <div class=" col-6 m-auto fw-bold fs-5">
-                  Formation <?= $formation['Libelle']?>
+                <div class=" col-6 m-auto">
+                  <label for="Trainingwording" class="fw-bold fs-5"> Formation</label>
+                  <input class="form-control" id="Trainingwording" name="wording" value="<?= htmlentities($training->wording)?>"> 
+
                 </div>
+
                 <div class="row">
                   <div class="col-12 mt-2">
-                    <label for="FormDescriptionformation" class="form-label pe-none">Description de la formation</label>
-                    <input class="form-control" id="FormDescriptionformation" value="<?= $formation['Description']?>"> 
+                    <label for="trainingdescription" class="form-label pe-none">Description de la formation</label>
+                    <input class="form-control" id="trainingdescription" name="description" value="<?= htmlentities($training->description)?>"> 
                   </div>
                   <div class="col-12 mt-2 mb-4">
-                    <label for="FormNiveauQual" class="form-label pe-none">Niveau de qualification</label>
-                    <input class="form-control" id="FormNiveauQual" value="<?= $formation['NiveauQual']?>"> 
+                    <label for="qualifLevelTraining" class="form-label pe-none">Niveau de qualification</label>
+                    <input class="form-control" id="qualifLevelTraining"  name="qualifLevel" value="<?= htmlentities($training->qualifLevel)?>"> 
                   </div> 
-                </div>               
+                </div>
+
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                  <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Valider</button>
+                </div>
+                
+              </div>
+            </div>  
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal ajout utilisateur-->
+    <div class="modal fade" id="newUser" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newUserLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form action="<?= $_SERVER ["REQUEST_URI"]?>" method="POST">
+                <input type="hidden" name="action" value="addUser">
+                <input type="hidden" name="idTraining" value="<?= htmlentities($training->idTraining)?>">
+                    
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="newUserLabel">Ajouter utilisateur</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="row">
+                            <!-- Affichage de l'image lié a la formation-->
+                            <div class="col-4 text-center">
+                                <!--Rajouter et changer les images -->
+                                <label for="imgUser"><img src="/assets/images/formation/ampoules.jpg" class="w-50 text-center" alt="Image de l'utilisateur"></label>
+                                <input id="imgUser" type="text" class="d-none" name="picture" value="azerty">
+                            </div>
+
+                            <!-- Seletection du nom et du prenom-->
+                            <div class="col-8">
+                                <div class="input-group col-12 mt-3">
+                                    <span class="input-group-text " id="inputLastName">Nom</span>
+                                    <input type="text" class="form-control" aria-describedby="inputLastName" name="lastName">
+                                </div>
+
+                                <div class="input-group col-12 mt-3">
+                                    <span class="input-group-text " id="inputFirstName">Prenom</span>
+                                    <input type="text" class="form-control" aria-describedby="inputFirstName" name="firstName">
+                                </div>
+                            </div>
+                            <!-- Selection de la confirmation de Mot de passe -->
+                            <div class="col-12">
+                                <div class="row mt-3"> 
+                                    <div class="input-group">
+                                        <label class="input-group-text" for="inputGroupSelectMDP">Type mot de passe</label>
+                                        <select class="form-select" id="inputGroupSelectMDP" name="typePwd">
+                                            <option value="1">Texte</option>
+                                            <option value="2">Code</option>
+
+                                            <!-- Mot de passe schéma on verra plus tard #imgTraining
+                                            <option value="3">Schéma</option>
+                                            -->
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--Selection du mot de passe -->
+                            <div class="col-12">
+                                <div class="row mt-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text " id="inputPWD">Mot de passe</span>
+                                        <input type="password" class="form-control" aria-describedby="inputPWD" name="pwd">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Selection de la confirmation de mot de passe-->
+                            <div class="col-12">
+                                <div class="row mt-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text " id="inputVerifPWD">Confirmation mot de passe</span>
+                                        <input type="password" class="form-control" aria-describedby="inputVerifPWD" name="verifPwd" >
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Selection du type d'utilisateur -->
+                            <div class="col-12">
+                                <div class="row mt-3 mb-3">
+                                    <div class="input-group">
+                                        <label class="input-group-text" for="inputGroupSelectRole">Rôle de l'utilisateur</label>
+                                        <select class="form-select" id="inputGroupSelectRole" name="role">
+                                            <option value="student">Élève</option>
+                                            <option value="educator">Educateur</option>
+                                            <option value="educator-admin">Educateur administrateur</option>
+                                            <option value="CIP">CIP </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer text-center">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Valider</button>
+                            </div>
+                        </div>  
+                    </div>  
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Consultation éducateur-->
+    <div class="modal fade" id="ConsEducator" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ConsEducatorLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form action="<?= $_SERVER ["REQUEST_URI"]?>" method="POST">
+          <input type="hidden" name="action" value="updateAdmin">
+
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="ConsEducatorLabel">Consulation formation</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-5 mt-3 text-center">
+                  <img src="" id ="imgEduc" class="img-thumbnail border border-3 border-black" alt="Photo de l\éducateur">
+                </div>
+                <div class="col-7 mt-3 align-items">
+                  <div class="col-12 my-3">
+                    <label for="adminName" class="form-label pe-none fw-bold fs-5">Nom</label>
+                    <input type="text" class="form-control" id="adminName" value="<?= htmlentities($admin->lastName) ?>" name="lastName">  
+                  </div>
+                  <div class="col-12 my-3">
+                    <label for="adminFirstName" class="form-label pe-none fw-bold fs-5">Prenom</label>
+                    <input type="text" class="form-control" id="adminFirstName" value="<?= htmlentities($admin->firstName) ?>" name="firstName">
+                  </div>
+                </div>
+                <div class="col-12"> 
+                  <div class="col-12 my-3 fw-bold fs-5">
+                    <label class="form-label pe-none" for="SelectRole">Role de l'utilisateur</label>
+                    <select class="form-select" id="SelectRole" name="role">
+                      <option value="student ">Élève</option>
+                      <option value="educator">Educateur</option>
+                      <option value="educator-admin">Educateur éditeur</option>
+                      <option value="CIP">CIP </option>
+                    </select> 
+                  </div>   
+                  <div class="col-12 my-3 fw-bold fs-5">
+                    <label class="form-label pe-none" for="SelectPWD">Type de Mot de passe</label>
+                    <select class="form-select" id="SelectPWD" name="typePWD">
+                      <option value="1">Code</option>
+                      <option value="2">Texte</option>
+                      <!-- Mot de passe schéma on verra plus tard #imgTraining
+                      <option value="3">Schéma</option>
+                      --> 
+                    </select> 
+                  </div>
+                </div> 
+                <div class="col-12">
+                  <button type="button" class="btn btn-primary mt-3" onclick="Enabledisablefield()">
+                    Modifier les informations
+                  </button>
+                </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
                   <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Valider</button>
                 </div>
               </div>
-            </form>
-          </div>  
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal Création Utilisateur-->
-    <div class="modal fade" id="newUser" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newUserLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="newUserLabel">Ajouter utilisateur</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-
-          <div class="modal-body">
-       
-            <form action="<?= $_SERVER ["REQUEST_URI"]?>" method="POST">
-              <div class="row">
-                <!-- Affichage de l'image lié a la formation-->
-                <div class="col-4 text-center">
-                  <img src="<?= $formation['image']?>" class="card-img-top w-75" alt="Image formation">
-                </div>
-                <!-- Seletection du nom et du prenom-->
-                <div class="col-8">
-
-                  <!--
-                  <div class="form-floating col-12 mt-3">
-                   <input type="text" class="form-control" id="floatingNom" placeholder="">
-                   <label for="floatingNom">Nom</label>
-                  </div>
-                   
-                  <div class="form-floating col-12 mt-3"> 
-                    <input type="text" class="form-control" id="floatingPrenom" placeholder="">
-                    <label for="floatingPrenom">Prenom</label> 
-                  </div>
-                  -->
-                  <div class="input-group col-12 mt-3">
-                    <span class="input-group-text " id="basic-addon3">Nom :</span>
-                    <input type="text" class="form-control" aria-label="Nom" aria-describedby="basic-addon3">
-                  </div>
-
-                  <div class="input-group col-12 mt-3">
-                    <span class="input-group-text " id="basic-addon2">Prenom :</span>
-                    <input type="text" class="form-control" aria-label="Prenom" aria-describedby="basic-addon2">
-                  </div>
-
-                </div>
-
-                <!--Selection du login -->
-                <div class="col-12">
-                  <div class="row mt-3">
-                    <!--
-                      <div class="col-4 d-flex">
-                        <label for="idlogin" class="my-auto">Login : </label>
-                      </div>
-                      <div class="col-8">
-                        <input class="form-control" id="idlogin">
-                      </div>
-                    -->
-                    <div class="input-group">
-                      <span class="input-group-text " id="basic-addon1">Login</span>
-                         
-                          <input type="text" class="form-control" aria-label="Login" aria-describedby="basic-addon1">
-                      
-                    </div>
-
-                  </div>
-                </div>
-
-                <!-- Selection de la confirmation de Mot de passe -->
-                <div class="col-12">
-                  <div class="row mt-3">
-                    <!--
-                    <div class="col-4 d-flex">
-                      <label for="idTypeMDP" class="my-auto">Type de mdp : </label>
-                    </div>
-                    <div class="col-8">
-                      <select class="form-select">
-                        <option value="1" id="idTypeMDP">Mot de passe</option>
-                        <option value="2" id="idTypeMDP">Code</option>
-                        <option value="3" id="idTypeMDP">Schéma</option>
-                      </select>
-                    </div> 
-                    -->
-                    <div class="input-group">
-                      <label class="input-group-text" for="inputGroupSelectMDP">Type mot de passe</label>
-                      <select class="form-select" id="inputGroupSelectMDP">
-                        <option value="1">Texte</option>
-                        <option value="2">Code</option>
-                        <option value="3">Schéma</option>
-                      </select>
-                    </div>
-
-
-
-
-                  </div>
-                </div>
-                <!--Selection du mot de passe -->
-                <div class="col-12">
-                  <div class="row mt-3">
-                  <!--
-                    <div class="col-4 d-flex">
-                      <label for="idMDP" class="my-auto">Mot de passe :</label>
-                    </div>
-                    <div class="col-8">
-                      <input class="form-control" id="idMDP">
-                    </div>
-                  -->
-                    <div class="input-group">
-                      <span class="input-group-text " id="basic-addon4">Mot de passe</span>
-                      <input type="password" class="form-control" aria-label="MDP" aria-describedby="basic-addon4">
-                    </div>
-
-
-                  </div>
-                </div>
-                <!-- Selection de la confirmation de mot de passe-->
-                <div class="col-12">
-                  <div class="row mt-3">
-                    <!--
-                    <div class="col-4 d-flex">
-                      <label for="idConfMDP" class="my-auto">Confirmation mot de passe :</label>
-                    </div>
-                    <div class="col-8">
-                      <input class="form-control" id="idConfMDP">
-                    </div>
-                    -->
-
-
-                    <div class="input-group">
-                      <span class="input-group-text " id="basic-addon5">Confirmation mot de passe</span>
-                      <input type="password" class="form-control" aria-label="ConfMDP" aria-describedby="basic-addon5">
-                    </div>
-
-
-                  </div>
-                </div>
-                <!-- Selection du type d'utilisateur -->
-                <div class="col-12">
-                  <div class="row mt-3 mb-3">
-
-                  <div class="input-group">
-                      <label class="input-group-text" for="inputGroupSelectRole">Role de l'utilisateur</label>
-                      <select class="form-select" id="inputGroupSelectRole">
-                        <option value="1">Élève</option>
-                        <option value="2">Educateur</option>
-                        <option value="3">Educateur éditeur</option>
-                        <option value="4">CIP </option>
-                      </select>
-                    </div>
-
-
-
-
-
-
-                <!--
-                    <div class="col-4">
-                      <label>Type utilisateur :</label>
-                    </div>
-                    <div class="col-8 mb-2">
-                    
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="flexRadioUtilisateur" id="Éducateur"> 
-                        <label class="form-check-label" for="Éducateur">
-                          Éducateur
-                        </label>
-                      </div>
-
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="flexRadioUtilisateur" id="ÉducateurÉditeur"> 
-                        <label class="form-check-label" for="ÉducateurÉditeur">
-                          Éducateur éditeur
-                        </label>
-                      </div>
-
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="flexRadioUtilisateur" id="CIP"> 
-                        <label class="form-check-label" for="CIP">
-                          CIP
-                        </label>
-                      </div>
-                       
-
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="flexRadioUtilisateur" id="Élève">
-                        <label class="form-check-label" for="Élève">
-                          Élève
-                        </label>
-                      </div>
-                  </div>
-                    -->
-                  </div>
-                </div>
-      
-                <div class="modal-footer text-center">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                  <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Valider</button>
-                </div>
-              </div>  
             </form>
           </div>  
         </div>

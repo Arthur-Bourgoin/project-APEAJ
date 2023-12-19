@@ -1,6 +1,7 @@
 <?php
-
 namespace App\Controllers;
+use App\Models\TrainingModel;
+use App\Models\UserModel;
 
 class SAdminController extends AdminController {
 
@@ -13,56 +14,115 @@ class SAdminController extends AdminController {
     }
 
     public function home() {
-        //$formations = UserModel::getAllFormations();
-        $formations = [
-            ['Id_formation' => '1','Libelle' => 'Electricité', 'Description' => 'Description','image' => '/assets/images/formation/ampoules.jpg'],
-            ['Id_formation' => '2','Libelle' => 'Plomberie', 'Description' => 'Description','image' => '/assets/images/formation/ampoules.jpg'],
-            ['Id_formation' => '3','Libelle' => 'Amenagement', 'Description' => 'Description','image' => '/assets/images/formation/ampoules.jpg'],
-            ['Id_formation' => '4','Libelle' => 'Finition', 'Description' => 'Description','image' => '/assets/images/formation/ampoules.jpg']
-        ];
-
-        require("../app/views/sadmins/home.php");
+        $this->displayTemplateHome(0, 0);
         }
 
-    public function addUser() {
-        echo "Créer un Utilisateur";
+    public function infoTraining(int $idTraining) {
+        $this->displayTemplateTraining(0, 0, $idTraining);
     }
 
-    public function rmStudent() {
-        //code
+
+    public function add_user(string $page) {
+        if(!$this->verifUsers()){
+            $error = 5;
+        } else {
+            $error = UserModel::addUser($_POST,$_POST["idTraining"]);
+        }
+        if($page === "home")
+            $this->displayTemplateHome($error, $error===0 ? 3 : 0);
+        else
+            $this->displayTemplateTraining($error, $error===0 ? 2 : 0, $_POST["idTraining"]);
     }
 
-    public function addFormation() {
-        echo "Créer une formation";
+
+    public function delete_user() {
+        $error = UserModel::deleteUser($_POST["idUser"]);
+        $this->displayTemplateTraining($error, $error===0 ? 3 : 0, $_POST["idTraining"]);
     }
 
-    public function consultFormation(int $id) {
-        $formation = ['Id' => '1','Libelle' => 'Electricité', 'Description' => 'Description','NiveauQual' => 'CAP', 'image' => '/assets/images/formation/ampoules.jpg'];
+    public function add_training() {        
+        if(!$this->verifTraining()) {
+            $error = 2;
+        } else {
+            $error = TrainingModel::addTraining($_POST);
+        }
+        $this->displayTemplateHome($error, $error===0 ? 1 : 0);
+    }
 
-        $educators = [
-            ['Id_utilisateur'=> '3','Nom'=> 'BALZAC','Prenom'=> 'Théo','TypeU'=> 'Admin Educateur', 'image'=> '/assets/images/Utilisateurs/theo.png'],
-            ['Id_utilisateur'=> '2','Nom'=> 'CHARBONNIER','Prenom'=> 'Alban','TypeU'=> 'Educateur', 'image'=> '/assets/images/Utilisateurs/alban.png'],
-            ['Id_utilisateur'=> '4','Nom'=> 'DELAUNAY','Prenom'=> 'Flora','TypeU'=> 'Educateur', 'image'=> '/assets/images/Utilisateurs/flora.png']
-        ];
-        
-        $students = [
-            ['Id_utilisateur'=> '6','Nom'=> 'DROZ','Prenom'=> 'Romane','TypeU'=> 'Eleve', 'image'=> '/assets/images/Utilisateurs/romane.png'],
-            ['Id_utilisateur'=> '7','Nom'=> 'DU TOIT','Prenom'=> 'Bruno','TypeU'=> 'Eleve', 'image'=> '/assets/images/Utilisateurs/bruno.png'],
-            ['Id_utilisateur'=> '1','Nom'=> 'FREDERIC','Prenom'=> 'Mathieu','TypeU'=> 'Eleve', 'image'=> '/assets/images/Utilisateurs/mathieu.png'],
-            ['Id_utilisateur'=> '5','Nom'=> 'GARDET','Prenom'=> 'Fabien','TypeU'=> 'Eleve', 'image'=> '/assets/images/Utilisateurs/fabien.png'],
-            ['Id_utilisateur'=> '8','Nom'=> 'LALANDE','Prenom'=> 'Gustave','TypeU'=> 'Eleve', 'image'=> '/assets/images/Utilisateurs/gustave.png'],
-            ['Id_utilisateur'=> '9','Nom'=> 'MAZET','Prenom'=> 'Coralie','TypeU'=> 'Eleve', 'image'=> '/assets/images/Utilisateurs/coralie.png']
-    
-        ];
+    public function delete_training(string $page) {
+        $error = TrainingModel::deleteTraining($_POST["idTraining"]);
+        if($page === "home")
+            $this->displayTemplateHome($error, $error===0 ? 2 : 0);
+        else
+            $this->displayTemplateTraining($error, $error===0 ? 2 : 0, $_POST["idTraining"]);
+    }
 
+    public function update_admin(){
+        // A faire
+    }
 
+    public function update_training(){
+        if(!$this->verifTraining()){
+            $error = 3;
+        } else {
+            $error = TrainingModel::updateTraining($_POST);
+        }
+        $this->displayTemplateTraining($error, $error===0 ? 1 : 0, $_POST["idTraining"]);
+    }
+
+    private function displayTemplateHome(int $p_error, int $p_success) {
+        $error = $p_error;
+        $success = $p_success;
+        $trainings = TrainingModel::getTrainings();
+        if(!is_array($trainings) ) 
+            $error = 1;
+        require("../app/views/sadmins/home.php");
+    }
+
+    private function displayTemplateTraining(int $p_error, int $p_success, int $idTraining) {
+        $error = $p_error;
+        $success = $p_success;
+        $admins = UserModel::getAdmins();
+        $students = UserModel::getStudents($idTraining);
+        $training = TrainingModel::getTraining($idTraining);
+        if(!is_array($admins) || !is_array($students)  || is_int($training)) 
+            $error = 1;
         require("../app/views/sadmins/formation.php");
     }
 
-    public function exportFormation(int $id) {
-        
+    private function verifTraining(){
+        if(
+            //!isset($_POST["idTraining"]) ||
+            empty($_POST["wording"])||
+            empty($_POST["description"])||
+            empty($_POST["qualifLevel"])
+           
+        )
+            return false;
+        return true;
     }
 
+    private function verifUsers(){
+        if (
+            //!empty($_POST["idUser"]) ||
+            empty($_POST["lastName"])||
+            empty($_POST["firstName"])||
+            empty($_POST["picture"])||
+            empty($_POST["typePwd"])||
+            empty($_POST["pwd"])||
+            empty($_POST["verifPwd"])||
+            empty($_POST["role"])
+
+        ) 
+           return false;
+
+        if($_POST["verifPwd"]!== $_POST["pwd"])
+            return false;
+        
+        return true;
+        
+    }
+    
     
 
 }

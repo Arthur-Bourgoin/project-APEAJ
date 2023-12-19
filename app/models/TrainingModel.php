@@ -30,7 +30,7 @@ class TrainingModel {
                 return 2; // training not exist
             return $res->fetch();
         } catch (\Exception $e) {
-            return 7; // query error
+            return 1; // query error
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -52,7 +52,7 @@ class TrainingModel {
     public static function updateTraining(array $args) {
         try {
             if(!self::existTraining($args["idTraining"]))
-                return 14; // training not exist
+                return 2; // training not exist
             Database::getInstance()
                 ->prepare("UPDATE training
                            SET wording = :wording, description = :description, qualifLevel = :qualifLevel
@@ -64,16 +64,22 @@ class TrainingModel {
         }
     }
 
+    /**
+     * Undocumented function
+     * @TODO export excel
+     * @param integer $idTraining
+     * @return void
+     */
     public static function deleteTraining(int $idTraining) {
         try {
             if(!self::existTraining($idTraining))
-                return 47; // training not exist
+                return 2; // training not exist
             Database::getInstance()
                 ->prepare("DELETE FROM training WHERE idTraining = :id")
                 ->execute(array("id" => $idTraining));
             return 0;
         } catch (\Exception $e) {
-            return 4; // query error
+            return 8; // query error
         }
     }
 

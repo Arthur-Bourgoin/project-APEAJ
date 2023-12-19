@@ -14,6 +14,18 @@ if(divAlert) {
     }, 5000);
 }
 
+document.querySelector("#btn-admin").addEventListener("click", e => {
+    visibleDivAdmin(null);
+    document.querySelector("#loginAdmin").value="";
+    document.querySelector('#modalConnexionAdmin img').src =  '/assets/images/Utilisateurs/user.png';
+    document.querySelectorAll("#modalConnexionAdmin .divChange .input-group input").forEach(input => {
+        input.type = "password";
+        input.value = "";
+        input.name = "";
+        input.nextElementSibling.innerHTML = "<i class='bi bi-eye'></i>";
+    });
+});
+
 document.querySelectorAll('.btn-number').forEach(btn => {
     btn.addEventListener('click', e => {
         btn.closest("form").querySelector(".login-code").value += btn.textContent;
@@ -78,22 +90,14 @@ document.querySelector("#loginAdmin").addEventListener("input", e => {
     }
 });
 
-function visibleDivAdmin(div) {
+function visibleDivAdmin(classDiv) {
     document.querySelectorAll(".divChange").forEach(div => {
         div.classList.add("d-none");
+        console.log(div.querySelector("div:nth-child(1) input"));
+        div.querySelector("div:nth-child(1) input").name = "";
     });
-    if(div === null)
+    if(classDiv === null)
         return;
-    document.querySelector(div).classList.remove("d-none");
+    document.querySelector(classDiv).classList.remove("d-none");
+    document.querySelector(classDiv + " div:nth-child(1) input").name = "inputPwd";
 }
-
-document.querySelector("#btn-admin").addEventListener("click", e => {
-    visibleDivAdmin(null);
-    document.querySelector("#loginAdmin").value="";
-    document.querySelector('#modalConnexionAdmin img').src =  '/assets/images/Utilisateurs/user.png';
-    document.querySelectorAll("#modalConnexionAdmin .divChange .input-group input").forEach(input => {
-        input.type = "password";
-        input.value = "";
-        input.nextElementSibling.innerHTML = "<i class='bi bi-eye'></i>";
-    });
-});

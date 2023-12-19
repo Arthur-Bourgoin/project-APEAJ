@@ -223,10 +223,10 @@ $router->map("POST", "/formation-[i:id]", function ($id) {
                 $controller->update_training();
                 break;
             case "deleteTraining":
-                $controller->delete_training();
+                $controller->delete_training("training");
                 break;
             case "addUser":
-                $controller->add_user();
+                $controller->add_user("training");
                 break;
             case "updateAdmin":
                 $controller->update_user(); // update_admin()

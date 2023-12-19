@@ -1,211 +1,273 @@
 <?php
-$bsIcons = true; //Si on veut utiliser les icones de bootstrap j'inclue le fichier nécessaire
-
-$title = "Accueil"; //Définir le titre de la page
-
-ob_start(); //On bufferise l'affichage
+$bsIcons = true;
+$title = "Accueil";
+$scripts = "<script src='./assets/js/sadmin/home.js' type='module'></script>";
+define("PATH", "/assets/images/formations/");
+ob_start();
 ?>
 
-<div class="container mt-5">
-    <div class="row">
-        
-        <div class="col-10 col-xl-11 m-auto"><button type="button" class="btn btn-primary"> Ajouter une formation </button></div>
-        <div class="col-2 col-xl-1"><a href=""><i class="bi bi-person-circle text-black" style="font-size: 3rem"></i></a></div>   
-    </div>
-    
-    
-    <div class ="d-none d-md-block">
-        <div class ="row mb-3 align-items-center">
-            <?php
-            foreach($formations as $formation){?>
+<div class="container">
+    <div class="row mb-3">
+        <div class="d-flex justify-content-between align-items-center p-0">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTraining"> 
+                <i class="bi bi-file-plus me-2"></i>Ajouter une formation 
+            </button>
+            <div class="d-flex align-items-center">
+                <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
+                    <input type="hidden" name="action" value="disconnect">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-power me-2"></i>Se déconnecter 
+                    </button>
+                </form>
+                <button class="btn p-0 ms-3">
+                    <i class="bi bi-person-circle" style="font-size: 2.5rem"></i>
+                </button>
+            </div>
+        </div>
+    <?php
+    switch ($error) {
+        case 1 :
+            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Une erreur s\'est produite lors de l\'initialisation de la page.</div>'; break;
+        case 2 :
+            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Ajout impossible d\'une formation impossible, les données ne sont pas completes.</div>'; break;
+        case 3 : 
+            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Une erreur s\'est produite lors de l\'ajout d\'une formation</div>'; break;
+        case 8:
+            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Une erreur s\'est produite lors de la suppression de la formation.</div>'; break;
+        case 5 : 
+            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Ajout impossible d\'un utilisateur, les valeurs rentrées ne sont pas valides.</div>'; break;
+        case 6 :
+            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Une erreur s\'est produite lors de l\'ajout d\'un utilisateur à une formation.</div>'; break;
+    }
 
-                <div class="col-6">
-                    <div class="card mt-3">
-                        <div class="text-center">
-                            <img src="<?= $formation['image']?>" class="card-img-top w-50" alt="...">
+    switch ($success) {
+        case 1 :
+            echo '<div class="alert alert-success mt-3 mb-1" role="alert">Ajout de la formation enregistré.</div>'; break;
+        case 2 :
+            echo '<div class="alert alert-success mt-3 mb-1" role="alert">Suppression enregistrée.</div>'; break;
+        case 3 :
+            echo '<div class="alert alert-success mt-3 mb-1" role="alert">Ajout de l\'utilisateur enregistré.</div>'; break;
+    }
+    ?>
+    </div>
+
+    
+    <!-- Affichge grand écran-->
+    <div class ="">
+        <?php
+            if(is_array($trainings)) {
+                foreach ($trainings as $training) {?>
+                    <div class="row border mb-3">
+                        <div class="col-4 my-auto">
+                            <div class="text-center">
+                                <img src="<?= PATH . 'ampoules.jpg' ?>" class="border w-100">
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <p class="card-title fs-4 fw-bold"><?= $formation['Libelle']?></p>
-               
-                            <p class="card-text"><?= $formation['Description']?></p>
-                            <div class="d-flex justify-content-around "> 
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newUser"> 
-                                    <i class="bi bi-person-plus-fill" style="font-size: 2rem"></i>
+                        <div class="col-8 d-flex flex-column justify-content-evenly py-3">
+                            <p class=" fs-3 fw-bold text-center"><?= htmlentities($training->wording)?></p>
+                            <p class="text-center fs-5 d-none d-md-block"><?= htmlentities($training->description)?></p>                            
+                            <div class="d-flex justify-content-evenly" >  
+                                <button type="button" class="btn-add-user btn btn-primary" data-bs-toggle="modal" data-bs-target="#newUser" data-id-training="<?= $training->idTraining ?>">
+                                    <i class="bi bi-person-plus-fill" style="font-size: 1.5rem"></i>
                                 </button>
-                                <a href=" <?='/formation-' . $formation['Id_formation'] . '/supprimer'?>" >
-                                    <button class="btn btn-primary btn-removed">
-                                        <i class="bi bi-trash-fill" style="font-size: 2rem"></i>
+                                <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
+                                    <input type="hidden" name="action" value="deleteTraining">
+                                    <input type="hidden" name="idTraining" value="<?= $training->idTraining ?>">
+                                    <button type="submit" class="btn btn-primary btn-removed">
+                                        <i class="bi bi-trash-fill" style="font-size: 1.5rem"></i>
                                     </button>
-                                </a>                
-                                <a href="/formation-<?=$formation['Id_formation']?>">
-                                    <button type="button" class="btn btn-primary">
-                                        <i class="bi bi-eye" style="font-size: 2rem"></i>
+                                </form>
+                                <a href="/formation-<?=htmlentities($training->idTraining)?>">
+                                    <button class=" btn btn-primary">
+                                        <i class="bi bi-eye" style="font-size: 1.5rem"></i>
                                     </button>
-                                </a>
-                                    
-                                
-                                
-                            </div>    
+                                </a>                              
+                            </div>                                
                         </div>
                     </div>
-                </div>
-            <?php   
+                <?php
+                }
             }
             ?>
-        </div>
     </div>
 
-    <div class="d-block d-md-none">
-        
-            <?php
-            foreach ($formations as $formation) {?>
-                <div class="row border mb-3">
-                    <div class="col-4">
-                        <div class="text-center">
-                            <img src="<?= $formation['image']?>" class="w-100">
-                        </div>
-                    </div>
-                    <div class="col-8">
-                        <p class=" fs-3 fw-bold text-center"><?= $formation['Libelle']?></p>
-                        <div class="d-flex">
-                            <div class="mb-3 m-auto">    
-                                <button type="button" class=" btn btn-primary" data-bs-toggle="modal" data-bs-target="#newUser">
-                                    <i class="bi bi-person-plus-fill"></i>
-                                </button>
-                            </div>
-                            <div class="mb-3 m-auto">
-                                <a href=" <?='/formation-' . $formation['Id_formation'] . '/supprimer'?>">
-                                    <button class=" btn btn-primary btn-removed">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
-                                </a>
-                            </div>
-                            <div class="mb-3 m-auto">
-                                <a href="/formation-<?=$formation['Id_formation']?>">
-                                    <button class=" btn btn-primary">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <?php
-            }
-            ?>           
-        
-    </div>
-
-    <!-- Modal -->
+    <!-- Modal ajout utilisateur-->
     <div class="modal fade" id="newUser" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newUserLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="newUserLabel">Ajouter utilisateur</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+            <form action="<?= $_SERVER ["REQUEST_URI"]?>" method="POST">
+                <input type="hidden" name="action" value="addUser">
+                <input type="hidden" name="idTraining">
+                    
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="newUserLabel">Ajouter utilisateur</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
 
-                <div class="modal-body">
-       
-                    <form action="<?= $_SERVER ["REQUEST_URI"]?>" method="POST">
+                    <div class="modal-body">
                         <div class="row">
-                            <!-- Affichage de l'image lié a la formation-->
-                            <div class="col-4 text-center">
-                                <img src="<?= $formation['image']?>" class="card-img-top w-75 border border-black rounded" alt="Image formation">
-                            </div>
-                            <!-- Seletection du nom et du prenom-->
-                            <div class="col-8">
-                                <div class="input-group col-12 mt-3">
-                                    <span class="input-group-text " id="basic-addon3">Nom :</span>
-                                    <input type="text" class="form-control" aria-label="Nom" aria-describedby="basic-addon3">
-                                </div>
-                                <div class="input-group col-12 mt-3">
-                                    <span class="input-group-text " id="basic-addon2">Prenom :</span>
-                                    <input type="text" class="form-control" aria-label="Prenom" aria-describedby="basic-addon2">
-                                </div>
-                            </div>
-                            <!--Selection du login -->
-                            <div class="col-12">
-                                <div class="row mt-3">
-                                    <div class="input-group">
-                                        <span class="input-group-text " id="basic-addon1">Login</span>
-                                        <input type="text" class="form-control" aria-label="Login" aria-describedby="basic-addon1">
-                                    </div>
-                                </div>
+                            <div class="col-4">
+                                <!--Rajouter et changer les images -->
+                                <label for="inputImgUser">
+                                    <img id="imgUser" src="<?= PATH . 'ampoules.jpg' ?>" class="w-100 border" alt="Image de l'utilisateur">
+                                </label>
+                                <input id="inputImgUser" type="file" class="d-none" name="picture">
                             </div>
 
-                            <!-- Selection de la confirmation de Mot de passe -->
-                            <div class="col-12">
-                                <div class="row mt-3"> 
+                            <!-- Seletection du nom et du prenom-->
+                            <div class="col-8 d-flex flex-column justify-content-between">
+                                <div class="mb-3">
+                                    <label for="inputLastName">Nom</label>
                                     <div class="input-group">
-                                        <label class="input-group-text" for="inputGroupSelectMDP">Type mot de passe</label>
-                                        <select class="form-select" id="inputGroupSelectMDP">
-                                            <option value="1">Texte</option>
-                                            <option value="2">Code</option>
-                                            <option value="3">Schéma</option>
-                                        </select>
+                                        <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
+                                        <input id="inputLastName" type="text" class="form-control" name="lastName">
                                     </div>
                                 </div>
-                            </div>
-                            <!--Selection du mot de passe -->
-                            <div class="col-12">
-                                <div class="row mt-3">
+
+                                <div class="mb-3">
+                                    <label for="inputFirstName">Prénom</label>
                                     <div class="input-group">
-                                        <span class="input-group-text " id="basic-addon4">Mot de passe</span>
-                                        <input type="password" class="form-control" aria-label="MDP" aria-describedby="basic-addon4">
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Selection de la confirmation de mot de passe-->
-                            <div class="col-12">
-                                <div class="row mt-3">
-                                    <div class="input-group">
-                                        <span class="input-group-text " id="basic-addon5">Confirmation mot de passe</span>
-                                        <input type="password" class="form-control" aria-label="ConfMDP" aria-describedby="basic-addon5">
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Selection du type d'utilisateur -->
-                            <div class="col-12">
-                                <div class="row mt-3 mb-3">
-                                    <div class="input-group">
-                                        <label class="input-group-text" for="inputGroupSelectRole">Role de l'utilisateur</label>
-                                        <select class="form-select" id="inputGroupSelectRole">
-                                            <option value="1">Élève</option>
-                                            <option value="2">Educateur</option>
-                                            <option value="3">Educateur éditeur</option>
-                                            <option value="4">CIP </option>
-                                        </select>
+                                        <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
+                                        <input id="inputFirstName" type="text" class="form-control" name="firstName">
                                     </div>
                                 </div>
                             </div>
                             
-                
+                            <div class="col-12 mt-3">
+                                <label for="inputTypePwd" class="form-label">Type de mot de passe</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                    <select class="form-select" id="inputTypePwd" name="typePwd">
+                                        <option value="1">Texte</option>
+                                        <option value="2">Code</option>
+                                        <option value="3">Schéma</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div id="champText">
+                                <div class="col-12 mt-3">
+                                    <label for="inputPwd" class="form-label">Mot de passe</label>
+                                    <div class="input-group">
+                                        <input id="inputPwd" type="password" class="form-control input-pwd" name="pwd">
+                                        <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
+                                    </div>
+                                </div>
+                                <div class="col-12 mt-3">
+                                    <label for="inputConfirmPwd" class="form-label">Confirmation du mot de passe</label>
+                                    <div class="input-group">
+                                        <input id="inputVerifPwd" type="password" class="form-control input-pwd" name="verifPwd">
+                                        <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="champCode">
+                                <div class="col-12 mt-3">
+                                    <label for="inputPwd" class="form-label">Code</label>
+                                    <div class="input-group">
+                                        <input id="inputPwd" type="password" class="form-control input-pwd" name="pwd" pattern="[0-9]{4,6}">
+                                        <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
+                                    </div>
+                                </div>
+                                <div class="col-12 mt-3">
+                                    <label for="inputConfirmPwd" class="form-label">Confirmation du code</label>
+                                    <div class="input-group">
+                                        <input id="inputVerifPwd" type="password" class="form-control input-pwd" name="verifPwd" pattern="[0-9]{4,6}">
+                                        <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="champSchema">
+                                <div class="col-12 mt-3">
+                                    schéma
+                                </div>
+                                <div class="col-12 mt-3">
+                                    confirmation schéma
+                                </div>
+                            </div>
+                            <!-- Selection du type d'utilisateur -->
+                            <div class="col-12 my-3">
+                                <label class="form-label" for="inputRole">Rôle de l'utilisateur</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-mortarboard"></i></span>
+                                    <select class="form-select" id="inputRole" name="role">
+                                        <option value="student">Élève</option>
+                                        <option value="educator">Educateur</option>
+                                        <option value="educator-admin">Educateur administrateur</option>
+                                        <option value="CIP">CIP</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="modal-footer text-center">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Valider</button>
+                                <button type="button" class="btn btn-danger me-2" data-bs-dismiss="modal">
+                                    <i class="bi bi-x-circle me-2"></i>Annuler
+                                </button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle me-2"></i>Valider
+                                </button>
                             </div>
                         </div>  
-                    </form>
-                </div>  
-            </div>
+                    </div>  
+                </div>
+            </form>
         </div>
     </div>
 
-    
+
+
+    <!-- Add Training-->
+    <div class="modal fade" id="newTraining" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newTrainingLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form action="<?= $_SERVER ["REQUEST_URI"]?>" method="POST">
+                <input type="hidden" name="action" value="addTraining">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="newTrainingLabel">Ajouter formation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">     
+                        <div class="row">
+                            <!--Selection de l'image -->
+                            <div class="col-4">
+                                <label for="inputImgTraining">
+                                    <img id="imgTraining" src="<?= PATH . 'ampoules.jpg' ?>" class="w-100 border border-black border-2 rounded" alt="Photo de la formation">
+                                </label>
+                                <input id="inputImgTraining" type="file" class="d-none" name="imgTraining">
+                            </div>   
+                            <div class="col-8">
+                                <div class="">
+                                    <label for="inputName" class="form-label">Nom de la formation</label>
+                                    <input id="inputName" type="text" class="form-control" name="wording">
+                                </div>
+                                <div class="">
+                                    <label for="inputLevel" class="form-label">Niveau de la formation</label>
+                                    <input id="inputLevel" type="text" class="form-control" name="qualifLevel">
+                                </div>
+                            </div>
+                            <div class="col-12 my-3">
+                                <label for="inputDescription" class="form-label">Description Formation</label>                                        
+                                <textarea class="form-control" id="inputDescription" rows="3" name="description" ></textarea>
+                            </div>
+                
+                            <div class="modal-footer">
+                                <button type="button" class="me-3 btn btn-danger" data-bs-dismiss="modal">
+                                    <i class="bi bi-x-circle me-2"></i>Annuler
+                                </button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle me-2"></i>Valider
+                                </button>
+                            </div>
+                        </div>      
+                    </div>  
+                </div>
+            </form>
+        </div>  
+    </div>
        
 </div>
-<script>
-    document.querySelectorAll(".btn-removed").forEach(btn => {
-        btn.addEventListener("click", e => {
-        if(!confirm("Voulez vous vraiment supprimer cet formation ?"))
-            e.preventDefault();
-        });
-    });
-</script>
 
 <?php
 $content = ob_get_clean(); //On récupère le contenu bufferisé
 
-require("../app/views/layout.php"); //On require le fichier avec toutes les variables définies
-//pas obligatoire de définir toutes les variables, voir fichier layout.php
+require("../app/views/layout.php");

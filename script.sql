@@ -3,6 +3,7 @@ CREATE TABLE Training(
     wording VARCHAR(100),
     description TEXT,
     qualifLevel VARCHAR(50),
+    picture VARCHAR(50),
     PRIMARY KEY(idTraining)
 ) ENGINE = InnoDB;
 
@@ -25,7 +26,7 @@ CREATE TABLE Users(
     firstName VARCHAR(50),
     picture VARCHAR(50),
     typePwd TINYINT,
-    pwd VARCHAR(50),
+    pwd VARCHAR(256),
     role VARCHAR(50),
     idTraining INT,
     UNIQUE(login),
@@ -47,7 +48,6 @@ CREATE TABLE Form(
     numero INT,
     finish BOOLEAN,
     creationDate DATETIME,
-    educatorNote TINYINT,
     studentNote TINYINT,
     bgColor VARCHAR(50),
     studentLastName VARCHAR(50),
@@ -78,6 +78,7 @@ CREATE TABLE CommentForm(
     text TEXT,
     audio VARCHAR(50) ,
     admin BOOLEAN,
+    note TINYINT,
     lastModif DATETIME,
     idAuthor INT NOT NULL,
     numero INT NOT NULL,

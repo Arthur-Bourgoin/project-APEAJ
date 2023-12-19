@@ -56,7 +56,7 @@ class ConnexionController {
             if(!is_array($admins) || !is_array($students))
                 $error = 1;
             require("../app/views/connexion.php");
-        } elseif($user->pwd !== $_POST["inputPwd"]) {
+        } elseif(password_verify($user->pwd, $_POST["inputPwd"])) {
             $error = 2;
             $admins = UserModel::getAdmins();
             $students = UserModel::getStudents($_SESSION["training"]);

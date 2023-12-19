@@ -28,6 +28,8 @@ class UserModel {
 
     public static function getStudents(int $idTraining) {
         try {
+            if(!TrainingModel::existTraining($idTraining))
+                return 47; // training not exist
             $users = [];
             $res = Database::getInstance()->prepare("SELECT * FROM users WHERE idTraining = :id AND role = 'student'");
             $res->execute(array("id" => $idTraining));
@@ -67,7 +69,7 @@ class UserModel {
             $user = $res->fetch();
             $comments = CommentStudentModel::getComments($user->idUser);
             if(!is_array($comments))
-                    return 73; // Error on CommentStudensModel::getComments() method
+                return 73; // Error on CommentStudensModel::getComments() method
             return new User($user, $comments);
         } catch (\Exception $e) {
             return 1; // query error
@@ -93,10 +95,26 @@ class UserModel {
         }
     }
 
+    public static function addUser(array $args, int $idTraining) {
+        try {
+            $keys = ["login", "lastName", "firstName", "picture", "typePwd", "pwd", "role", "idTraining"];
+            $args["login"] = self::generateLogin($args["firstName"], $args["lastName"]);
+            $args["idTraining"] = $idTraining;
+            $args["pwd"] = password_hash($args["pwd"], PASSWORD_BCRYPT);
+            Database::getInstance()
+                ->prepare("INSERT INTO users (login, lastName, firstName, picture, typePwd, pwd, role, idTraining)
+                           VALUES (:login, :lastName, :firstName, :picture, :typePwd, :pwd, :role, :idTraining)")
+                ->execute(array_intersect_key($args, array_flip($keys)));
+            return 0;
+        } catch (\Exception $e) {
+            return 1; // query error
+        }
+    }
+
     public static function updateUser(array $args) {
         try {
             if(!self::existUser($args["idUser"]))
-                return 1; // user not exist
+                return 26; // user not exist
             $keys = ["login", "lastName", "firstName", "picture", "idUser"];
             $args["login"] = self::generateLogin($args["firstName"], $args["lastName"]);
             Database::getInstance()
@@ -135,19 +153,12 @@ class UserModel {
         }
     }
 
-    public static function addUser(array $args, int $idTraining) {
-        try {
-            $keys = ["login", "lastName", "firstName", "picture", "typePwd", "pwd", "role", "idTraining"];
-            $args["login"] = self::generateLogin($args["firstName"], $args["lastName"]);
-            $args["idTraining"] = $idTraining;
-            Database::getInstance()
-                ->prepare("INSERT INTO users (login, lastName, firstName, picture, typePwd, pwd, role, idTraining)
-                           VALUES (:login, :lastName, :firstName, :picture, :typePwd, :pwd, :role, :idTraining)")
-                ->execute(array_intersect_key($args, array_flip($keys)));
-            return 0;
-        } catch (\Exception $e) {
-            return 1; // query error
-        }
+    /**
+     * @todo export excel
+     */
+    public static function delete_user(int $idUser) {
+        return 5; // query error
+        return 26; // user not exist
     }
 
     public static function existUser(int $idUser) {
@@ -156,6 +167,13 @@ class UserModel {
         return $res->rowCount() === 1;
     }
 
+    /**
+     * Undocumented function
+     * problem both login
+     * @param string $fName
+     * @param string $lName
+     * @return void
+     */
     private static function generateLogin(string $fName, string $lName) {
         $res = Database::getInstance()->prepare("SELECT * FROM users WHERE lastName = :lName AND firstName = :fName");
         $res->execute(array("lName" => $lName, "fName" => $fName));

@@ -77,8 +77,10 @@ class FormModel {
             $forms = [];
             $res = Database::getInstance()->prepare("SELECT * FROM form, session WHERE form.idSession = session.idSession AND session.idTraining = :id");
             $res->execute(array("id" => $idTraining));
-            while ($form = $res->fetch())
-                $forms[] = new Form($form, null, null, null, null, null, null, null);
+            while ($form = $res->fetch()) {
+                $comments = CommentFormModel::getComments($form->numero, $form->idStudent);
+                $forms[] = new Form($form, $comments, null, null, null, null, null, null);
+            }
             return $forms;
         } catch (\Exception $e) {
             return 1; // query error

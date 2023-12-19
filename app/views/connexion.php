@@ -127,7 +127,7 @@ $bsIcons = true ?>
                     <div class="divChange divAdminText d-flex flex-column align-items-center w-100 d-none">
                         <div class="input-group w-75 mb-3">
                             <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                            <input type="password" class="form-control" placeholder="Votre mot de passe" name="inputPwd" aria-label="Username" aria-describedby="addon-wrapping">
+                            <input type="password" class="form-control" placeholder="Votre mot de passe">
                             <button type="button" class="btn btn-show btn-dark"><i class="bi bi-eye"></i></button>
                         </div>
                         <div class="row d-flex justify-content-center w-100">
@@ -139,7 +139,7 @@ $bsIcons = true ?>
                     <div class="divChange divAdminCode d-flex flex-column align-items-center d-none">
                         <div class="input-group w-75 mb-3">
                             <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                            <input type="password" class="form-control pe-none text-center login-code" name="inputPwd" placeholder="Code numérique" maxlength="6" />
+                            <input type="password" class="form-control pe-none text-center login-code" placeholder="Code numérique"/>
                             <button type="button" class="btn btn-show btn-dark"><i class="bi bi-eye"></i></button>
                         </div>
                         <div class="row g-2">
