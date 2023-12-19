@@ -3,6 +3,7 @@ namespace App\Models;
 use Config\Database;
 use App\Models\UserModel;
 use App\Class\CommentForm;
+use App\Class\CommentStudent;
 
 class CommentStudentModel {
 

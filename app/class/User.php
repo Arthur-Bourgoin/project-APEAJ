@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Class;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+
 
 class User {
 
@@ -60,7 +62,30 @@ class User {
         return ob_get_clean();
     }
 
-
+    public function setLineXLS(Worksheet $sheet, int $line){
+        $sheet->setCellValue('A'.$line , $this->idUser);
+        $sheet->setCellValue('B'.$line , $this->lastName);
+        $sheet->setCellValue('C'.$line , $this->firstName);
+        switch ($this->role){
+            case('student'):
+                $sheet->setCellValue('D'.$line , 'Étudiant');
+                break;
+            case('educator-admin'):
+                $sheet->setCellValue('D'.$line , 'Éducateur-admin');
+                break;
+            case('educator'):
+                $sheet->setCellValue('D'.$line , 'Éducateur');
+                break;          
+        }
+        $sheet->mergeCells('E'.$line.':H'.$line);
+        foreach($this->comments as $comment) {
+            $line++;
+            $sheet->mergeCells('F'.$line.':H'.$line);
+            $sheet->setCellValue('E'.$line, $comment->educator->lastName);
+            $sheet->setCellValue('F'.$line, $comment->text);
+        }
+        $line++;
+    }
 
 
 }

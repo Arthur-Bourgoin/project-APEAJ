@@ -2,6 +2,7 @@
 namespace App\Models;
 use Config\Database;
 use App\Models\FormModel;
+use App\Models\UserModel;
 use App\Class\CommentForm;
 
 class CommentFormModel {
