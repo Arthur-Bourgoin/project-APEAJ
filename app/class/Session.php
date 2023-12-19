@@ -1,5 +1,7 @@
 <?php
 namespace App\Class;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+
 
 class Session {
 
@@ -19,4 +21,12 @@ class Session {
         $this->timeEnd = $obj->timeEnd;
     }
 
+    public function setLineXLS(Worksheet $sheet, int $line){
+        $sheet->setCellValue('A'.$line , $this->idSession);
+        $sheet->setCellValue('B'.$line , $this->wording);
+        $sheet->setCellValue('C'.$line , $this->theme);
+        $sheet->setCellValue('D'.$line , $this->description);
+        $sheet->setCellValue('E'.$line , $this->timeBegin);
+        $sheet->setCellValue('F'.$line , $this->timeEnd);
+    }
 }

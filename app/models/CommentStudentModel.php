@@ -2,16 +2,22 @@
 namespace App\Models;
 use Config\Database;
 use App\Models\UserModel;
+use App\Class\CommentStudent;
 
 class CommentStudentModel {
 
     public static function getComments(int $idStudent) {
         try {
+            $comments = [];
             if(!UserModel::existUser($idStudent))
                 return 1; // user not exist
             $res = Database::getInstance()->prepare("SELECT * FROM commentStudent WHERE idStudent = :id");
             $res->execute(array("id" => $idStudent));
-            return $res->fetchAll();
+            while($comment = $res->fetch()) {
+                $educator = UserModel::getUser($comment->idEducator);
+                $comments[] = new CommentStudent($comment, $educator);
+            }
+            return $comments;
         } catch (\Exception $e) {
             return 2; // query error
         } finally {
