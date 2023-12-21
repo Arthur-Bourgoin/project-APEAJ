@@ -124,6 +124,11 @@ $router->map("POST", "/fiche-[i:id]/completer", function ($id) {
 /*######################################################################################
                                       ADMIN
 #######################################################################################*/
+$router->map("GET", "/choix-modele-fiche", function () {
+    $controller = new AdminController();
+    $id = 1;
+    $controller->chooseTemplate($id);
+});
 $router->map("GET", "/etudiants/[a]-[a]-[i:id]", function ($id) {
     $controller = new AdminController();
     $controller->infoStudent($id);

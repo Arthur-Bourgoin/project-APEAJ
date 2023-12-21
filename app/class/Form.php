@@ -31,61 +31,61 @@ class Form {
         $sheet->setCellValue('B'.$line , $this->form->idStudent);
         $sheet->setCellValue('C'.$line , $this->form->idSession);
         $sheet->setCellValue('D'.$line , $this->form->creationDate);
-        $sheet->setCellValue('E'.$line , $this->form->educatorNote);
-        $sheet->setCellValue('F'.$line , $this->form->studentNote);
-        $sheet->setCellValue('G'.$line , $this->form->applicantName);
-        $sheet->setCellValue('H'.$line , $this->form->location);
-        $sheet->setCellValue('I'.$line , $this->form->description);
-        $sheet->setCellValue('J'.$line , $this->form->urgencyDegree);
-        $sheet->setCellValue('K'.$line , $this->form->interventionDate);
-        $sheet->setCellValue('L'.$line , $this->form->interventionDuration);
+        //$sheet->setCellValue('E'.$line , $this->form->educatorNote);
+        //$sheet->setCellValue('F'.$line , $this->form->studentNote);
+        $sheet->setCellValue('E'.$line , $this->form->applicantName);
+        $sheet->setCellValue('F'.$line , $this->form->location);
+        $sheet->setCellValue('G'.$line , $this->form->description);
+        $sheet->setCellValue('H'.$line , $this->form->urgencyDegree);
+        $sheet->setCellValue('I'.$line , $this->form->interventionDate);
+        $sheet->setCellValue('J'.$line , $this->form->interventionDuration);
         switch ($this->form->maintenanceType){
             case 1:
-                $sheet->setCellValue('M'.$line , 'Améliorative');
+                $sheet->setCellValue('K'.$line , 'Améliorative');
                 break;
             case 2:
-                $sheet->setCellValue('M'.$line , 'Préventive');
+                $sheet->setCellValue('K'.$line , 'Préventive');
                 break;
             case 3:
-                $sheet->setCellValue('M'.$line , 'Corrective');
+                $sheet->setCellValue('K'.$line , 'Corrective');
                 break;          
         }
         switch ($this->form->interventionNature){
             case 1:
-                $sheet->setCellValue('N'.$line , 'Aménagement');
+                $sheet->setCellValue('L'.$line , 'Aménagement');
                 break;
             case 2:
-                $sheet->setCellValue('N'.$line , 'Finitions');
+                $sheet->setCellValue('L'.$line , 'Finitions');
                 break;
             case 3:
-                $sheet->setCellValue('N'.$line , 'Installation sanitaire');
+                $sheet->setCellValue('L'.$line , 'Installation sanitaire');
                 break;
             case 4:
-                $sheet->setCellValue('N'.$line , 'Installation électrique');
+                $sheet->setCellValue('L'.$line , 'Installation électrique');
                 break;     
         }
-        $sheet->setCellValue('O'.$line , $this->form->workDone);
-        $sheet->setCellValue('P'.$line , $this->form->workNotDone);
+        $sheet->setCellValue('M'.$line , $this->form->workDone);
+        $sheet->setCellValue('N'.$line , $this->form->workNotDone);
         if ($this->form->workNotDone===null){
-            $sheet->setCellValue('P'.$line ,' ');
+            $sheet->setCellValue('N'.$line ,' ');
         }
         switch ($this->form->newIntervention){
             case false:
-                $sheet->setCellValue('Q'.$line , 'Non');
+                $sheet->setCellValue('O'.$line , 'Non');
                 break;
             case true:
-                $sheet->setCellValue('Q'.$line , 'Oui');
+                $sheet->setCellValue('O'.$line , 'Oui');
                 break;
         }
         if ($this->form->newIntervention===null){
-            $sheet->setCellValue('Q'.$line , ' ');
+            $sheet->setCellValue('O'.$line , ' ');
         }
-        $sheet->mergeCells('R'.$line.':U'.$line);
+        $sheet->mergeCells('P'.$line.':S'.$line);
         foreach($this->comments as $comment) {
             $line++;
-            $sheet->mergeCells('S'.$line.':U'.$line);
-            $sheet->setCellValue('R'.$line, $comment->author->lastName);
-            $sheet->setCellValue('S'.$line, $comment->text);
+            $sheet->mergeCells('Q'.$line.':S'.$line);
+            $sheet->setCellValue('P'.$line, $comment->author->lastName);
+            $sheet->setCellValue('Q'.$line, $comment->text);
     }
         $line++;
     }

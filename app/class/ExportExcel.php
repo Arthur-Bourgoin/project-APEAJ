@@ -78,13 +78,13 @@ class ExportExcel {
             $this->line++;
             $this->line+=3;
             if ($user->role==="student"){
-                $forms = FormModel::getAllForms($idUser);
+                $forms = FormModel::getForms($idUser);
                 $countComments=0;
                 foreach($forms as $form) {
                     $countComments+=count($form->comments);
                 }
-                $this->customStyle('U', $this->line, count($forms)+$countComments);
-                $this->activeSheet->mergeCells('S'.($this->line+2).':U'.($this->line+2));
+                $this->customStyle('S', $this->line, count($forms)+$countComments);
+                $this->activeSheet->mergeCells('Q'.($this->line+2).':S'.($this->line+2));
                 $this->nameColumns("FORM");
                 foreach($forms as $form) {
                     $form->setLineXLS($this->activeSheet, $this->line);
@@ -109,10 +109,9 @@ class ExportExcel {
                 break;
             case "FORM":
                 $this->activeSheet->setCellValue('A'.$this->line, 'FICHES ÉLÈVES');
-                $columnTitle = ['A' => 'Éducateur', 'B' => 'Étudiant', 'C' => 'Session', 'D' => 'Date de création', 'E' => 'Note éducateur', 'F' =>  'Note élève',
-                'G' => 'Demandeur', 'H' => 'Localisation', 'I' => 'Description', 'J' => 'Urgence', 'K' => 'Date intervention', 'L' =>  'Durée intervention',
-                'M' => 'Maintenance', 'N' => 'Intervention', 'O' => 'Travaux faits', 'P' => 'Travaux non faits', 'Q' => 'Nouvelle intervention','R'=>'Auteur commentaire',
-                'S' => 'Commentaire'];
+                $columnTitle = ['A' => 'Éducateur', 'B' => 'Étudiant', 'C' => 'Session', 'D' => 'Date de création', 'E' => 'Demandeur', 'F' => 'Localisation',
+                'G' => 'Description', 'H' => 'Urgence', 'I' => 'Date intervention', 'J' =>  'Durée intervention','K' => 'Maintenance', 'L' => 'Intervention',
+                'M' => 'Travaux faits', 'N' => 'Travaux non faits', 'O' => 'Nouvelle intervention','P'=>'Auteur commentaire','Q' => 'Commentaire'];
                 break;
             }
         $this->line += 2;
@@ -188,8 +187,8 @@ class ExportExcel {
         foreach($forms as $form) {
             $countComments+=count($form->comments);
         }
-        $this->customStyle('U', $this->line, count($forms)+$countComments);
-        $this->activeSheet->mergeCells('S'.($this->line+2).':U'.($this->line+2));
+        $this->customStyle('S', $this->line, count($forms)+$countComments);
+        $this->activeSheet->mergeCells('Q'.($this->line+2).':S'.($this->line+2));
         $this->nameColumns("FORM");
         foreach($forms as $form) {
             $form->setLineXLS($this->activeSheet, $this->line);

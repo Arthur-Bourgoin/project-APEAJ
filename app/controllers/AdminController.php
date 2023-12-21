@@ -177,6 +177,12 @@ class AdminController extends UserController
         $this->displayTemplateInfoForm($error, $error === 0 ? 5 : 0, $idStudent, $idForm);
     }
 
+    public function chooseTemplate($id){
+        $student = UserModel::getUser($id);
+        $formTemplates = FormModel::getForms(1000);
+        require("../app/views/admins/chooseTemplate.php");
+    }
+
     public function createForm(string $fName, string $lName, int $idStudent)
     {
         //echo "Creation d'une fiche pour " . $fName . " " . $lName . " id :" . $idStudent;

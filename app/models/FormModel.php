@@ -11,7 +11,7 @@ use App\Class\Form;
 
 class FormModel {
 
-    public static function getAllForms(int $idStudent){
+    public static function getForms(int $idStudent){
         try {
             if(!UserModel::existUser($idStudent))
                 return 2; // student not exist

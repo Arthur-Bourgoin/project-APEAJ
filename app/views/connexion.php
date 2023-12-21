@@ -117,7 +117,7 @@ $bsIcons = true ?>
             </div>
             <div class="modal-body text-center">
                 <!-- Photo de l'étudiant -->
-                <img class="adminPicture img-thumbnail w-50" src="/assets/images/Utilisateurs/user.png" alt="Icone de l'admin">
+                <img class="adminPicture img-thumbnail w-50" src="./assets/images/users/user.png" alt="Icone de l'admin">
                 <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST" class="d-flex flex-column align-items-center w-100">
                     <div class="input-group w-75 my-3">
                         <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
