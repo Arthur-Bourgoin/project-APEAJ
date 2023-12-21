@@ -173,7 +173,6 @@ $bsIcons = true ?>
 
 <script>
     const studentsTab = <?= json_encode($students) ?>;
-    console.log(studentsTab);
     const adminsTab = <?= json_encode($admins) ?>;
 </script>
 

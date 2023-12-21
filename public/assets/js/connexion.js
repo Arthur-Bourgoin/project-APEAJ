@@ -93,7 +93,6 @@ document.querySelector("#loginAdmin").addEventListener("input", e => {
 function visibleDivAdmin(classDiv) {
     document.querySelectorAll(".divChange").forEach(div => {
         div.classList.add("d-none");
-        console.log(div.querySelector("div:nth-child(1) input"));
         div.querySelector("div:nth-child(1) input").name = "";
     });
     if(classDiv === null)

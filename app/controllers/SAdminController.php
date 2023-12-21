@@ -23,7 +23,7 @@ class SAdminController extends AdminController {
 
 
     public function add_user(string $page) {
-        if(!$this->verifUsers()){
+        if(!$this->verifUser()){
             $error = 5;
         } else {
             $error = UserModel::addUser($_POST,$_POST["idTraining"]);
@@ -57,8 +57,15 @@ class SAdminController extends AdminController {
             $this->displayTemplateTraining($error, $error===0 ? 2 : 0, $_POST["idTraining"]);
     }
 
-    public function update_admin(){
-        // A faire
+    // on redefinit update_user()
+    public function update_user(?string $page, ?int $id){
+        if(!$this->verifUser($_POST)){
+            $error = 5;
+        }
+        else  {
+            $error = UserModel::updateUser($_POST);
+        }
+        $this->displayTemplateTraining($error, $error===0 ? 2 : 0, $_POST["idTraining"]);
     }
 
     public function update_training(){
@@ -102,12 +109,12 @@ class SAdminController extends AdminController {
         return true;
     }
 
-    private function verifUsers(){
+    private function verifUser(){
         if (
             //!empty($_POST["idUser"]) ||
             empty($_POST["lastName"])||
             empty($_POST["firstName"])||
-            empty($_POST["picture"])||
+            //empty($_POST["picture"])||
             empty($_POST["typePwd"])||
             empty($_POST["pwd"])||
             empty($_POST["verifPwd"])||

@@ -20,15 +20,30 @@ class PictureModel {
         }
     }
 
+    public function getPicture(int $idPicture) {
+        try {
+            if(!self::existPicture($idPicture))
+                return 2; // picture not exist
+            $res = Database::getInstance()->prepare("SELECT * FROM picture WHERE idPicture = :idPicture");
+            $res->execute(array("idPicture" => $idPicture));
+            return $res->fetch();
+        } catch (\Exception $e) {
+            return 1; // query error
+        } finally {
+            if(!empty($res))
+                $res->closeCursor();
+        }
+    }
+
     public static function addPicture(array $args, int $idAuthor) {
         try {
             if(!FormModel::existForm($args["numero"], $args["idStudent"]))
                 return 2; // form not exist
             $args["idAuthor"] = $idAuthor;
             Database::getInstance()
-                ->prepare("INSERT INTO picture (idAuthor, path, title, numero, idStudent)
-                           VALUES (:idAuthor, :path, :title, :numero, :idStudent)")
-                ->execute(array_intersect_key($args, array_flip(["idAuthor", "path", "title", "numero", "idStudent"])));
+                ->prepare("INSERT INTO picture (idPicture, idAuthor, path, title, numero, idStudent)
+                           VALUES (:idPicture, :idAuthor, :path, :title, :numero, :idStudent)")
+                ->execute(array_intersect_key($args, array_flip(["idPicture, idAuthor", "path", "title", "numero", "idStudent"])));
             return 0; // success
         } catch (\Exception $e) {
             return 1; // query error
@@ -45,6 +60,15 @@ class PictureModel {
             return 0;
         } catch (\Exception $e) {
             return 1; // query error
+        }
+    }
+
+    public static function getNbPictures() {
+        try {
+            $res = Database::getInstance()->query("SELECT * FROM picture");
+            return $res->rowCount();
+        } catch (\Exception $e) {
+            return 234; // query error
         }
     }
 

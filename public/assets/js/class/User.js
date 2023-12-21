@@ -1,3 +1,5 @@
+import { initModalPwd } from "/assets/js/functions.js";
+
 export class User {
 
     idUser;
@@ -30,4 +32,19 @@ export class User {
         modal.querySelector('img').src = this.picture;
         modal.querySelector(".loginStudent").value = this.login;
     }
+
+    updateModifModal(selectorModal) {
+        const modal = document.querySelector(selectorModal);
+        modal.querySelector('#inputLastName').value= this.lastName;
+        modal.querySelector('#inputFirstName').value= this.firstName;
+        modal.querySelector('img').src = this.picture;
+        modal.querySelector('#inputTypePwd').value = this.typePwd;
+        modal.querySelectorAll(".input-pwd").forEach(input => input.value = "");
+        modal.querySelector("#idUser").value = this.idUser;
+        initModalPwd(selectorModal, this.typePwd, false);
+        if(this.role !== "student") {
+            modal.querySelector(".selectRole").value = this.role;
+        }
+    }
+
 }

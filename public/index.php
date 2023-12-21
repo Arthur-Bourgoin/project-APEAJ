@@ -223,7 +223,7 @@ $router->map("POST", "/formation-[i:id]", function ($id) {
     if(isset($_POST["action"])) {
         switch($_POST["action"]) {
             case "updateAccount":
-                $controller->update_user();
+                $controller->update_user(null, null);
                 break;
             case "updateTraining":
                 $controller->update_training();
@@ -235,7 +235,7 @@ $router->map("POST", "/formation-[i:id]", function ($id) {
                 $controller->add_user("training");
                 break;
             case "updateAdmin":
-                $controller->update_user(); // update_admin()
+                $controller->update_user(null, null); // update_admin()
                 break;
             case "deleteUser":
                 $controller->delete_user();

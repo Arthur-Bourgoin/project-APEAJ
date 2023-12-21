@@ -2,7 +2,7 @@
 $bsIcons = true;
 $title = "Accueil";
 $scripts = "<script src='./assets/js/sadmin/home.js' type='module'></script>";
-define("PATH", "/assets/images/formations/");
+define("PATH", "/assets/images/trainings/");
 ob_start();
 ?>
 
@@ -74,7 +74,7 @@ ob_start();
                                     <input type="hidden" name="action" value="deleteTraining">
                                     <input type="hidden" name="idTraining" value="<?= $training->idTraining ?>">
                                     <button type="submit" class="btn btn-primary btn-removed">
-                                        <i class="bi bi-trash-fill" style="font-size: 1.5rem"></i>
+                                        <i class="bi bi-trash" style="font-size: 1.5rem"></i>
                                     </button>
                                 </form>
                                 <a href="/formation-<?=htmlentities($training->idTraining)?>">
@@ -107,14 +107,12 @@ ob_start();
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-4">
-                                <!--Rajouter et changer les images -->
                                 <label for="inputImgUser">
                                     <img id="imgUser" src="<?= PATH . 'ampoules.jpg' ?>" class="w-100 border" alt="Image de l'utilisateur">
                                 </label>
                                 <input id="inputImgUser" type="file" class="d-none" name="picture">
                             </div>
 
-                            <!-- Seletection du nom et du prenom-->
                             <div class="col-8 d-flex flex-column justify-content-between">
                                 <div class="mb-3">
                                     <label for="inputLastName">Nom</label>
@@ -137,7 +135,7 @@ ob_start();
                                 <label for="inputTypePwd" class="form-label">Type de mot de passe</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                    <select class="form-select" id="inputTypePwd" name="typePwd">
+                                    <select class="form-select selectTypePwd" id="inputTypePwd" name="typePwd">
                                         <option value="1">Texte</option>
                                         <option value="2">Code</option>
                                         <option value="3">Schéma</option>
@@ -145,7 +143,7 @@ ob_start();
                                 </div>
                             </div>
 
-                            <div id="champText">
+                            <div class="textField">
                                 <div class="col-12 mt-3">
                                     <label for="inputPwd" class="form-label">Mot de passe</label>
                                     <div class="input-group">
@@ -161,7 +159,7 @@ ob_start();
                                     </div>
                                 </div>
                             </div>
-                            <div id="champCode">
+                            <div class="codeField">
                                 <div class="col-12 mt-3">
                                     <label for="inputPwd" class="form-label">Code</label>
                                     <div class="input-group">
@@ -177,7 +175,7 @@ ob_start();
                                     </div>
                                 </div>
                             </div>
-                            <div id="champSchema">
+                            <div class="schemaField">
                                 <div class="col-12 mt-3">
                                     schéma
                                 </div>

@@ -1,51 +1,102 @@
-export const divText = document.querySelector("#champText");
-export const divCode = document.querySelector("#champCode");
-export const divSchema = document.querySelector("#champSchema");
-
 export const divErrorPwd = document.createElement("div");
 divErrorPwd.classList.add("alert", "alert-danger");
 divErrorPwd.role = "alert";
 divErrorPwd.style.opacity = 1;
 divErrorPwd.innerText = "Erreur, les deux mots de passes ne correspondent pas.";
 
+function eyeOnClick(e) {
+    const input = e.currentTarget.previousElementSibling;
+    if(input.type === "text") {
+        input.type = "password";
+        e.currentTarget.innerHTML = '<i class="bi bi-eye"></i>';
+    }
+    else {
+        input.type = "text";
+        e.currentTarget.innerHTML = '<i class="bi bi-eye-slash"></i>';
+    }
+}
 
-/**
- * removes all password type divs from the DOM
- * @export
- */
-export function removeAllDivPwd() { divText?.remove(); divCode?.remove(); divSchema?.remove(); }
+export function initModalPwd(modal, typePwd, initEvent) {
 
-/**
- * removes all input values of the div as parameter
- * @export
- * @param {HTMLElement} div
- */
-export function resetInput(div) { div.querySelectorAll("input").forEach(input => input.value = "") }
+    const divText = document.querySelector(modal + " .textField");
+    const divCode = document.querySelector(modal + " .codeField");
+    const divSchema = document.querySelector(modal + " .schemaField");
+    if(initEvent) {
+        [divText, divCode].forEach(div => {
+            div.querySelectorAll("span").forEach(span => {
+                span.addEventListener("click", e => eyeOnClick(e));
+            });
+        });
+    }
+    let div;
+    switch(typePwd) {
+        case 1:
+            divCode?.remove();
+            divSchema?.remove();
+            div = divText;
+            break;
+        case 2:
+            divText?.remove();
+            divSchema?.remove();
+            div = divCode;
+            break;
+        case 3:
+            divText?.remove();
+            divCode?.remove();
+            div = divSchema;
+            break;
+    }
+    if(typePwd !== 0) document.querySelector(modal + " .selectTypePwd").parentElement.parentElement.insertAdjacentElement('afterend', div);
+}
 
+export function changeModalPwd(modal) {
 
-/**
- * manages the modification of the DOM at each "change" event of the select
- * @export
- * @param {string} select
- */
-export function eventChangeTypePwd(select) {
-    document.querySelector(select).addEventListener('change', e => {
+    const divText = document.querySelector(modal + " .textField");
+    const divCode = document.querySelector(modal + " .codeField");
+    const divSchema = document.querySelector(modal + " .schemaField");
+
+    function removeAllDivPwd() {
+        [divText, divCode, divSchema].forEach(div => {
+            div.querySelectorAll("input").forEach(input => input.type = "password");
+            div.querySelectorAll("span").forEach(span => span.innerHTML = '<i class="bi bi-eye"></i>');
+            div?.remove();
+        })
+    }
+
+    function appendAllDivPwd() {
         removeAllDivPwd();
-        switch(e.currentTarget.value) {
-            case "1":
-                resetInput(divText);
-                e.currentTarget.parentElement.parentElement.insertAdjacentElement('afterend', divText);
-                break;
-            case "2":
-                resetInput(divCode);
-                e.currentTarget.parentElement.parentElement.insertAdjacentElement('afterend', divCode);
-                break;
-            case "3":
-                resetInput(divSchema);
-                e.currentTarget.parentElement.parentElement.insertAdjacentElement('afterend', divSchema);
-                break;
-        }
-    });
+        const inputSelect = document.querySelector(modal + " .selectTypePwd").parentElement.parentElement;
+        [divText, divCode, divSchema].forEach(div => {
+            inputSelect.insertAdjacentElement('afterend', div);
+        });
+    }
+
+    function resetInput(div) { div.querySelectorAll("input").forEach(input => input.value = "") }
+
+    function eventChangeTypePwd(select) {
+        document.querySelector(select).addEventListener('change', e => {
+            let div = null;
+            removeAllDivPwd();
+            switch(e.currentTarget.value) {
+                case "1":
+                    div = divText; break;
+                case "2":
+                    div = divCode; break;
+                case "3":
+                    div = divSchema; break;
+            }
+            resetInput(div);
+            e.currentTarget.parentElement.parentElement.insertAdjacentElement('afterend', div);
+        });
+    }
+    
+    function eventBtnsCancel(selectors) {
+        document.querySelectorAll(selectors).forEach(btn => {
+            btn.addEventListener("click", e => appendAllDivPwd());
+        });
+    }
+    eventBtnsCancel(modal + " .btn-close, " + modal + " .btn-cancel");
+    eventChangeTypePwd(modal + " .selectTypePwd");
 }
 
 /**
@@ -78,8 +129,8 @@ export function verifPwdModal(event, inputs, modal) {
 /**
  * to manage dynamic photo change
  * @export
- * @param {string} input
- * @param {string} img
+ * @param {string} input "#inputImgUser"
+ * @param {string} img "#imgUser"
  */
 export function eventChangePicture(input, img) {
     document.querySelector(input).addEventListener("input", e => {
@@ -96,7 +147,7 @@ export function eventChangePicture(input, img) {
 /**
  * reduces the opacity of the feddback div until it is removed
  * @export
- * @param {string} selectors
+ * @param {string} selectors ".alert"
  */
 export function removeDivFeedback(selectors) {
     const divAlert = document.querySelector(selectors);

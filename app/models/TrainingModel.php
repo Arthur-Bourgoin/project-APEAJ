@@ -28,7 +28,7 @@ class TrainingModel {
             $res->execute(array("id" => $idTraining));
             if($res->rowCount() === 0)
                 return 2; // training not exist
-            return $res->fetch();
+            return new Training($res->fetch());
         } catch (\Exception $e) {
             return 1; // query error
         } finally {

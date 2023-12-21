@@ -22,7 +22,7 @@
     <main>
         <?= isset($content) ? $content : "Contenu de la page." ?>
     </main>
-    <footer class="footer">
+    <footer class="footer mt-4">
         <div class="container">
             <div class="row bg-secondary">
                 <h1 class="text-center">FOOTER</h1>

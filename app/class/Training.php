@@ -4,21 +4,19 @@ namespace App\Class;
 
 class Training {
 
-    const PATH_IMG = "/assets/images/Formations/";
+    const PATH_IMG = "/assets/images/trainings/";
     public $idTraining;
     public $wording;
     public $description;
     public $qualifLevel;
     public $picture;
-    public $picturePath;
 
     public function __construct(object $obj) {
         $this->idTraining=$obj->idTraining;
         $this->wording=$obj->wording;
         $this->description=$obj->description;
         $this->qualifLevel=$obj->qualifLevel;
-        $this->picture=$obj->picture;
-        $this->picturePath = self::PATH_IMG . $this->picture;
+        $this->picture = self::PATH_IMG . $obj->picture;
     }
 
     public function getBsCard() {

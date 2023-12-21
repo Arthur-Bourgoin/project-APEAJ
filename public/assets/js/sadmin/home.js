@@ -1,12 +1,10 @@
 import * as helpers from '/assets/js/functions.js';
 
-helpers.divCode?.remove();
-helpers.divSchema?.remove();
-
 helpers.eventChangePicture("#inputImgUser", "#imgUser");
 helpers.eventChangePicture("#inputImgTraining", "#imgTraining");
 helpers.removeDivFeedback(".alert");
-helpers.eventChangeTypePwd("#inputTypePwd");
+helpers.changeModalPwd("#newUser");
+helpers.initModalPwd("#newUser", 1);
 
 // supprimer une formation
 document.querySelectorAll(".btn-removed").forEach(btn => {

@@ -30,15 +30,19 @@ class ConnexionController {
             header("Location: /choix-formation");
         } else {
             try {
-                if(!TrainingModel::existTraining($_SESSION["training"])) {
-                    unset($_SESSION["training"]);
-                    header("Location: /choix-formation");
+                if(isset($_SESSION["role"])) {
+                    header("Location: /");
                 } else {
-                    $admins = UserModel::getAdmins();
-                    $students = UserModel::getStudents($_SESSION["training"]);
-                    if(!is_array($admins) || !is_array($students))
-                        $error = 1;
-                    require("../app/views/connexion.php");
+                    if(!TrainingModel::existTraining($_SESSION["training"])) {
+                        unset($_SESSION["training"]);
+                        header("Location: /choix-formation");
+                    } else {
+                        $admins = UserModel::getAdmins();
+                        $students = UserModel::getStudents($_SESSION["training"]);
+                        if(!is_array($admins) || !is_array($students))
+                            $error = 1;
+                        require("../app/views/connexion.php");
+                    }
                 }
             } catch (\Exception $e) {
                 unset($_SESSION["training"]);
@@ -56,7 +60,7 @@ class ConnexionController {
             if(!is_array($admins) || !is_array($students))
                 $error = 1;
             require("../app/views/connexion.php");
-        } elseif(password_verify($user->pwd, $_POST["inputPwd"])) {
+        } elseif(!password_verify($_POST["inputPwd"], $user->pwd)) {
             $error = 2;
             $admins = UserModel::getAdmins();
             $students = UserModel::getStudents($_SESSION["training"]);

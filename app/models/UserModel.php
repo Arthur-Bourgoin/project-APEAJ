@@ -50,8 +50,12 @@ class UserModel {
 
     public static function getAdmins() {
         try {
-            $res = Database::getInstance()->query("SELECT * FROM users WHERE role in ('educator-admin', 'educator', 'CIP', 'super-admin')");
-            return $res->fetchAll();
+            $admins = [];
+            $res = Database::getInstance()->query("SELECT * FROM users WHERE role in ('educator-admin', 'educator', 'CIP')");
+            while($admin = $res->fetch()) {
+                $admins[] = new User($admin, null);
+            }
+            return $admins;
         } catch (\Exception $e) {
             return 1; // query error
         } finally {
@@ -156,8 +160,8 @@ class UserModel {
     /**
      * @todo export excel
      */
-    public static function delete_user(int $idUser) {
-        return 5; // query error
+    public static function deleteUser(int $idUser) {
+        return 0; // query error
         return 26; // user not exist
     }
 
