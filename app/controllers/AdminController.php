@@ -6,31 +6,12 @@ use App\Models\{
     AdminModel,
     SessionModel,
     UserModel,
-    FormModel
+    FormModel,
+    CommentFormModel,
+    PictureModel,
+    CommentStudentModel
+
 };
-
-/*
-TODO
-1) pour tout les controllers qui ne sont pas "d'affichage" (ceux qui sont en POST)
-   pense à tester tous les codes de retour possibles avant de faire fonctionner le modèle
-2) Si les méthodes n'ont pas de paramètres soit:
-    - Elles n'en ont pas besoin
-    - Il faut utiliser les valeurs dans $_POST
-    - J'ai fait une erreur
-3) Marque en haut du fichier tous les codes d'erreurs et à quoi ils correspondent
-4) Documente les fonctions si besoin
-
-Le paramère $id de la méthode update_user() correspond soit à l'id de la session 
-(pour la page infoSession), soit à l'id de l'étudiant (pour la page infoStudent),
-soit "null" (pour la page home). L'id de l'utilisateur à modifier (soit l'id d'un 
-étudiant soit l'id de l'éducateur lui même) doit se trouver dans $_POST.
-
-Il faudrait modifier la page infoForm afin de mettre en place une note par commentaire,
-l'éducateur qui ajouter un commentaire ajoutera aussi une note (modal). Note qu'on
-divise pas 5 pour pouvoir afficher un des 5 smileys en haut à droite de chaque commentaire.
-
-Les modèles contiennent surement pas mal de petites erreurs, demande moi avant de modifier.
-*/
 
 class AdminController extends UserController
 {
@@ -59,18 +40,23 @@ class AdminController extends UserController
      * @param integer $id --> idSession OR idStudent OR null (depending on the page to display)
      *                    --> != $_POST["idUser"]
      */
-    public function update_user(?string $page, ?int $id)
-    {
+    public function update_user(string $page, ?int $id)
+    {    
+        $this->saveProfilePicture('picture');
         if(!$this->verifUser($_POST)){
-            $error=1;
+            $error = 1;
         }
-        else  {
-            $error = UserModel::updateUser($_POST);
-        }
+        switch($_POST['pwd']){
+            case ' ' :
+                $error = UserModel::updateUser($_POST);
+                break;
+            default : 
+                $error = UserModel::updateUserAndPwd($_POST);
+            }
         if($_POST["action"] === "updateStudent") {
             switch($page) {
                 case "home":
-                    $this->displayTemplateHome($error,$error===0 ? 1 : 0); break;
+                    $this->displayTemplateHome($error,$error===0 ? 2 : 0); break;
                 case "infoStudent":
                     $this->displayTemplateInfoStudent($error,$error===0 ? 1 : 0, $id); break;
             }
@@ -110,7 +96,11 @@ class AdminController extends UserController
         $this->displayTemplateInfoSession($error, $error===0 ? 1 : 0, $_POST["idSession"]);
     }
 
-    public function closeSession() {}
+    public function closeSession() 
+    {
+        $error = SessionModel::closeSession($_POST["idSession"]);
+        $this->displayTemplateInfoSession($error, $error===0 ? 2 : 0, $_POST["idSession"]);
+    }
 
     public function add_commentStudent() {}
 
@@ -120,24 +110,72 @@ class AdminController extends UserController
 
     public function infoForm(int $idStudent, int $idForm)
     {
-        $student = UserModel::getUser($idStudent);
-        $form = FormModel::getForm($idForm, $idStudent);
-        require("../app/views/admins/fiche-info.php");
+        $this->displayTemplateInfoForm(0,0,$idStudent,$idForm);
     }
 
     public function finishForm() {}
 
     public function deleteForm() {}
 
-    public function add_commentForm() {}
+    public function add_commentForm($idStudent, $idForm) {
+        $_POST["admin"] = isset($_POST["admin"]) ? true : false;
+        $_POST["idAuthor"] = $_SESSION['id'];
+        if(!$this->verifComment($_POST)){
+            $error = 1;}
+        else
+        $error = CommentFormModel::addComment($_POST,$_SESSION["id"]);
+    $this->displayTemplateInfoForm($error, $error===0 ? 1 : 0, $idStudent, $idForm);
+    }
+    public function update_commentForm($idStudent, $idForm) {
+        $_POST["admin"] = isset($_POST["admin"]) ? true : false;
+    if(!$this->verifComment($_POST))
+        $error = 1;
+    else
+        $error = CommentFormModel::updateComment($_POST);
+        
+    $this->displayTemplateInfoForm($error, $error===0 ? 2 : 0, $idStudent, $idForm);
+    }
+    public function delete_commentForm($idStudent, $idForm) {
+        $error = CommentFormModel::deleteComment($_POST["idCommentForm"]);
+        $this->displayTemplateInfoForm($error, $error===0 ? 3 : 0, $idStudent, $idForm);
+    }
 
-    public function update_commentForm() {}
-
-    public function delete_commentForm() {}
-
-    public function add_picture() {}
-
-    public function delete_picture() {}
+    public function add_picture($idStudent, $idForm) {
+        $idAuthor = $_SESSION['id'];
+        $_POST['numero'] = $idForm;
+        $_POST['idStudent'] = $idStudent;
+        $error=$this->saveFormPicture('path');
+        if($error !==0){
+            $this->displayTemplateInfoForm($error, $error===0 ? 4 : 0, $idStudent, $idForm); 
+        }
+        else{
+            if(!$this->verifPicture($_POST))
+                $error = 4;
+            else
+                $error = PictureModel::addPicture($_POST,$idAuthor);
+            $this->displayTemplateInfoForm($error, $error===0 ? 4 : 0, $idStudent, $idForm);   
+        }
+    } 
+    public function delete_picture($idStudent, $idForm) {
+        $idPicture = $_POST["idPicture"];
+        $uploadDir = 'assets/images/pictures/'; // Chemin vers ton dossier d'images
+        $picturePath = $uploadDir . PictureModel::getPicture($idPicture)->path;
+    // Vérification si le fichier existe avant de le supprimer
+        if (file_exists($picturePath)) {
+            if (unlink($picturePath)) {
+                // Suppression réussie du fichier, maintenant supprime de la base de données
+                $error = PictureModel::deletePicture($idPicture);
+            } else {
+                // Erreur lors de la suppression du fichier
+                $error = 6; // Par exemple, code d'erreur personnalisé pour la suppression du fichier
+            }
+        } else {
+            // Le fichier n'existe pas
+            $error = 7; // Par exemple, code d'erreur personnalisé pour fichier non trouvé
+        }
+    
+        $this->displayTemplateInfoForm($error, $error === 0 ? 5 : 0, $idStudent, $idForm);
+    }
 
     public function createForm(string $fName, string $lName, int $idStudent)
     {
@@ -205,9 +243,10 @@ class AdminController extends UserController
         $error = $p_error;
         $success = $p_success;
         $student = UserModel::getUser($id);
+        $comments =CommentStudentModel::getComments($id);
         $currentForm = FormModel::getCurrentForm($id);
         $finishedForms = FormModel::getFinishedForms($id);
-        if(is_int($currentForm) || !is_array($finishedForms) || is_int($student)) 
+        if(is_int($currentForm) || !is_array($finishedForms) || is_int($student)|| is_int($comments)) 
             $error = 1;
         require("../app/views/admins/details.php");
 
@@ -224,6 +263,15 @@ class AdminController extends UserController
         require("../app/views/admins/details-session.php");
 
     }
+    private function displayTemplateInfoForm(int $p_error, int $p_success,int $idStudent, int $idForm){
+        $error = $p_error;
+        $success = $p_success;    
+        $student = UserModel::getUser($idStudent);
+        $form = FormModel::getForm($idForm, $idStudent);
+        if( is_int($student) || is_int($form))     
+            $error = 1;
+        require("../app/views/admins/fiche-info.php");
+    }
     private function verifSession(array $args){
         if(
             empty($args["wording"]) ||
@@ -235,19 +283,81 @@ class AdminController extends UserController
             return false;
         return true;
     }
+    private function verifClosingSession(array $args){
+        if($args["timeBegin"]>$args["timeEnd"])
+            return false;
+        return true;
+    }
     private function verifUser(array $args){
         if(
             empty($args["idUser"]) ||
             empty($args["lastName"]) ||
             empty($args["firstName"]) ||
-            //empty($args["picture"]) ||
+            empty($args["picture"]) ||
             empty($args["typePwd"]) ||
-            empty($args["pwd"]) ||
-            empty($args["role"]) 
+            empty($args["pwd"]) 
+        )
+            return false;
+        return true;
+    }
+    private function verifComment(array $args){
+        if(
+            empty($args["wording"]) ||
+            empty($args["text"])  
         )
             return false;
         return true;
     }
 
+    private function verifPicture(array $args){
+        if(
+            empty($args["title"]) 
+        )
+            return false;
+        return true;
+    }
+    
+    private function saveProfilePicture(String $name){
+        $uploadDir = 'assets/images/users/'; 
+        if (isset($_FILES[$name]) && $_FILES[$name]['error'] === UPLOAD_ERR_OK) { 
+            $uploadFile = $uploadDir . basename($_FILES[$name]['name']); 
+            if (move_uploaded_file($_FILES[$name]['tmp_name'], $uploadFile)) {
+                $_POST['picture'] = basename($_FILES[$name]['name']);
+            } else {
+                $_POST['picture'] = str_replace($uploadDir, '', UserModel::getUser($_POST['idUser'])->picture);
+            }
+        }
+        else
+            $_POST['picture'] = str_replace($uploadDir, '', UserModel::getUser($_POST['idUser'])->picture);
+
+    }
+
+    private function saveFormPicture(string $name) {
+        $uploadDir = 'assets/images/pictures/';
+        $allowedExtensions = array('jpg', 'jpeg', 'png', 'gif','wbep','svg');
+    
+        if (isset($_FILES[$name]) && $_FILES[$name]['error'] === UPLOAD_ERR_OK && in_array(strtolower(pathinfo($_FILES[$name]['name'], PATHINFO_EXTENSION)), $allowedExtensions)
+        ) {
+            $imageData = file_get_contents($_FILES[$name]['tmp_name']);
+    
+            // Vérification que les données sont une image
+            if (@imagecreatefromstring($imageData)) {
+                $extension = pathinfo($_FILES[$name]['name'], PATHINFO_EXTENSION);
+                $photoCount = PictureModel::getNbPictures();
+                $uploadFile = $uploadDir . ($photoCount + 1) . '.' . $extension;
+    
+                if (move_uploaded_file($_FILES[$name]['tmp_name'], $uploadFile)) {
+                    $_POST['path'] = ($photoCount + 1) . '.' . $extension;
+                    return $error=0;
+                } else {
+                    return $error=10;
+                }
+            } else { 
+                return $error=102;
+            }
+        } else {
+            return $error=102;
+        }
+    }
     
 }

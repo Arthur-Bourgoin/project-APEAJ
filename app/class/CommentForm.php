@@ -14,6 +14,7 @@ class CommentForm {
     public $numero;
     public $idStudent;
     public $author;
+    public $note;
     const TAB_ICONS = ["bi-emoji-angry-fill text-danger", "bi-emoji-frown-fill text-warning", "bi-emoji-neutral-fill text-info", "bi-emoji-smile-fill text-success", "bi-emoji-laughing-fill text-success-emphasis"];
     
     public function __construct(Object $obj, User $author) {
@@ -27,39 +28,39 @@ class CommentForm {
         $this->numero = $obj->numero;
         $this->idStudent = $obj->idStudent;
         $this->author = $author;
-    }
+        $this->note =$obj->note;    }
 
     public function getTemplateComment() {
         ob_start();
         ?>
-        <div class="col-12 mb-4 p-0 form-floating w-100">
-            <div class="form-control comment-container h-auto position-relative" id="<?= $this->idCommentForm ?>">
-                <p class="comment-text">
+        <div class= "col-12 mb-4 p-0 form-floating w-100">
+            <div class= "form-control comment-container h-auto position-relative" id = "<?= $this->idCommentForm ?>">
+                <p class= "comment-text">
                     <?= $this->text ?>
                 </p>
-                <?php if($_SESSION['idUser']==$this->idAuthor){?>
+                <?php if($_SESSION['id'] == $this->idAuthor){?>
                 <div class="d-flex justify-content-end ">
-                    <button class="btn btn-primary me-2 px-2" data-id="<?= $this->idCommentForm ?>" data-bs-toggle="modal"
+                    <button class="btn btn-primary me-2 px-2" data-id="<?= $this->idCommentForm ?>" data-bs-toggle = "modal"
                         data-bs-target="#ModalUpdateComs">
-                        <i class="bi bi-pencil"></i>
+                        <i class = "bi bi-pencil"></i>
                     </button>
-                    <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
-                        <input type="hidden" name="idCommentForm" value="<?= $this->idCommentForm ?>">
-                        <input type="hidden" name="action" value="deleteComment">
-                        <button type="submit" class="btn btn-primary px-2">
-                            <i class="bi bi-trash-fill"></i>
+                    <form action = "<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
+                        <input type = "hidden" name = "idCommentForm" value = "<?= $this->idCommentForm ?>">
+                        <input type = "hidden" name = "action" value = "deleteComment">
+                        <button type = "submit" class = "btn btn-primary px-2">
+                            <i class = "bi bi-trash-fill"></i>
                         </button>
-                    </form>
+                    </form> 
                 </div>
                 <?php } ?>
             </div>
 
-            <label for="<?= $this->idCommentForm ?>">
-                <?= $this->wording ?>
+            <label for = "<?= $this->idCommentForm ?>">
+                <?= $this->author->lastName ?> <?= $this->author->firstName ?> --- <?= $this->wording ?><i class="bi bi-volume-up"></i>
             </label>
-            <span class="position-absolute top-0 end-0 translate-middle z-3">
-                <i class="bi <?= self::TAB_ICONS[ceil($this->note-0.1) / 4 ] ?>"
-                    style="font-size: 1.8rem; margin-right: -18px;"></i>
+            <span class = "position-absolute top-0 end-0 translate-middle z-3">
+                <i class = "bi <?= self::TAB_ICONS[ceil($this->note-0.1) / 4 ] ?>"
+                    style = "font-size: 1.8rem; margin-right: -18px;"></i>
             </span>
         </div>
         <?php

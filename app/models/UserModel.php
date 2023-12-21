@@ -51,7 +51,7 @@ class UserModel {
     public static function getAdmins() {
         try {
             $admins = [];
-            $res = Database::getInstance()->query("SELECT * FROM users WHERE role in ('educator-admin', 'educator', 'CIP')");
+            $res = Database::getInstance()->query("SELECT * FROM users WHERE role in ('educator-admin', 'educator', 'CIP','super-admin')");
             while($admin = $res->fetch()) {
                 $admins[] = new User($admin, null);
             }

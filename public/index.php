@@ -181,25 +181,25 @@ $router->map("POST", "/etudiants/[a]-[a]-[i:idS]/fiche-[i:idF]", function ($idS,
     if(isset($_POST["action"])) {
         switch($_POST["action"]) {
             case "finishForm":
-                $controller->finishForm();
+                $controller->finishForm($idS, $idF);
                 break;
             case "deleteForm":
-                $controller->delete_form();
+                $controller->delete_form($idS, $idF);
                 break;
             case "addComment":
-                $controller->add_commentForm();
+                $controller->add_commentForm($idS, $idF);
                 break;
             case "updateComment":
-                $controller->update_commentForm();
+                $controller->update_commentForm($idS, $idF);
                 break;
             case "deleteComment":
-                $controller->delete_commentForm();
+                $controller->delete_commentForm($idS, $idF);
                 break;
             case "addPicture":
-                $controller->add_picture();
+                $controller->add_picture($idS, $idF);
                 break;
             case "deletePicture":
-                $controller->delete_picture();
+                $controller->delete_picture($idS, $idF);
                 break;
         }
     } else {
