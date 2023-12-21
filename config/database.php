@@ -7,7 +7,7 @@ class Database {
     const SERVER = "localhost";
     const DB = "apeaj";
     const LOGIN = "root";
-    const PWD = "iutinfoROOT";
+    const PWD = "";
     private static $linkpdo = null;
 
     private function __contruct() {}

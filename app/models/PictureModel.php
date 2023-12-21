@@ -20,7 +20,7 @@ class PictureModel {
         }
     }
 
-    public function getPicture(int $idPicture) {
+    public static function getPicture(int $idPicture) {
         try {
             if(!self::existPicture($idPicture))
                 return 2; // picture not exist
@@ -41,18 +41,19 @@ class PictureModel {
                 return 2; // form not exist
             $args["idAuthor"] = $idAuthor;
             Database::getInstance()
-                ->prepare("INSERT INTO picture (idPicture, idAuthor, path, title, numero, idStudent)
-                           VALUES (:idPicture, :idAuthor, :path, :title, :numero, :idStudent)")
-                ->execute(array_intersect_key($args, array_flip(["idPicture, idAuthor", "path", "title", "numero", "idStudent"])));
+                ->prepare("INSERT INTO picture (idAuthor, path, title, numero, idStudent)
+                           VALUES (:idAuthor, :path, :title, :numero, :idStudent)")
+                ->execute(array_intersect_key($args, array_flip(["idAuthor", "path", "title", "numero", "idStudent"])));
             return 0; // success
         } catch (\Exception $e) {
-            return 1; // query error
+            throw ($e);
+           // return 1; // query error
         }
     } 
 
     public static function deletePicture(int $idPicture) { 
         try {
-            if(!self::existPicture($iPicture))
+            if(!self::existPicture($idPicture))
                 return 2; // picture not exist
             Database::getInstance()
                 ->prepare("DELETE FROM picture WHERE idPicture = :idPicture")

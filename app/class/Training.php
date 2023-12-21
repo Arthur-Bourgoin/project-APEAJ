@@ -35,7 +35,7 @@ class Training {
             <div class="divTraining d-flex align-items-center border border-dark rounded-3" role="button">
                 <div class="col-10 col-md-4">
                     <div class="text-center">
-                        <img src= <?= $this->picturePath ?> class="w-75 my-4">
+                        <img src= <?= $this->picture ?> class="w-75 my-4">
                     </div>
                 </div>
                 <div class="col-8">
