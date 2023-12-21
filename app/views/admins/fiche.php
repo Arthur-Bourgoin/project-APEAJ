@@ -11,7 +11,12 @@ ob_start();
         height: 100px;
     }
 </style>
-<div class="container">
+<div class="container position-relative">
+    <div class="col-lg-1 position-absolute top-0 end-0">
+        <a href="https://google.com">
+            <i class="bi bi-person-circle text-black" style="font-size: 3rem;"></i>
+        </a>
+    </div>
     <div class="row m-0">
         <div class="col-md-3 col-lg-2 border d-flex flex-row flex-md-column">
             <div class="border px-2 m-1">
