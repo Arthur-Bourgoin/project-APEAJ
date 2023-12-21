@@ -13,22 +13,21 @@ ob_start(); //On bufferise l'affichage
           require("../app/views/layout.php");
           exit();
         case 2 :
-          echo '<div class="alert alert-danger my-3" role="alert"> La formation n\'existe pas.</div>'; break;
+          echo '<div class="row alert alert-danger my-3" role="alert"> La formation n\'existe pas.</div>'; break;
         case 3:
-          echo '<div class="alert alert-danger my-3" role="alert">Une erreur s\'est produite lors de la mise à jour de la formation.</div>'; break;
+          echo '<div class="row alert alert-danger my-3" role="alert">Une erreur s\'est produite lors de la mise à jour de la formation.</div>'; break;
         case 4:
-          echo '<div class="alert alert-danger my-3" role="alert">Ajout impossible d\'un utilisateur, les valeurs rentrées ne sont pas valides.</div>'; break;
+          echo '<div class="row alert alert-danger my-3" role="alert">Ajout impossible d\'un utilisateur, les valeurs rentrées ne sont pas valides.</div>'; break;
         case 5:
-          echo '<div class="alert alert-danger my-3" role="alert">Une erreur s\'est produite lors de la suppression de l\'utilisateur.</div>'; break; 
+          echo '<div class="row alert alert-danger my-3" role="alert">Une erreur s\'est produite lors de la suppression de l\'utilisateur.</div>'; break; 
         case 6:
-          echo '<div class="alert alert-danger my-3" role="alert">Une erreur s\'est produite lors de l\'ajout d\'un utilisateur à une formation.</div>'; break;
+          echo '<div class="row alert alert-danger my-3" role="alert">Une erreur s\'est produite lors de l\'ajout d\'un utilisateur à une formation.</div>'; break;
         case 7:
-          echo '<div class="alert alert-danger my-3" role="alert">Modification de l\utilisateur avec succès</div>'; break;
+          echo '<div class="row alert alert-danger my-3" role="alert">Modification de l\utilisateur avec succès</div>'; break;
         case 8:
-          echo '<div class="alert alert-danger my-3" role="alert">Une erreur s\'est produite lors de la suppression de la formation.</div>'; break;
+          echo '<div class="row alert alert-danger my-3" role="alert">Une erreur s\'est produite lors de la suppression de la formation.</div>'; break;
         case 26:
-            echo '<div class="alert alert-danger my-3" role="alert">L\'utilisateur n\'existe pas</div>'; break;
-  
+            echo '<div class="row alert alert-danger my-3" role="alert">L\'utilisateur n\'existe pas</div>'; break;
     }
 
     switch ($success) {
@@ -223,9 +222,9 @@ ob_start(); //On bufferise l'affichage
 
                             <div class="textField">
                                 <div class="col-12 mt-3">
-                                    <label for="inputPwd" class="form-label">Mot de passe</label>
+                                    <label for="inputPwdText" class="form-label">Mot de passe</label>
                                     <div class="input-group">
-                                        <input id="inputPwd" type="password" class="form-control input-pwd" name="pwd">
+                                        <input id="inputPwdText" type="password" class="form-control input-pwd" name="pwd">
                                         <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
                                     </div>
                                 </div>

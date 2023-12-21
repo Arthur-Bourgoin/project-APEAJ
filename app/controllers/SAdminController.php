@@ -24,7 +24,7 @@ class SAdminController extends AdminController {
 
     public function add_user(string $page) {
         if(!$this->verifUser()){
-            $error = 5;
+            $error = 6;
         } else {
             $error = UserModel::addUser($_POST,$_POST["idTraining"]);
         }
