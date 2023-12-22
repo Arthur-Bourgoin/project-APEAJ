@@ -13,12 +13,11 @@ ob_start();
                 <i class="bi bi-file-plus me-2"></i>Ajouter une formation 
             </button>
             <div class="d-flex align-items-center">
-                <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
-                    <input type="hidden" name="action" value="disconnect">
-                    <button type="submit" class="btn btn-danger">
+                <a href="/disconnect">
+                    <button class="btn btn-danger">
                         <i class="bi bi-power me-2"></i>Se déconnecter 
                     </button>
-                </form>
+                </a>
                 <button class="btn p-0 ms-3">
                     <i class="bi bi-person-circle" style="font-size: 2.5rem"></i>
                 </button>
@@ -28,25 +27,27 @@ ob_start();
     switch ($error) {
         case 1 :
             echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Une erreur s\'est produite lors de l\'initialisation de la page.</div>'; break;
-        case 2 :
-            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Ajout impossible d\'une formation impossible, les données ne sont pas completes.</div>'; break;
-        case 3 : 
-            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Une erreur s\'est produite lors de l\'ajout d\'une formation</div>'; break;
-        case 8:
-            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Une erreur s\'est produite lors de la suppression de la formation.</div>'; break;
-        case 5 : 
-            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Ajout impossible d\'un utilisateur, les valeurs rentrées ne sont pas valides.</div>'; break;
-        case 6 :
-            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Une erreur s\'est produite lors de l\'ajout d\'un utilisateur à une formation.</div>'; break;
+        case 101:
+            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Une erreur s\'est produite lors de l\'ajout d\'un utilisateur.</div>'; break;
+        case 102:
+            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Une erreur s\'est produite lors de l\'ajout d\'une formation.</div>'; break;
+        case 301:
+            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Une erreur s\'est produite lors de la suppression d\'une formation.</div>'; break;
+        case 404:
+            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Erreur, la formation n\'existe pas.</div>'; break;
+        case 501:
+            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Les informations de l\'utilisateur ne sont pas valides.</div>'; break;
+        case 503:
+            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Les informations de la formation ne sont pas valides.</div>'; break;
     }
 
     switch ($success) {
         case 1 :
-            echo '<div class="alert alert-success mt-3 mb-1" role="alert">Ajout de la formation enregistré.</div>'; break;
-        case 2 :
-            echo '<div class="alert alert-success mt-3 mb-1" role="alert">Suppression enregistrée.</div>'; break;
-        case 3 :
             echo '<div class="alert alert-success mt-3 mb-1" role="alert">Ajout de l\'utilisateur enregistré.</div>'; break;
+        case 2 :
+            echo '<div class="alert alert-success mt-3 mb-1" role="alert">Ajout de la formation enregistré.</div>'; break;
+        case 3 :
+            echo '<div class="alert alert-success mt-3 mb-1" role="alert">Suppression de la formation enregistrée.</div>'; break;
     }
     ?>
     </div>
@@ -57,10 +58,10 @@ ob_start();
         <?php
             if(is_array($trainings)) {
                 foreach ($trainings as $training) {?>
-                    <div class="row border mb-3">
+                    <div class="row border mb-3 divTraining">
                         <div class="col-4 my-auto">
                             <div class="text-center">
-                                <img src="<?= PATH . 'ampoules.jpg' ?>" class="border w-100">
+                                <img src="<?= $training->picture ?>" class="w-100">
                             </div>
                         </div>
                         <div class="col-8 d-flex flex-column justify-content-evenly py-3">
@@ -108,7 +109,7 @@ ob_start();
                         <div class="row">
                             <div class="col-4">
                                 <label for="inputImgUser">
-                                    <img id="imgUser" src="<?= PATH . 'ampoules.jpg' ?>" class="w-100 border" alt="Image de l'utilisateur">
+                                    <img id="imgUser" src="/assets/images/users/user.png" class="w-100 border" alt="Image de l'utilisateur">
                                 </label>
                                 <input id="inputImgUser" type="file" class="d-none" name="picture">
                             </div>
@@ -118,7 +119,7 @@ ob_start();
                                     <label for="inputLastName">Nom</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
-                                        <input id="inputLastName" type="text" class="form-control" name="lastName">
+                                        <input id="inputLastName" type="text" class="form-control" name="lastName" required>
                                     </div>
                                 </div>
 
@@ -126,7 +127,7 @@ ob_start();
                                     <label for="inputFirstName">Prénom</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
-                                        <input id="inputFirstName" type="text" class="form-control" name="firstName">
+                                        <input id="inputFirstName" type="text" class="form-control" name="firstName" required>
                                     </div>
                                 </div>
                             </div>
@@ -147,14 +148,14 @@ ob_start();
                                 <div class="col-12 mt-3">
                                     <label for="inputPwd" class="form-label">Mot de passe</label>
                                     <div class="input-group">
-                                        <input id="inputPwd" type="password" class="form-control input-pwd" name="pwd">
+                                        <input id="inputPwd" type="password" class="form-control input-pwd" name="pwd" required>
                                         <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
                                     </div>
                                 </div>
                                 <div class="col-12 mt-3">
                                     <label for="inputConfirmPwd" class="form-label">Confirmation du mot de passe</label>
                                     <div class="input-group">
-                                        <input id="inputVerifPwd" type="password" class="form-control input-pwd" name="verifPwd">
+                                        <input id="inputConfirmPwd" type="password" class="form-control input-pwd" name="verifPwd" required>
                                         <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
                                     </div>
                                 </div>
@@ -163,14 +164,14 @@ ob_start();
                                 <div class="col-12 mt-3">
                                     <label for="inputPwd" class="form-label">Code</label>
                                     <div class="input-group">
-                                        <input id="inputPwd" type="password" class="form-control input-pwd" name="pwd" pattern="[0-9]{4,6}">
+                                        <input id="inputPwd" type="password" class="form-control input-pwd" name="pwd" pattern="[0-9]{4,6}" required>
                                         <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
                                     </div>
                                 </div>
                                 <div class="col-12 mt-3">
                                     <label for="inputConfirmPwd" class="form-label">Confirmation du code</label>
                                     <div class="input-group">
-                                        <input id="inputVerifPwd" type="password" class="form-control input-pwd" name="verifPwd" pattern="[0-9]{4,6}">
+                                        <input id="inputConfirmPwd" type="password" class="form-control input-pwd" name="verifPwd" pattern="[0-9]{4,6}" required>
                                         <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
                                     </div>
                                 </div>
@@ -229,23 +230,23 @@ ob_start();
                             <!--Selection de l'image -->
                             <div class="col-4">
                                 <label for="inputImgTraining">
-                                    <img id="imgTraining" src="<?= PATH . 'ampoules.jpg' ?>" class="w-100 border border-black border-2 rounded" alt="Photo de la formation">
+                                    <img id="imgTraining" src="/assets/images/users/user.png" class="w-100 border border-black border-2 rounded" alt="Photo de la formation">
                                 </label>
                                 <input id="inputImgTraining" type="file" class="d-none" name="imgTraining">
                             </div>   
                             <div class="col-8">
                                 <div class="">
                                     <label for="inputName" class="form-label">Nom de la formation</label>
-                                    <input id="inputName" type="text" class="form-control" name="wording">
+                                    <input id="inputName" type="text" class="form-control" name="wording" required>
                                 </div>
                                 <div class="">
                                     <label for="inputLevel" class="form-label">Niveau de la formation</label>
-                                    <input id="inputLevel" type="text" class="form-control" name="qualifLevel">
+                                    <input id="inputLevel" type="text" class="form-control" name="qualifLevel" required>
                                 </div>
                             </div>
                             <div class="col-12 my-3">
                                 <label for="inputDescription" class="form-label">Description Formation</label>                                        
-                                <textarea class="form-control" id="inputDescription" rows="3" name="description" ></textarea>
+                                <textarea class="form-control" id="inputDescription" rows="3" name="description" required></textarea>
                             </div>
                 
                             <div class="modal-footer">
@@ -266,6 +267,6 @@ ob_start();
 </div>
 
 <?php
-$content = ob_get_clean(); //On récupère le contenu bufferisé
+$content = ob_get_clean();
 
 require("../app/views/layout.php");

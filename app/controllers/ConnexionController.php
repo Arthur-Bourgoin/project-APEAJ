@@ -74,4 +74,10 @@ class ConnexionController {
         }
     }
 
+    public function disconnect() {
+        session_destroy();
+        header("Location: /choix-formation");
+        exit();
+    }
+
 }

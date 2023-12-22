@@ -45,14 +45,14 @@ class TrainingModel {
                 ->execute(array_intersect_key($args, array_flip(["wording", "description", "qualifLevel"])));
             return 0;
         } catch (\Exception $e) {
-            return 3; // query error
+            return 102; // query error
         }
     }
 
     public static function updateTraining(array $args) {
         try {
             if(!self::existTraining($args["idTraining"]))
-                return 2; // training not exist
+                return 404; // training not exist
             Database::getInstance()
                 ->prepare("UPDATE training
                            SET wording = :wording, description = :description, qualifLevel = :qualifLevel
@@ -60,7 +60,7 @@ class TrainingModel {
                 ->execute(array_intersect_key($args, array_flip(["wording", "description", "qualifLevel", "idTraining"])));
             return 0;
         } catch (\Exception $e) {
-            return 3; // query error
+            return 202; // query error
         }
     }
 
@@ -73,13 +73,13 @@ class TrainingModel {
     public static function deleteTraining(int $idTraining) {
         try {
             if(!self::existTraining($idTraining))
-                return 2; // training not exist
+                return 404; // training not exist
             Database::getInstance()
                 ->prepare("DELETE FROM training WHERE idTraining = :id")
                 ->execute(array("id" => $idTraining));
             return 0;
         } catch (\Exception $e) {
-            return 8; // query error
+            return 301; // query error
         }
     }
 

@@ -7,9 +7,20 @@ $bsIcons = true ?>
 <?php ob_start(); ?>
 
 <div class="container">
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <h1 class="m-0">Sélectionner un profil</h1>
-        <button class="btn btn-primary" id="btn-admin" data-bs-toggle="modal" data-bs-target="#modalConnexionAdmin">Éducateur</button>
+    <div class="row mb-4">
+        <h1 class="text-center">Sélectionner un profil</h1>
+        <div class="d-flex justify-content-between">
+            <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
+                <input type="hidden" name="action" value="disconnectTraining">
+                <button class="btn btn-primary">
+                    <i class="bi bi-arrow-left-circle me-2"></i>Retour
+                </button>
+            </form>
+            <button class="btn btn-primary" id="btn-admin" data-bs-toggle="modal" data-bs-target="#modalConnexionAdmin">
+            <i class="bi bi-person-lock me-2"></i>Éducateur
+            </button>
+        </div>
+        
     </div>
 <?php
     if(isset($error)) {
@@ -46,6 +57,7 @@ $bsIcons = true ?>
                 <img class="studentPicture img-thumbnail w-50" alt="Photo de l'étudiant">
                 <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST" class="d-flex flex-column align-items-center w-100">
                     <input type="hidden" name="inputLogin" class="loginStudent">
+                    <input type="hidden" name="action" value="verifLogin">
                         <div class="input-group my-4 w-75">
                             <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
                             <input type="password" class="form-control" name="inputPwd" placeholder="Votre mot de passe">
@@ -74,6 +86,7 @@ $bsIcons = true ?>
                 <img class="studentPicture img-thumbnail w-50" alt="Photo de l'étudiant">
                 <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST" class="d-flex flex-column align-items-center">
                     <input type="hidden" name="inputLogin" class="loginStudent">
+                    <input type="hidden" name="action" value="verifLogin">
                     <div class="input-group my-4 w-75">
                         <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
                         <input type="password" class="form-control text-center login-code" placeholder="Code numérique" name="inputPwd" pattern="[0-9]{4,6}"/>
@@ -117,8 +130,9 @@ $bsIcons = true ?>
             </div>
             <div class="modal-body text-center">
                 <!-- Photo de l'étudiant -->
-                <img class="adminPicture img-thumbnail w-50" src="/assets/images/Utilisateurs/user.png" alt="Icone de l'admin">
+                <img class="adminPicture img-thumbnail w-50" alt="Icone de l'admin">
                 <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST" class="d-flex flex-column align-items-center w-100">
+                    <input type="hidden" name="action" value="verifLogin">
                     <div class="input-group w-75 my-3">
                         <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
                         <input id="loginAdmin" type="texte" class="form-control" placeholder="Votre login" name="inputLogin">

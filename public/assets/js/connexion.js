@@ -17,7 +17,7 @@ if(divAlert) {
 document.querySelector("#btn-admin").addEventListener("click", e => {
     visibleDivAdmin(null);
     document.querySelector("#loginAdmin").value="";
-    document.querySelector('#modalConnexionAdmin img').src =  '/assets/images/Utilisateurs/user.png';
+    document.querySelector('#modalConnexionAdmin img').src =  '/assets/images/users/user.png';
     document.querySelectorAll("#modalConnexionAdmin .divChange .input-group input").forEach(input => {
         input.type = "password";
         input.value = "";
@@ -86,7 +86,7 @@ document.querySelector("#loginAdmin").addEventListener("input", e => {
         }
     } else {
         visibleDivAdmin(null);
-        document.querySelector('#modalConnexionAdmin img').src =  '/assets/images/Utilisateurs/user.png';
+        document.querySelector('#modalConnexionAdmin img').src =  '/assets/images/users/user.png';
     }
 });
 

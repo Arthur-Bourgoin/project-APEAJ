@@ -60,7 +60,23 @@ $router->map("GET", "/connexion", function () {
 });
 $router->map("POST", "/connexion", function () {
     $controller = new ConnexionController();
-    $controller->verifLogin();
+    if(isset($_POST["action"])) {
+        switch($_POST["action"]) {
+            case "verifLogin":
+                $controller->verifLogin();
+                break;
+            case "disconnectTraining":
+                $controller->disconnect();
+                break;
+        }
+    }
+     else {
+        $controller->login();
+     }
+});
+$router->map("GET", "/disconnect", function() {
+    $controller = new ConnexionController();
+    $controller->disconnect();
 });
 
 /*######################################################################################
@@ -223,19 +239,19 @@ $router->map("POST", "/formation-[i:id]", function ($id) {
     if(isset($_POST["action"])) {
         switch($_POST["action"]) {
             case "updateAccount":
-                $controller->update_user(null, null);
+                $controller->update_user();
                 break;
             case "updateTraining":
                 $controller->update_training();
                 break;
             case "deleteTraining":
-                $controller->delete_training("training");
+                $controller->delete_training();
                 break;
             case "addUser":
                 $controller->add_user("training");
                 break;
             case "updateAdmin":
-                $controller->update_user(null, null); // update_admin()
+                $controller->update_user();
                 break;
             case "deleteUser":
                 $controller->delete_user();

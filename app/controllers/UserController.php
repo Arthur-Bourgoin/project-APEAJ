@@ -68,7 +68,7 @@ class UserController {
                         $controller->add_training();
                         break;
                     case "deleteTraining":
-                        $controller->delete_training("home");
+                        $controller->delete_training();
                         break;
                     case "addUser":
                         $controller->add_user("home");

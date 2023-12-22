@@ -72,9 +72,9 @@ class User {
             <div class="card-footer d-flex justify-content-evenly w-100">
                 <?php
                     if($this->role === "student") {
-                        echo '<a href="/etudiants/' . $this->lastName . '-' . $this->firstName . '-' . $this->idUser . '"><button type="button" class=" btn btn-primary"><i class="bi bi-eye"></i></button></a>';
+                        echo '<a href="/etudiants/' . $this->lastName . '-' . $this->firstName . '-' . $this->idUser . '"><button type="button" class="btn btn-primary"><i class="bi bi-eye"></i></button></a>';
                     } else {
-                        echo '<button type="button" class=" btn btn-primary btn-update-admin" data-id="' . $this->idUser . ' "data-bs-toggle="modal" data-bs-target="#updateUserModal"><i class="bi bi-eye"></i></button>';
+                        echo '<button type="button" class=" btn btn-primary btn-update-admin" data-id="' . $this->idUser . '" data-bs-toggle="modal" data-bs-target="#updateUserModal"><i class="bi bi-eye"></i></button>';
                     }
                 ?>
                 <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
