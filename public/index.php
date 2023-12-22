@@ -60,7 +60,23 @@ $router->map("GET", "/connexion", function () {
 });
 $router->map("POST", "/connexion", function () {
     $controller = new ConnexionController();
-    $controller->verifLogin();
+    if(isset($_POST["action"])) {
+        switch($_POST["action"]) {
+            case "verifLogin":
+                $controller->verifLogin();
+                break;
+            case "disconnectTraining":
+                $controller->disconnect();
+                break;
+        }
+    }
+     else {
+        $controller->login();
+     }
+});
+$router->map("GET", "/disconnect", function() {
+    $controller = new ConnexionController();
+    $controller->disconnect();
 });
 
 /*######################################################################################
@@ -138,6 +154,7 @@ $router->map("POST", "/etudiants/[a]-[a]-[i:id]", function ($id) {
     if(isset($_POST["action"])) {
         switch($_POST["action"]) {
             case "updateAccount":
+                $controller->update_user("infoStudent", $id,null);
             case "updateUser":
                 $controller->update_user("infoStudent", $id);
                 break;
@@ -164,7 +181,7 @@ $router->map("POST", "/sessions/[i:id]", function ($id) {
     if(isset($_POST["action"])) {
         switch($_POST["action"]) {
             case "updateAccount":
-                $controller->update_user($_SESSION["idUser"], "infoSession", $id);
+                $controller->update_user("infoSession", $id,null);
                 break;
             case "updateSession":
                 $controller->update_session();
@@ -206,6 +223,9 @@ $router->map("POST", "/etudiants/[a]-[a]-[i:idS]/fiche-[i:idF]", function ($idS,
             case "deletePicture":
                 $controller->delete_picture($idS, $idF);
                 break;
+            case "updateAccount":
+                $controller->update_user("infoForm", $idS,$idF,null);
+                break;
         }
     } else {
         $controller->infoForm($idS, $idF);
@@ -228,19 +248,19 @@ $router->map("POST", "/formation-[i:id]", function ($id) {
     if(isset($_POST["action"])) {
         switch($_POST["action"]) {
             case "updateAccount":
-                $controller->update_user(null, null);
+                $controller->update_user();
                 break;
             case "updateTraining":
                 $controller->update_training();
                 break;
             case "deleteTraining":
-                $controller->delete_training("training");
+                $controller->delete_training();
                 break;
             case "addUser":
                 $controller->add_user("training");
                 break;
             case "updateAdmin":
-                $controller->update_user(null, null); // update_admin()
+                $controller->update_user();
                 break;
             case "deleteUser":
                 $controller->delete_user();

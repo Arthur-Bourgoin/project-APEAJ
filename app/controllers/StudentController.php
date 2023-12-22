@@ -35,6 +35,8 @@ class StudentController extends UserController {
         require("../app/views/students/fiche-info.php");
     }
 
+    
+
     public function consultForm(int $idF) {} 
 
     public function add_comment() {}

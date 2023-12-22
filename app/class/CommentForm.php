@@ -49,7 +49,7 @@ class CommentForm {
                         <input type = "hidden" name = "idCommentForm" value = "<?= $this->idCommentForm ?>">
                         <input type = "hidden" name = "action" value = "deleteComment">
                         <button type = "submit" class = "btn btn-primary px-2">
-                            <i class = "bi bi-trash-fill"></i>
+                            <i class = "bi bi-trash"></i>
                         </button>
                     </form> 
                 </div>

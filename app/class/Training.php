@@ -19,9 +19,6 @@ class Training {
         $this->picture = self::PATH_IMG . $obj->picture;
     }
 
-    public function getBsCard() {
-
-    }
 
     // $footer = "connexion" || "sadmin" || "admin"
     public function getDenomination($footer): String {

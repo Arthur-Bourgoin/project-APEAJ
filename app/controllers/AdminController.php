@@ -9,13 +9,13 @@ use App\Models\{
     FormModel,
     CommentFormModel,
     PictureModel,
-    CommentStudentModel
+    CommentStudentModel,
+    TrainingModel
 
 };
 
 class AdminController extends UserController
 {
-
     public function __construct()
     {
         parent::__construct();
@@ -40,20 +40,27 @@ class AdminController extends UserController
      * @param integer $id --> idSession OR idStudent OR null (depending on the page to display)
      *                    --> != $_POST["idUser"]
      */
-    public function update_user(string $page, ?int $id)
-    {    
+    public function update_user(string $page, ?int $id, ?int $id2)
+    {  
+        $allowed_roles = array('educator-admin', 'educator', 'CIP', 'super-admin');
         $this->saveProfilePicture('picture');
         if(!$this->verifUser($_POST)){
-            $error = 1;
+            $error = 501;
         }
-        switch($_POST['pwd']){
-            case ' ' :
-                $error = UserModel::updateUser($_POST);
-                break;
-            default : 
-                $error = UserModel::updateUserAndPwd($_POST);
-            }
+        
         if($_POST["action"] === "updateStudent") {
+            if (in_array($_SESSION['role'], $allowed_roles)){
+            switch(true) {
+                case empty(trim($_POST['pwd'])):
+                    $error = UserModel::updateUser($_POST);
+                    break;
+                default:
+                    $error = UserModel::updateUserAndPwd($_POST);
+                    break;
+                }
+            }else {
+                require("../app/views/error403.php");
+            }
             switch($page) {
                 case "home":
                     $this->displayTemplateHome($error,$error===0 ? 2 : 0); break;
@@ -62,13 +69,27 @@ class AdminController extends UserController
             }
         }
         else {
+            if($_SESSION['id']==$_POST["idUser"]){
+                switch(true) {
+                    case empty(trim($_POST['pwd'])):
+                        $error = UserModel::updateUser($_POST);
+                        break;
+                    default:
+                        $error = UserModel::updateUserAndPwd($_POST);
+                        break;
+                    }
+            }else{
+                $error=707;
+            }
             switch($page) {
                 case "home":
-                    $this->displayTemplateHome($error,$error===0 ? 1 : 0); break;
+                    $this->displayTemplateHome($error,$error===0 ? 12 : 0); break;
                 case "infoStudent":
-                    $this->displayTemplateInfoStudent($error,$error===0 ? 1 : 0, $id); break;
+                    $this->displayTemplateInfoStudent($error,$error===0 ? 12 : 0, $id); break;
                 case "infoSession":
-                    $this->displayTemplateInfoSession($error,$error===0 ? 1 : 0, $id); break;
+                    $this->displayTemplateInfoSession($error,$error===0 ? 12 : 0, $id); break;
+                case "infoForm":
+                    $this->displayTemplateInfoForm($error,$error===0 ? 12 : 0, $id,$id2); break;
             }
         }
     }
@@ -102,11 +123,18 @@ class AdminController extends UserController
         $this->displayTemplateInfoSession($error, $error===0 ? 2 : 0, $_POST["idSession"]);
     }
 
-    public function add_commentStudent() {}
-
-    public function update_commentStudent() {}
-
-    public function delete_commentStudent() {}
+    public function add_commentStudent() {
+        $error=CommentStudentModel::addComment($_POST,$_SESSION["id"]);
+        $this->displayTemplateInfoStudent($error, $error===0 ? 3 : 0, $_POST["idStudent"]);
+    }
+    public function update_commentStudent() {
+        $error=CommentStudentModel::updateComment($_POST,$_SESSION["id"]);
+        $this->displayTemplateInfoStudent($error, $error===0 ? 4 : 0, $_POST["idStudent"]);
+        }
+    public function delete_commentStudent() {
+        $error=CommentStudentModel::deleteComment($_POST["idStudent"],$_POST["idEducator"]);
+        $this->displayTemplateInfoStudent($error, $error===0 ? 2 : 0, $_POST["idStudent"]);
+    }
 
     public function infoForm(int $idStudent, int $idForm)
     {
@@ -237,9 +265,11 @@ class AdminController extends UserController
     private function displayTemplatehome(int $p_error, int $p_success) {
         $error = $p_error;
         $success = $p_success;
-        $formation = 1;
-        $students = UserModel::getStudents($formation);
-        $sessions = SessionModel::getSessions($formation);
+        $currentUser=$this->getCurrentUser();
+        $training = TrainingModel::getTraining($_SESSION["training"]);
+        $students = UserModel::getStudents($training->idTraining);
+        $sessions = SessionModel::getSessions($training->idTraining);
+        
         if(!is_array($students) || !is_array($sessions)) 
             $error = 1;
         require("../app/views/admins/home.php");
@@ -252,6 +282,7 @@ class AdminController extends UserController
         $comments =CommentStudentModel::getComments($id);
         $currentForm = FormModel::getCurrentForm($id);
         $finishedForms = FormModel::getFinishedForms($id);
+        $currentUser=$this->getCurrentUser();
         if(is_int($currentForm) || !is_array($finishedForms) || is_int($student)|| is_int($comments)) 
             $error = 1;
         require("../app/views/admins/details.php");
@@ -264,6 +295,7 @@ class AdminController extends UserController
         $students = UserModel::getStudents(1);
         $forms = FormModel::getFormsBySession($id);
         $session = SessionModel::getSession($id);
+        $currentUser=$this->getCurrentUser();
         if(!is_array($students) || !is_array($forms) || is_int($session)) 
             $error = 1;
         require("../app/views/admins/details-session.php");
@@ -274,6 +306,7 @@ class AdminController extends UserController
         $success = $p_success;    
         $student = UserModel::getUser($idStudent);
         $form = FormModel::getForm($idForm, $idStudent);
+        $currentUser=$this->getCurrentUser();
         if( is_int($student) || is_int($form))     
             $error = 1; 
         require("../app/views/admins/fiche-info.php");
@@ -299,9 +332,7 @@ class AdminController extends UserController
             empty($args["idUser"]) ||
             empty($args["lastName"]) ||
             empty($args["firstName"]) ||
-            empty($args["picture"]) ||
-            empty($args["typePwd"]) ||
-            empty($args["pwd"]) 
+            empty($args["picture"]) 
         )
             return false;
         return true;
@@ -331,10 +362,13 @@ class AdminController extends UserController
                 $_POST['picture'] = basename($_FILES[$name]['name']);
             } else {
                 $_POST['picture'] = str_replace($uploadDir, '', UserModel::getUser($_POST['idUser'])->picture);
+                $_POST['picture'] = ltrim($_POST['picture'], '/');
             }
         }
         else
-            $_POST['picture'] = str_replace($uploadDir, '', UserModel::getUser($_POST['idUser'])->picture);
+           $_POST['picture'] = str_replace($uploadDir, '', UserModel::getUser($_POST['idUser'])->picture);
+           $_POST['picture'] = ltrim($_POST['picture'], '/');
+
 
     }
 
@@ -364,6 +398,9 @@ class AdminController extends UserController
         } else {
             return $error=102;
         }
+    }
+    private function getCurrentUser(){
+        return UserModel::getUser($_SESSION['id']);
     }
     
 }

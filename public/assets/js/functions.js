@@ -54,7 +54,6 @@ export function changeModalPwd(modal) {
     const divText = document.querySelector(modal + " .textField");
     const divCode = document.querySelector(modal + " .codeField");
     const divSchema = document.querySelector(modal + " .schemaField");
-
     function removeAllDivPwd() {
         [divText, divCode, divSchema].forEach(div => {
             div.querySelectorAll("input").forEach(input => input.type = "password");
@@ -129,13 +128,13 @@ export function verifPwdModal(event, inputs, modal) {
 /**
  * to manage dynamic photo change
  * @export
- * @param {string} input "#inputImgUser"
- * @param {string} img "#imgUser"
+ * @param {string} 
+ * @param {string} 
  */
 export function eventChangePicture(input, img) {
     document.querySelector(input).addEventListener("input", e => {
         const reader = new FileReader();
-        reader.onload = e => document.querySelector(img).src = e.target.result;
+        reader.onload = e => document.querySelector(img).src = e.target.result
         reader.addEventListener('progress', e => {
             if (e.loaded && e.total)
               console.log("Progress: " + Math.round((e.loaded / e.total) * 100));

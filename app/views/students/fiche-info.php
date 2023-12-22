@@ -199,7 +199,7 @@ define("PATH", "/assets/images/pictures/");
     </div>
 
     <div class = "modal fade" id = "ModalUpdateComs" tabindex = "-1" aria-labelledby = "ModalUpdateComs" aria-hidden = "true">
-        <div class = "modal-dialog modal-lg">
+        <div class = "modal-dialog modal-dialog-centered modal-lg">
             <div class = "modal-content">
                 <div class = "modal-header">
                     <h5 class = "modal-title" id = "AddComment">Modifier un commentaire</h5>
@@ -222,19 +222,16 @@ define("PATH", "/assets/images/pictures/");
                             <label for="formNote" class="form-label pe-none">Note:</label>
                             <input class=" form-control" id="formNote" name="note" pattern="[0-9]|1[0-9]|20"></input>
                         </div>
-                        <div class = "form-check form-switch">
-                            <input class = "form-check-input" type="checkbox" role="switch" id="admin" name="admin"
-                                value = "1">
-                            <label class = "form-check-label" for = "flexSwitchCheckDefault">Visible uniquement par l'équipe
-                                pédagogique
-                                </input></label>
-                        </div>
 
 
                 </div>
                 <div class = "modal-footer">
-                    <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Fermer</button>
-                    <button type = "submit" class = "btn btn-primary">Modifier</button>
+                    <button type="button" class="btn btn-cancel btn-danger me-2" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-2"></i>Annuler
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle me-2"></i>Valider
+                    </button>
                 </div>
                 </form>
             </div>

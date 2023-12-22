@@ -3,7 +3,41 @@ namespace App\Controllers;
 use App\Models\TrainingModel;
 use App\Models\UserModel;
 
-class SAdminController extends AdminController {
+/*
+code d'erreur:
+0** --> code d'erreur lors d'une requete d'affichage
+    - 1 : Une erreur s'est produite lors de l'initialisation de la page
+1** --> code d'erreur lors d'une requete d'ajout
+    - 101 : Une erreur s'est produite lors de l'ajout d'un utilisateur
+    - 102 : Une erreur s'est produite lors de l'ajout d'une formation
+    - ...
+2** --> code d'erreur lors d'une requete de modification
+    - 201 : Une erreur s'est produite lors de la modification de l'utilisateur
+    - 202 : Une erreur est survenue lors de la modification de la formation
+    - ...
+3** --> code d'erreur lors d'une requete de suppression
+    - 301 : Une erreur s'est produite lors de la suppression d'une formation
+    - ...
+4** --> code d'erreur si la ressource demandée n'existe pas
+    - 401 : utilisateur n'existe pas
+    - 404 : formation n'existe pas
+    - ...
+5** --> Les informations rentrées ne sont pas valides
+    - 501 : les informations de l'utilisateur ne sont pas valides
+    - 503 : les informations de le formation ne sont pas valides
+    - ...
+
+SUCCES
+1 --> succes lors de l'ajout d'un utilisateur
+2 --> succes lors de l'ajout d'une formation
+3 --> succes lors de la suppression d'un utilisateur 
+4 --> succes lors de la modification de la formation
+5 --> succes mors de la modification d'un utilisateur
+
+TODO --> code erreur suppression (voir pour l'export) + rajouter les required
+*/
+
+class SAdminController extends UserController {
 
     public function __construct() {
         parent::__construct();
@@ -15,25 +49,33 @@ class SAdminController extends AdminController {
 
     public function home() {
         $this->displayTemplateHome(0, 0);
-        }
+    }
 
     public function infoTraining(int $idTraining) {
         $this->displayTemplateTraining(0, 0, $idTraining);
     }
 
-
     public function add_user(string $page) {
         if(!$this->verifUser()){
-            $error = 5;
+            $error = 501;
         } else {
             $error = UserModel::addUser($_POST,$_POST["idTraining"]);
         }
         if($page === "home")
-            $this->displayTemplateHome($error, $error===0 ? 3 : 0);
+            $this->displayTemplateHome($error, $error===0 ? 1 : 0);
         else
-            $this->displayTemplateTraining($error, $error===0 ? 2 : 0, $_POST["idTraining"]);
+            $this->displayTemplateTraining($error, $error===0 ? 1 : 0, $_POST["idTraining"]);
     }
 
+    public function update_user(){
+        if(!$this->verifUser($_POST)){
+            $error = 501;
+        }
+        else  {
+            $error = UserModel::updateUser($_POST);
+        }
+        $this->displayTemplateTraining($error, $error===0 ? 5 : 0, $_POST["idTraining"]);
+    }
 
     public function delete_user() {
         $error = UserModel::deleteUser($_POST["idUser"]);
@@ -42,39 +84,25 @@ class SAdminController extends AdminController {
 
     public function add_training() {        
         if(!$this->verifTraining()) {
-            $error = 2;
+            $error = 503;
         } else {
             $error = TrainingModel::addTraining($_POST);
         }
-        $this->displayTemplateHome($error, $error===0 ? 1 : 0);
-    }
-
-    public function delete_training(string $page) {
-        $error = TrainingModel::deleteTraining($_POST["idTraining"]);
-        if($page === "home")
-            $this->displayTemplateHome($error, $error===0 ? 2 : 0);
-        else
-            $this->displayTemplateTraining($error, $error===0 ? 2 : 0, $_POST["idTraining"]);
-    }
-
-    // on redefinit update_user()
-    public function update_user(?string $page, ?int $id){
-        if(!$this->verifUser($_POST)){
-            $error = 5;
-        }
-        else  {
-            $error = UserModel::updateUser($_POST);
-        }
-        $this->displayTemplateTraining($error, $error===0 ? 2 : 0, $_POST["idTraining"]);
+        $this->displayTemplateHome($error, $error===0 ? 2 : 0);
     }
 
     public function update_training(){
         if(!$this->verifTraining()){
-            $error = 3;
+            $error = 503;
         } else {
             $error = TrainingModel::updateTraining($_POST);
         }
-        $this->displayTemplateTraining($error, $error===0 ? 1 : 0, $_POST["idTraining"]);
+        $this->displayTemplateTraining($error, $error===0 ? 4 : 0, $_POST["idTraining"]);
+    }
+
+    public function delete_training() {
+        $error = TrainingModel::deleteTraining($_POST["idTraining"]);
+        $this->displayTemplateHome($error, $error===0 ? 3 : 0);
     }
 
     private function displayTemplateHome(int $p_error, int $p_success) {
@@ -120,10 +148,9 @@ class SAdminController extends AdminController {
             empty($_POST["verifPwd"])||
             empty($_POST["role"])
 
-        ) 
+        )
            return false;
-
-        if($_POST["verifPwd"]!== $_POST["pwd"])
+        if($_POST["verifPwd"] !== $_POST["pwd"])
             return false;
         
         return true;

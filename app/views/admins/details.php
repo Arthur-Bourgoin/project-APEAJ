@@ -2,28 +2,34 @@
 $title = "Page Information Elève";
 $bsIcons = true;
 $scripts = "<script src='/assets/js/admin/details.js' type = 'module'></script>
-<script src = '/assets/js/class/alert.js' type = 'module'></script>";
+<script src='/assets/js/CurrentUser.js' type='module'></script>";
 ob_start(); ?>
+<style>
+    .comment-container:hover {
+        background-color: lightgray;
+        cursor: pointer;
+    }
+</style>
 
-<div class = "container position-relative">
-    <div class = "col-lg-1 position-absolute top-0 end-0">
-        <a href = "https://google.com">
-            <i class = "bi bi-person-circle text-black" style="font-size: 3rem;"></i>
-        </a>
+<div class="container position-relative">
+<div class="col-lg-2 position-absolute top-0 end-0">
+    <a href="/disconnect"><button class="btn btn-danger"><i class="bi bi-power me-2"></i>Se déconnecter</button></a>  
+    <i class="bi bi-person-circle text-black" style="font-size: 3rem;" data-bs-toggle="modal"
+            data-bs-target="#profileConsultation"></i>
     </div>
-    <div class = "row">
-        <div class = "col-3 mt-3 mr-3 ">
-            <img src = "<?= $student->picture ?>" class = "img-thumbnail" alt="Photo de l\'étudiant 1">
+    <div class="row">
+        <div class="col-3 mt-3 mr-3 ">
+            <img src="<?= $student->picture ?>" class="img-thumbnail" alt="Photo de l\'étudiant 1">
         </div>
-        <div class = "col-9">
-            <div class = "row mt-3 ms-3 align-items">
-                <div class = "col-12 my-3">
+        <div class="col-9">
+            <div class="row mt-3 ms-3 align-items">
+                <div class="col-12 my-3">
                     <h2>
                         <?= htmlentities($student->lastName) ?>
                         <?= htmlentities($student->firstName) ?>
                     </h2>
                 </div>
-                <div class = "col-12 my-3">
+                <div class="col-12 my-3">
                     <h5>
                         login:
                         <?= htmlentities($student->login) ?>
@@ -40,67 +46,99 @@ ob_start(); ?>
                     </button>
                     </div>
                 </div>
-                <div class = "col-12 mt-4">
+                <div class="col-12 mt-4">
                     <?php
-                     
-                    switch($error){
-                        case 1: 
-                            echo "<div class = 'alert alert-danger'> Les données ne sont pas valides </div>"; break;
-                        case 2: 
-                            echo "<div class = 'alert alert-danger'> Une erreur s'est produite lors de l'affichage </div>"; break;
-                        case 3: 
-                            echo "<div class = 'alert alert-danger'> Une erreur s'est produite lors de l'affichage </div>"; break;
+
+                    switch ($error) {
+                        case 501:
+                            echo "<div class = 'alert alert-danger'> Les données ne sont pas valides </div>";
+                            break;
+                        case 2:
+                            echo "<div class = 'alert alert-danger'> Une erreur s'est produite lors de l'affichage </div>";
+                            break;
+                        case 3:
+                            echo "<div class = 'alert alert-danger'> Une erreur s'est produite lors de l'affichage </div>";
+                            break;
                     }
-                    switch($success){
-                        case 1: 
-                            echo "<div class = 'alert alert-success'> Modification de l'étudiant réussie ! </div>"; break;
-                        case 2: 
-                            echo "<div class = 'alert alert-success'>  </div>"; break;
-                        case 3: 
-                            echo "<div class = 'alert alert-success'>  </div>"; break;
-                     }
-                     ?>
-                    
+                    switch ($success) {
+                        case 1:
+                            echo "<div class = 'alert alert-success'> Modification de l'étudiant réussie ! </div>";
+                            break;
+                        case 2:
+                            echo "<div class = 'alert alert-success'> Suppression du commentaire réussie !  </div>";
+                            break;
+                        case 3:
+                            echo "<div class = 'alert alert-success'>Ajout d'un commenttaire réussi ! </div>";
+                            break;
+                        case 4:
+                            echo "<div class = 'alert alert-success'>Modification d'un commenttaire réussi ! </div>";
+                            break;
+                        case 12:
+                            echo "<div class = 'alert alert-success'> Modification profile réussie ! </div>";
+                            break;
+                    }
+                    ?>
+
                 </div>
             </div>
         </div>
     </div>
-    <div class = "row">
-        <div class = "col mt-3">
+    <div class="row">
+        <h2>Commentaires</h2>
+        <?php
+        $foundId = false;
+        foreach ($comments as $com) {
+            echo $com->getTemplateCommentStudent();
+            if ($com->educator->idUser === $_SESSION["id"]) {
+                $foundId = true;
+            }
+        }
+        ?>
+    </div>
+
+    <?php if (!$foundId) { ?>
+        <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#ModalComs">
+            <i class="bi bi-chat-left-text me-2"></i> Ajouter un commentaire
+        </button>
+        <?php
+    }
+    ?>
+    <div class="row">
+        <div class="col mt-3">
             <h2>
                 Historique des fiches
             </h2>
         </div>
     </div>
-    <div class = "row border border-5 my-3 ">
-        <div class = "row mb-3">
-            <div class = "col-3">
+    <div class="row border border-5 my-3 ">
+        <div class="row mb-3">
+            <div class="col-3">
                 <h5>Session courante</h5>
             </div>
-            <div class = "col-9">
+            <div class="col-9">
             </div>
-            <div class = "col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-3">
+            <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-3">
                 <a
-                    href = "/etudiants/<?= htmlentities($student->lastName) ?>-<?= htmlentities($student->firstName) ?>-<?= $currentForm->form->idStudent ?>/fiche-<?= $currentForm->form->numero ?>"><i
-                        class = "bi bi-file-earmark-text" style="font-size: 5rem"></i></a>
-                <div class = "col">
+                    href="/etudiants/<?= htmlentities($student->lastName) ?>-<?= htmlentities($student->firstName) ?>-<?= $currentForm->form->idStudent ?>/fiche-<?= $currentForm->form->numero ?>"><i
+                        class="bi bi-file-earmark-text" style="font-size: 5rem"></i></a>
+                <div class="col">
                     <?= $currentForm->session->wording ?>
                 </div>
             </div>
 
         </div>
-        <div class = "row">
-            <div class  ="col-3">
+        <div class="row">
+            <div class="col-3">
                 <h5>Sessions terminées</h5>
             </div>
-            <div class = "col-9">
+            <div class="col-9">
             </div>
             <?php
             foreach ($finishedForms as $finishedForm) { ?>
-                <div class = "col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-3">
+                <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-3">
                     <a
-                        href = "/etudiants/<?= htmlentities($student->lastName) ?>-<?= htmlentities($student->firstName) ?>-<?= htmlentities($finishedForm->form->idStudent) ?>/fiche-<?= htmlentities($finishedForm->form->numero) ?>"><i
-                            class = "bi bi-file-earmark-text" style = "font-size: 5rem"></i></a>
+                        href="/etudiants/<?= htmlentities($student->lastName) ?>-<?= htmlentities($student->firstName) ?>-<?= htmlentities($finishedForm->form->idStudent) ?>/fiche-<?= htmlentities($finishedForm->form->numero) ?>"><i
+                            class="bi bi-file-earmark-text" style="font-size: 5rem"></i></a>
 
                     <div>
                         <?= $finishedForm->session->wording ?>

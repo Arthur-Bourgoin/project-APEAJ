@@ -13,7 +13,6 @@ document.querySelectorAll(".button-update").forEach(btn => {
         students.get(parseInt(e.currentTarget.dataset.id)).updateModifModal('#ModalModifie');
     });
 });
-
 helpers.eventChangePicture("#inputImgUser", "#imgUser");
 helpers.removeDivFeedback(".alert");
 helpers.changeModalPwd("#ModalModifie");

@@ -1,22 +1,23 @@
 <?php $title = "Page Accueil Admin";
 $bsIcons = true;
-$scripts = "<script src='/assets/js/class/alert.js' type='module'></script>
-            <script src='/assets/js/admin/home.js' type='module'></script>";
+$scripts = "<script src='/assets/js/admin/home.js' type='module'></script>
+<script src='/assets/js/CurrentUser.js' type='module'></script>";
 ob_start(); ?>
 
 <div class="container position-relative">
-    <div class="col-lg-1 position-absolute top-0 end-0">
-        <a href="https://google.com">
-            <i class="bi bi-person-circle text-black" style="font-size: 3rem;"></i>
-        </a>
+<div class="col-lg-2 position-absolute top-0 end-0">
+    <a href="/disconnect"><button class="btn btn-danger"><i class="bi bi-power me-2"></i>Se déconnecter</button></a>  
+    <i class="bi bi-person-circle text-black" style="font-size: 3rem;" data-bs-toggle="modal"
+            data-bs-target="#profileConsultation"></i>
     </div>
     <div class="row">
-        <h2 class="text-center mt-3"> Formation
+        <h2 class="text-center mt-3">
+            <?= $training->wording ?>
         </h2>
     </div>
     <div class="row">
         <div class="col-10 col-lg-11">
-            <button type="button" class="btn btn-primary my-3" data-bs-toggle="modal"
+            <button type="button" class="btn btn-primary my-3 btn-account" data-bs-toggle="modal"
                 data-bs-target="#ModalAjouterSession">
                 <i class="bi bi-plus-circle"></i> Ajouter une session
             </button>
@@ -24,7 +25,7 @@ ob_start(); ?>
     </div>
     <?php
     switch ($error) {
-        case 1:
+        case 501:
             echo "<div class='alert alert-danger'> Les données ne sont pas valides </div>";
             break;
         case 2:
@@ -32,6 +33,9 @@ ob_start(); ?>
             break;
         case 3:
             echo "<div class='alert alert-danger'>  </div>";
+            break;
+        case 707:
+            echo "<div class = 'alert alert-danger'> Vous ne pouvez pas modifier un profil qui n'est pas le votre </div>";
             break;
     }
     switch ($success) {
@@ -43,6 +47,9 @@ ob_start(); ?>
             break;
         case 3:
             echo "<div class='alert alert-success'>  </div>";
+            break;
+        case 12:
+            echo "<div class = 'alert alert-success'> Modification profile réussie ! </div>";
             break;
     }
     ?>
@@ -96,26 +103,27 @@ ob_start(); ?>
                                 <p class="card-text">
                                     <?= htmlentities($student->firstName) ?>
                                 </p>
-                                <div class="row align-items-center">
-                                    <div class="col-8">
-                                        <a href="etudiants/<?= $student->lastName ?>-<?= $student->firstName ?>-<?= $student->idUser ?>"
-                                            class="btn btn-primary"><i class="bi bi-info-circle"></i></a>
-                                    </div>
+                                <div class="row d-flex flex-row-reverse me-2">
                                     <div class="col-2">
-                                        <button type="button" class="btn btn-primary button-update" data-bs-toggle="modal"
-                                            data-bs-target="#ModalModifie" data-id="<?= $student->idUser ?>">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                    </div>
+                                    <a href="etudiants/<?= $student->lastName ?>-<?= $student->firstName ?>-<?= $student->idUser ?>"
+                                        class="btn btn-primary"><i class="bi bi-info-circle"></i></a>
                                 </div>
+                                <div class="col-2">
+                                <button type="button" class="btn btn-primary button-update" data-bs-toggle="modal"
+                                    data-bs-target="#ModalModifie" data-id="<?= $student->idUser ?>">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
                             </div>
 
                         </div>
                     </div>
-                <?php } ?>
+
+                </div>
             </div>
-        </div>
+        <?php } ?>
     </div>
+</div>
+</div>
 
 </div>
 <div class="modal fade" id="ModalAjouterSession" tabindex="-1" aria-labelledby="ModalAjouterSessionLabel"
@@ -147,8 +155,12 @@ ob_start(); ?>
                         <textarea class="form-control" id="description" name="description"></textarea>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <button type="submit" class="btn btn-primary">Ajouter</button>
+                        <button type="button" class="btn btn-cancel btn-danger me-2" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-2"></i>Annuler
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle me-2"></i>Valider
+                        </button>
                     </div>
                 </form>
             </div>
@@ -156,110 +168,227 @@ ob_start(); ?>
         </div>
     </div>
 </div>
-<!-- Modal ajout utilisateur-->
-<div class="modal fade" id="ModalModifie" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="UpdateUserLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form enctype="multipart/form-data" action="<?= $_SERVER ["REQUEST_URI"]?>" method="POST">
-                <input type="hidden" id="idUser" name="idUser" value="" />
-                <input type="hidden" name="action" value="updateStudent" />
-                <input type="hidden" name="MAX_FILE_SIZE" value="300000" />   
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="newUserLabel">Modifier utilisateur</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-4">
-                                <label for="inputImgUser">
-                                    <img id="imgUser" src="" class="w-100 border" alt="Image de l'utilisateur">
-                                </label>
-                                <input id="inputImgUser" type="file" class="d-none" name="picture">
-                            </div>
-
-                            <div class="col-8 d-flex flex-column justify-content-between">
-                                <div class="mb-3">
-                                    <label for="inputLastName">Nom</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
-                                        <input id="inputLastName" type="text" class="form-control" name="lastName">
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="inputFirstName">Prénom</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
-                                        <input id="inputFirstName" type="text" class="form-control" name="firstName">
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-12 mt-3">
-                                <label for="inputTypePwd" class="form-label">Type de mot de passe</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                    <select class="form-select selectTypePwd" id="inputTypePwd" name="typePwd">
-                                        <option value="1"  <?=$student->typePwd === 1 ? 'selected' : "" ?>> Texte </option>
-                                        <option value="2"  <?=$student->typePwd === 2 ? "selected" : "" ?>> Code </option>
-                                        <option value="3" <?=$student->typePwd === 3 ? "selected" : "" ?>> Schéma </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="textField">
-                                <div class="col-12 mt-3">
-                                    <label for="inputPwd" class="form-label">Mot de passe</label>
-                                    <div class="input-group">
-                                        <input id="inputPwd" type="password" class="form-control input-pwd" name="pwd">
-                                        <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
-                                    </div>
-                                </div>
-                                <div class="col-12 mt-3">
-                                    <label for="inputConfirmPwd" class="form-label">Confirmation du mot de passe</label>
-                                    <div class="input-group">
-                                        <input id="inputVerifPwd" type="password" class="form-control input-pwd" name="verifPwd">
-                                        <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="codeField">
-                                <div class="col-12 mt-3">
-                                    <label for="inputPwd" class="form-label">Code</label>
-                                    <div class="input-group">
-                                        <input id="inputPwd" type="password" class="form-control input-pwd" name="pwd" pattern="[0-9]{4,6}">
-                                        <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
-                                    </div>
-                                </div>
-                                <div class="col-12 mt-3">
-                                    <label for="inputConfirmPwd" class="form-label">Confirmation du code</label>
-                                    <div class="input-group">
-                                        <input id="inputVerifPwd" type="password" class="form-control input-pwd" name="verifPwd" pattern="[0-9]{4,6}">
-                                        <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="schemaField">
-                                <div class="col-12 mt-3">
-                                    schéma
-                                </div>
-                                <div class="col-12 mt-3">
-                                    confirmation schéma
-                                </div>
-                            </div>
-                            <div class="modal-footer text-center">
-                                <button type="button" class="btn btn-cancel btn-danger me-2" data-bs-dismiss="modal">
-                                    <i class="bi bi-x-circle me-2"></i>Annuler
-                                </button>
-                                <button type="submit" class="btn btn-success">
-                                    <i class="bi bi-check-circle me-2"></i>Valider
-                                </button>
-                            </div>
-                        </div>  
-                    </div>  
+<div class="modal fade" id="ModalModifie" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="UpdateUserLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form enctype="multipart/form-data" action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
+            <input type="hidden" id="idUser" name="idUser" value="" />
+            <input type="hidden" name="action" value="updateStudent" />
+            <input type="hidden" name="MAX_FILE_SIZE" value="300000" />
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newUserLabel">Modifier utilisateur</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-            </form>
-        </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-4">
+                            <label for="inputImgUser">
+                                <img id="imgUser" src="" class="w-100 border" alt="Image de l'utilisateur">
+                            </label>
+                            <input id="inputImgUser" type="file" class="d-none" name="picture">
+                        </div>
+
+                        <div class="col-8 d-flex flex-column justify-content-between">
+                            <div class="mb-3">
+                                <label for="inputLastName">Nom</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
+                                    <input id="inputLastName" type="text" class="form-control" name="lastName">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputFirstName">Prénom</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
+                                    <input id="inputFirstName" type="text" class="form-control" name="firstName">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-3">
+                            <label for="inputTypePwd" class="form-label">Type de mot de passe</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <select class="form-select selectTypePwd" id="inputTypePwd" name="typePwd">
+                                    <option value="1" <?= $student->typePwd === 1 ? 'selected' : "" ?>> Texte </option>
+                                    <option value="2" <?= $student->typePwd === 2 ? "selected" : "" ?>> Code </option>
+                                    <option value="3" <?= $student->typePwd === 3 ? "selected" : "" ?>> Schéma </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="textField">
+                            <div class="col-12 mt-3">
+                                <label for="inputPwd" class="form-label">Mot de passe</label>
+                                <div class="input-group">
+                                    <input id="inputPwd" type="password" class="form-control input-pwd" name="pwd">
+                                    <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <label for="inputConfirmPwd" class="form-label">Confirmation du mot de passe</label>
+                                <div class="input-group">
+                                    <input id="inputVerifPwd" type="password" class="form-control input-pwd"
+                                        name="verifPwd">
+                                    <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="codeField">
+                            <div class="col-12 mt-3">
+                                <label for="inputCode" class="form-label">Code</label>
+                                <div class="input-group">
+                                    <input id="inputCode" type="password" class="form-control input-pwd" name="pwd"
+                                        pattern="[0-9]{4,6}">
+                                    <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <label for="inputConfirmCode" class="form-label">Confirmation du code</label>
+                                <div class="input-group">
+                                    <input id="inputVerifCode" type="password" class="form-control input-pwd"
+                                        name="verifPwd" pattern="[0-9]{4,6}">
+                                    <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="schemaField">
+                            <div class="col-12 mt-3">
+                                schéma
+                            </div>
+                            <div class="col-12 mt-3">
+                                confirmation schéma
+                            </div>
+                        </div>
+                        <div class="modal-footer text-center">
+                            <button type="button" class="btn btn-cancel btn-danger me-2" data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle me-2"></i>Annuler
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle me-2"></i>Valider
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
+</div>
+
+<div class="modal fade" id="profileConsultation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="UpdateUserLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form enctype="multipart/form-data" action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
+            <input type="hidden" id="idCurrentUser" name="idUser" value="<?= $currentUser->idUser ?>" />
+            <input type="hidden" name="action" value="updateAccount" />
+            <input type="hidden" name="MAX_FILE_SIZE" value="300000" />
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newUserLabel">Modifier utilisateur</h5>
+                    <button type="button" class="btn-close-acc" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-4">
+                            <label for="inputImgCurrentUser">
+                                <img id="imgCurrentUser" src="<?= $currentUser->picture ?>" class="w-100 border"
+                                    alt="Image de l'utilisateur">
+                            </label>
+                            <input id="inputImgCurrentUser" type="file" class="d-none" name="picture">
+                        </div>
+
+                        <div class="col-8 d-flex flex-column justify-content-between">
+                            <div class="mb-3">
+                                <label for="inputCurrentUserLastName">Nom</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
+                                    <input id="inputCurrentUserLastName" type="text" class="form-control"
+                                        name="lastName" value="<?= $currentUser->lastName ?>">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputCurrentUserFirstName">Prénom</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
+                                    <input id="inputCurrentUserFirstName" type="text" class="form-control"
+                                        name="firstName" value="<?= $currentUser->firstName ?>">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-3">
+                            <label for="inputTypePwd" class="form-label">Type de mot de passe</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <select class="form-select selectTypePwd" id="CurrentUserinputTypePwd" name="typePwd">
+                                    <option value="1" <?= $currentUser->typePwd === 1 ? 'selected' : "" ?>> Texte </option>
+                                    <option value="2" <?= $currentUser->typePwd === 2 ? "selected" : "" ?>> Code </option>
+                                    <option value="3" <?= $currentUser->typePwd === 3 ? "selected" : "" ?>> Schéma
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="textField">
+                            <div class="col-12 mt-3">
+                                <label for="inputPwd" class="form-label">Mot de passe</label>
+                                <div class="input-group">
+                                    <input id="CurrentUserinputPwd" type="password" class="form-control input-pwd"
+                                        name="pwd">
+                                    <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <label for="inputConfirmPwd" class="form-label">Confirmation du mot de passe</label>
+                                <div class="input-group">
+                                    <input id="CurrentUserinputVerifPwd" type="password" class="form-control input-pwd"
+                                        name="verifPwd">
+                                    <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="codeField">
+                            <div class="col-12 mt-3">
+                                <label for="inputPwd" class="form-label">Code</label>
+                                <div class="input-group">
+                                    <input id="CurrentUserinputCode" type="password" class="form-control input-pwd"
+                                        name="pwd" pattern="[0-9]{4,6}">
+                                    <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <label for="CurrentUserinputCode" class="form-label">Confirmation du code</label>
+                                <div class="input-group">
+                                    <input id="inputVerifPwd" type="password" class="form-control input-pwd"
+                                        name="verifPwd" pattern="[0-9]{4,6}">
+                                    <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="schemaField">
+                            <div class="col-12 mt-3">
+                                schéma
+                            </div>
+                            <div class="col-12 mt-3">
+                                confirmation schéma
+                            </div>
+                        </div>
+                        <div class="modal-footer text-center">
+                            <button type="button" class="btn btn-cancel-account btn-danger me-2"
+                                data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle me-2"></i>Annuler
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle me-2"></i>Valider
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 <script>
     const studentsTab = <?= json_encode($students) ?>;

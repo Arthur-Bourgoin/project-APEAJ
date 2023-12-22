@@ -4,7 +4,7 @@ helpers.eventChangePicture("#inputImgUser", "#imgUser");
 helpers.eventChangePicture("#inputImgTraining", "#imgTraining");
 helpers.removeDivFeedback(".alert");
 helpers.changeModalPwd("#newUser");
-helpers.initModalPwd("#newUser", 1);
+helpers.initModalPwd("#newUser", 1, true);
 
 // supprimer une formation
 document.querySelectorAll(".btn-removed").forEach(btn => {

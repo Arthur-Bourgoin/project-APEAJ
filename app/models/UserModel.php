@@ -111,16 +111,17 @@ class UserModel {
                 ->execute(array_intersect_key($args, array_flip($keys)));
             return 0;
         } catch (\Exception $e) {
-            return 1; // query error
+            return 101; // query error
         }
     }
 
     public static function updateUser(array $args) {
         try {
             if(!self::existUser($args["idUser"]))
-                return 26; // user not exist
+                return 401; // user not exist
             $keys = ["login", "lastName", "firstName", "picture", "idUser"];
             $args["login"] = self::generateLogin($args["firstName"], $args["lastName"]);
+            
             Database::getInstance()
                 ->prepare("UPDATE users 
                         SET login = :login,
@@ -131,16 +132,17 @@ class UserModel {
                 ->execute(array_intersect_key($args, array_flip($keys)));
                 return 0; // success
         } catch (\Exception $e) {
-            return 2; // query error
+            return 201; // query error
         }
     }
 
     public static function updateUserAndPwd(array $args) {
         try {
             if(!self::existUser($args["idUser"]))
-                return 1; // user not exist
+                return 401; // user not exist
             $keys = ["login", "lastName", "firstName", "picture", "typePwd", "pwd", "idUser"];
             $args["login"] = self::generateLogin($args["firstName"], $args["lastName"]);
+            $args["pwd"] = password_hash($args["pwd"], PASSWORD_BCRYPT);
             Database::getInstance()
                 ->prepare("UPDATE users 
                         SET login = :login,
@@ -153,7 +155,7 @@ class UserModel {
                 ->execute(array_intersect_key($args, array_flip($keys)));
                 return 0; // success
         } catch (\Exception $e) {
-            return 2; // query error
+            return 201; // query error
         }
     }
 
@@ -162,7 +164,6 @@ class UserModel {
      */
     public static function deleteUser(int $idUser) {
         return 0; // query error
-        return 26; // user not exist
     }
 
     public static function existUser(int $idUser) {
