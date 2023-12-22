@@ -1,5 +1,4 @@
-<div class="modal fade" id="profileConsultation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="UpdateUserLabel" aria-hidden="true">
+<div class="modal fade" id="profileConsultation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="UpdateUserLabel" aria-hidden="true">
     <div class="modal-dialog">
         <form enctype="multipart/form-data" action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
             <input type="hidden" id="idCurrentUser" name="idUser" value="<?= $currentUser->idUser ?>" />
@@ -25,8 +24,7 @@
                                 <label for="inputCurrentUserLastName">Nom</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
-                                    <input id="inputCurrentUserLastName" type="text" class="form-control"
-                                        name="lastName" value="<?= $currentUser->lastName ?>">
+                                    <input id="inputCurrentUserLastName" type="text" class="form-control" name="lastName" value="<?= $currentUser->lastName ?>">
                                 </div>
                             </div>
 
@@ -34,8 +32,7 @@
                                 <label for="inputCurrentUserFirstName">Prénom</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
-                                    <input id="inputCurrentUserFirstName" type="text" class="form-control"
-                                        name="firstName" value="<?= $currentUser->firstName ?>">
+                                    <input id="inputCurrentUserFirstName" type="text" class="form-control" name="firstName" value="<?= $currentUser->firstName ?>">
                                 </div>
                             </div>
                         </div>
@@ -56,16 +53,14 @@
                             <div class="col-12 mt-3">
                                 <label for="inputPwd" class="form-label">Mot de passe</label>
                                 <div class="input-group">
-                                    <input id="CurrentUserinputPwd" type="password" class="form-control input-pwd"
-                                        name="pwd">
+                                    <input id="CurrentUserinputPwd" type="password" class="form-control input-pwd" name="pwd">
                                     <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
                                 </div>
                             </div>
                             <div class="col-12 mt-3">
                                 <label for="inputConfirmPwd" class="form-label">Confirmation du mot de passe</label>
                                 <div class="input-group">
-                                    <input id="CurrentUserinputVerifPwd" type="password" class="form-control input-pwd"
-                                        name="verifPwd">
+                                    <input id="CurrentUserinputVerifPwd" type="password" class="form-control input-pwd" name="verifPwd">
                                     <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
                                 </div>
                             </div>
@@ -74,16 +69,14 @@
                             <div class="col-12 mt-3">
                                 <label for="inputPwd" class="form-label">Code</label>
                                 <div class="input-group">
-                                    <input id="CurrentUserinputCode" type="password" class="form-control input-pwd"
-                                        name="pwd" pattern="[0-9]{4,6}">
+                                    <input id="CurrentUserinputCode" type="password" class="form-control input-pwd" name="pwd" pattern="[0-9]{4,6}">
                                     <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
                                 </div>
                             </div>
                             <div class="col-12 mt-3">
                                 <label for="CurrentUserinputCode" class="form-label">Confirmation du code</label>
                                 <div class="input-group">
-                                    <input id="inputVerifPwd" type="password" class="form-control input-pwd"
-                                        name="verifPwd" pattern="[0-9]{4,6}">
+                                    <input id="inputVerifPwd" type="password" class="form-control input-pwd" name="verifPwd" pattern="[0-9]{4,6}">
                                     <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
                                 </div>
                             </div>
@@ -96,9 +89,8 @@
                                 confirmation schéma
                             </div>
                         </div>
-                        <div class="modal-footer text-center">
-                            <button type="button" class="btn btn-cancel-account btn-danger me-2"
-                                data-bs-dismiss="modal">
+                        <div class="modal-footer text-center mt-3">
+                            <button type="button" class="btn btn-cancel-account btn-danger me-2" data-bs-dismiss="modal">
                                 <i class="bi bi-x-circle me-2"></i>Annuler
                             </button>
                             <button type="submit" class="btn btn-success">

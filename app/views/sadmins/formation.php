@@ -1,19 +1,22 @@
 <?php
 $bsIcons = true;
 $title = "Consultation Formation";
-$scripts = "<script src='./assets/js/sadmin/formation.js' type='module'></script>";
+$scripts = "<script src='./assets/js/sadmin/formation.js' type='module'></script>
+            <script src='./assets/js/account.js' type='module'></script>";
 ob_start(); //On bufferise l'affichage
 ?>
 <div class="container">
 
-    <h2 class="text-center fw-bold"><?= htmlentities($training->wording)?></h2>
+    <h2 class="text-center"><?= htmlentities($training->wording)?></h2>
     <div class="d-flex align-items-center justify-content-end">
         <a href="/disconnect">
             <button class="btn btn-danger">
                 <i class="bi bi-power me-2"></i>Se déconnecter 
             </button>
         </a>
-      <div class="ms-3"><i class="bi bi-person-circle p-0" style="font-size: 3rem"></i></div>
+        <button class="btn p-0 ms-3" data-bs-toggle="modal" data-bs-target="#profileConsultation">
+            <i class="bi bi-person-circle" style="font-size: 2.5rem"></i>
+        </button>
     </div>
 
     <?php
@@ -407,7 +410,7 @@ ob_start(); //On bufferise l'affichage
             </form>
         </div>
     </div>
-
+    <?php require("../app/views/modalAccount.php") ?>
 </div>
 
 

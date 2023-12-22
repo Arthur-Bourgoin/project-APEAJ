@@ -1,18 +1,7 @@
 import { User } from "./class/User.js";
+import * as helpers  from "/assets/js/functions.js";
 
-const divAlert = document.querySelector(".alert");
-if(divAlert) {
-    setTimeout(() => {
-        divAlert.style.opacity = 1;
-        const interval = setInterval(() => {
-            divAlert.style.opacity -= 0.01;
-            if(divAlert.style.opacity <= 0) {
-                clearInterval(interval);
-                divAlert.remove();
-            }
-        }, 10);
-    }, 5000);
-}
+helpers.removeDivFeedback(".alert");
 
 document.querySelector("#btn-admin").addEventListener("click", e => {
     visibleDivAdmin(null);
@@ -69,6 +58,7 @@ const admins = new Map();
 adminsTab.forEach(admin => {
     admins.set(admin.login, new User(admin));
 });
+console.log(admins);
 
 document.querySelector("#loginAdmin").addEventListener("input", e => {
     let admin = admins.get(e.currentTarget.value);
