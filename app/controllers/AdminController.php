@@ -211,7 +211,7 @@ class AdminController extends UserController
         require("../app/views/admins/chooseTemplate.php");
     }
 
-    public function createForm(string $fName, string $lName, int $idStudent)
+    public function createForm(int $idStudent)
     {
         //echo "Creation d'une fiche pour " . $fName . " " . $lName . " id :" . $idStudent;
         $array = [

@@ -24,13 +24,12 @@ class StudentController extends UserController {
         require("../app/views/students/home_student.php");
     }
 
-    public function infoForm(int $idStudent, int $numero) {
+    public function infoForm(int $numero) {
         $error = 0;
-        $success = 0;  
-        //echo "Consultation de la fiche " . $numero;
-        $student = UserModel::getUser($idStudent);
-        $form = FormModel::getForm($numero, $idStudent);
-        if( is_int($student) || is_int($form))     
+        $success = 0; 
+        $student = UserModel::getUser($_SESSION["id"]);
+        $form = FormModel::getForm($numero, $student->idUser);
+        if( is_int($student) || is_int($form))
             $error = 1; 
         require("../app/views/students/fiche-info.php");
     }

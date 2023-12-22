@@ -62,7 +62,7 @@ ob_start();
                     <div class="row border mb-3 divTraining">
                         <div class="col-4 my-auto">
                             <div class="text-center">
-                                <img src="<?= $training->picture ?>" class="border w-50">
+                                <img src="<?= $training->picture ?>" class="w-100">
                             </div>
                         </div>
                         <div class="col-8 d-flex flex-column justify-content-evenly py-3">

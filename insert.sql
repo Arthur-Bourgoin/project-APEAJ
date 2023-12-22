@@ -516,6 +516,13 @@ VALUES
 (9, 1, 102), (9, 1, 9), (9, 1, 31), (9, 1, 56), (9, 1, 82), (9, 1, 7), (9, 1, 22), (9, 1, 44), (9, 1, 63), (9, 1, 88);
 
 
+INSERT INTO form (idStudent, numero, title)
+VALUES
+    (1000, 1, 'Pictos uniquement'),
+    (1000, 2, 'Texte uniquement'),
+    (1000, 3, 'Blanc sur noir'),
+    (1000, 4, 'Noir sur blanc'),
+    (1000, 5, 'Séparation de couleur');
 
 /* Insertion de la table display */
 INSERT INTO Display(idStudent,numero,idElementForm,level,label,picto,active,bold,italic,fontFamily,fontColor,fontSize,bgColor,textToSpeechBool,textToSpeechText)
@@ -2084,16 +2091,16 @@ VALUES
         (28,'Travaux','fsMaterials','pictoMateriaux.png');
 
 INSERT INTO  Picture(idPicture,path,title,idAuthor,idStudent,numero)
-VALUES  (1,'photo1.png','Photo 1',13,1,1),
-        (2,'photo2.png','Photo 2',1,1,1),    
-        (3,'photo3.png','Photo 3',15,1,1),
-        (4,'photo4.png','Photo 4',16,1,1),
-        (5,'photo1.png','Photo 1',12,1,2),
-        (6,'photo2.png','Photo 2',14,1,2),
-        (7,'photo3.png','Photo 3',15,1,2),
-        (8,'photo4.png','Photo 4',1,1,2),
-        (9,'photo1.png','Photo 1',13,1,3),
-        (10,'photo2.png','Photo 2',17,1,3),
+VALUES  (1,'1.jpg','Photo 1',13,1,1),
+        (2,'2.png','Photo 2',1,1,1),
+        (3,'3.png','Photo 3',15,1,1),
+        (4,'4.jpg','Photo 4',16,1,1),
+        (5,'5.png','Photo 1',12,1,2),
+        (6,'6.png','Photo 2',14,1,2),
+        (7,'7.jpg','Photo 3',15,1,2),
+        (8,'8.png','Photo 4',1,1,2),
+        (9,'9.png','Photo 1',13,1,3),
+        (10,'10.png','Photo 2',17,1,3),
         (11,'photo3.png','Photo 3',12,1,3),
         (12,'photo4.png','Photo 4',1,1,3),
         (13,'photo1.png','Photo 1',15,1,4),
@@ -2260,4 +2267,30 @@ VALUES  (1,'photo1.png','Photo 1',13,1,1),
         (174,'photo6.png','Photo 6',17,9,1);
 
 
-
+/*TABLE COMMENTSTUDENT*/
+INSERT INTO  CommentStudent(idStudent,idEducator,text,lastModif)
+VALUES
+    (1,10,"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quasi","2023-11-30T11:30"),
+    (1,11,"Nihil debitis minima obcaecati laudantium","2023-12-10T11:30"),
+    (1,12,"sit tenetur exercitationem maxime libero! Officia non doloribus debitis","2023-12-13T11:30"),
+    (1,16,"Nihil debitis minima obcaecati laudantium voluptatum suscipit sit oloribus debitis nobis recusandae nam!","2023-12-15T11:30"),
+    (2,13,"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quasi","2023-11-30T11:30"),
+    (2,16,"Nihil debitis minima obcaecati laudantium voluptatum suscipit sit oloribus debitis nobis recusandae nam!","2023-12-15T11:30"),
+    (3,14,"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quasi","2023-11-30T11:30"),
+    (3,15,"sit tenetur exercitationem maxime libero! Officia non doloribus debitis","2023-12-13T11:30"),
+    (3,16,"Nihil debitis minima obcaecati laudantium voluptatum suscipit sit oloribus debitis nobis recusandae nam!","2023-12-15T11:30"),
+    (4,16,"Nihil debitis minima obcaecati laudantium voluptatum suscipit sit oloribus debitis nobis recusandae nam!","2023-12-15T11:30"),
+    (5,10,"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quasi","2023-11-30T11:30"),
+    (5,11,"Nihil debitis minima obcaecati laudantium","2023-12-10T11:30"),
+    (5,12,"sit tenetur exercitationem maxime libero! Officia non doloribus debitis","2023-12-13T11:30"),
+    (5,16,"Nihil debitis minima obcaecati laudantium voluptatum suscipit sit oloribus debitis nobis recusandae nam!","2023-12-15T11:30"),
+    (6,15,"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quasi","2023-11-30T11:30"),
+    (6,14,"Nihil debitis minima obcaecati laudantium","2023-12-10T11:30"),
+    (6,16,"Nihil debitis minima obcaecati laudantium voluptatum suscipit sit oloribus debitis nobis recusandae nam!","2023-12-15T11:30"),
+    (8,13,"Nihil debitis minima obcaecati laudantium","2023-12-10T11:30"),
+    (8,14,"sit tenetur exercitationem maxime libero! Officia non doloribus debitis","2023-12-13T11:30"),
+    (8,16,"Nihil debitis minima obcaecati laudantium voluptatum suscipit sit oloribus debitis nobis recusandae nam!","2023-12-15T11:30"),
+    (9,13,"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quasi","2023-11-30T11:30"),
+    (9,11,"Nihil debitis minima obcaecati laudantium","2023-12-10T11:30"),
+    (9,15,"sit tenetur exercitationem maxime libero! Officia non doloribus debitis","2023-12-13T11:30"),
+    (9,16,"Nihil debitis minima obcaecati laudantium voluptatum suscipit sit oloribus debitis nobis recusandae nam!","2023-12-15T11:30");
