@@ -133,6 +133,7 @@ $router->map("POST", "/etudiants/[a]-[a]-[i:id]", function ($id) {
     if(isset($_POST["action"])) {
         switch($_POST["action"]) {
             case "updateAccount":
+                $controller->update_user("infoStudent", $id,null);
             case "updateUser":
                 $controller->update_user("infoStudent", $id);
                 break;
@@ -159,7 +160,7 @@ $router->map("POST", "/sessions/[i:id]", function ($id) {
     if(isset($_POST["action"])) {
         switch($_POST["action"]) {
             case "updateAccount":
-                $controller->update_user($_SESSION["idUser"], "infoSession", $id);
+                $controller->update_user("infoSession", $id,null);
                 break;
             case "updateSession":
                 $controller->update_session();
@@ -200,6 +201,9 @@ $router->map("POST", "/etudiants/[a]-[a]-[i:idS]/fiche-[i:idF]", function ($idS,
                 break;
             case "deletePicture":
                 $controller->delete_picture($idS, $idF);
+                break;
+            case "updateAccount":
+                $controller->update_user("infoForm", $idS,$idF,null);
                 break;
         }
     } else {

@@ -121,6 +121,7 @@ class UserModel {
                 return 26; // user not exist
             $keys = ["login", "lastName", "firstName", "picture", "idUser"];
             $args["login"] = self::generateLogin($args["firstName"], $args["lastName"]);
+            
             Database::getInstance()
                 ->prepare("UPDATE users 
                         SET login = :login,
@@ -141,6 +142,7 @@ class UserModel {
                 return 1; // user not exist
             $keys = ["login", "lastName", "firstName", "picture", "typePwd", "pwd", "idUser"];
             $args["login"] = self::generateLogin($args["firstName"], $args["lastName"]);
+            $args["pwd"] = password_hash($args["pwd"], PASSWORD_BCRYPT);
             Database::getInstance()
                 ->prepare("UPDATE users 
                         SET login = :login,
