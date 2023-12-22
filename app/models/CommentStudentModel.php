@@ -50,7 +50,7 @@ class CommentStudentModel {
             $args["idEducator"] = $idEducator;
             $args["lastModif"] = date('Y-m-d H:i:s');
             Database::getInstance()
-                ->prepare("UPDATE commentStudent SET text = :text AND lastModif = :lastModif WHERE idStudent = :idStudent AND idEducator = :idEducator")
+                ->prepare("UPDATE commentStudent SET text = :text, lastModif = :lastModif WHERE idStudent = :idStudent AND idEducator = :idEducator")
                 ->execute(array_intersect_key($args, array_flip(["idStudent", "idEducator", "text", "lastModif"])));
             return 0; // success
         } catch (\Exception $e) {
@@ -59,10 +59,10 @@ class CommentStudentModel {
 
     }
 
-    public static function deleteComment(int $idEducator, int $idStudent) {
+    public static function deleteComment( int $idStudent, int $idEducator,) {
         try {
             if(!self::existCommentStudent($idStudent, $idEducator))
-                return 2; // commentStudent not exist
+                return 2; 
             Database::getInstance()
                 ->prepare("DELETE FROM commentStudent WHERE idEducator = :idEducator AND idStudent = :idStudent")
                 ->execute(array("idEducator" => $idEducator, "idStudent" => $idStudent));

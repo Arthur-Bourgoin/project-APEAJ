@@ -1,6 +1,7 @@
 <?php
 $bsIcons = true;
-$scripts = "<script src='/assets/js/app.js' type='module'></script>";
+$scripts = "<script src='/assets/js/app.js' type='module'>
+</script><script src='/assets/js/CurrentUser.js' type='module'></script>";
 $title = "Création fiche";
 
 ob_start();

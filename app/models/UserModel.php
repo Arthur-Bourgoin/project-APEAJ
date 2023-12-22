@@ -121,6 +121,7 @@ class UserModel {
                 return 401; // user not exist
             $keys = ["login", "lastName", "firstName", "picture", "idUser"];
             $args["login"] = self::generateLogin($args["firstName"], $args["lastName"]);
+            
             Database::getInstance()
                 ->prepare("UPDATE users 
                         SET login = :login,
