@@ -9,7 +9,7 @@ helpers.initModalPwd("#newUser", 1, true);
 // supprimer une formation
 document.querySelectorAll(".btn-removed").forEach(btn => {
     btn.addEventListener("click", e => {
-    if(!confirm("Voulez vous vraiment supprimer cet formation ?"))
+    if(!confirm("Voulez vous vraiment supprimer cette formation ?"))
         e.preventDefault();
     });
 });

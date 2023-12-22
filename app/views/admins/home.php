@@ -102,26 +102,19 @@ ob_start(); ?>
                                 <p class="card-text">
                                     <?= htmlentities($student->firstName) ?>
                                 </p>
-                                <div class="row d-flex flex-row-reverse me-2">
-                                    <div class="col-2">
-                                    <a href="etudiants/<?= $student->lastName ?>-<?= $student->firstName ?>-<?= $student->idUser ?>"
-                                        class="btn btn-primary"><i class="bi bi-info-circle"></i></a>
+                                <div class="d-flex justify-content-evenly">
+                                    <a href="etudiants/<?= $student->lastName ?>-<?= $student->firstName ?>-<?= $student->idUser ?>" class="btn btn-primary"><i class="bi bi-info-circle"></i></a>
+                                    <button type="button" class="btn btn-primary button-update" data-bs-toggle="modal" data-bs-target="#ModalModifie" data-id="<?= $student->idUser ?>">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
                                 </div>
-                                <div class="col-2">
-                                <button type="button" class="btn btn-primary button-update" data-bs-toggle="modal"
-                                    data-bs-target="#ModalModifie" data-id="<?= $student->idUser ?>">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
                             </div>
                         </div>
                     </div>
-
-                </div>
+                <?php } ?>
             </div>
-        <?php } ?>
+        </div>
     </div>
-</div>
-</div>
 
 </div>
 <div class="modal fade" id="ModalAjouterSession" tabindex="-1" aria-labelledby="ModalAjouterSessionLabel"

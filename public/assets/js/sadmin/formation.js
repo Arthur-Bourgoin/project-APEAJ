@@ -11,6 +11,7 @@ helpers.changeModalPwd("#newUser");
 helpers.initModalPwd("#newUser", 1, true);
 helpers.eventChangePicture("#inputImgUserAdd", "#imgUserAdd");
 helpers.removeDivFeedback(".alert");
+helpers.eventChangePicture("#inputImgTraining", "#imgTraining");
 
 const admins = new Map();
 adminsTab.forEach(admin => {

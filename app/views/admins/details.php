@@ -56,21 +56,21 @@ ob_start(); ?>
 
                     switch ($error) {
                         case 501:
-                            echo "<div class = 'alert alert-danger'> Les données ne sont pas valides </div>";
+                            echo "<div class = 'alert alert-danger'> Les données ne sont pas valides.</div>";
                             break;
                         case 2:
-                            echo "<div class = 'alert alert-danger'> Une erreur s'est produite lors de l'affichage </div>";
+                            echo "<div class = 'alert alert-danger'> Une erreur s'est produite lors de l'affichage.</div>";
                             break;
                         case 3:
-                            echo "<div class = 'alert alert-danger'> Une erreur s'est produite lors de l'affichage </div>";
+                            echo "<div class = 'alert alert-danger'> Une erreur s'est produite lors de l'affichage.</div>";
                             break;
                         case 707:
-                            echo "<div class = 'alert alert-danger'> Vous ne pouvez pas modifier un profil qui n'est pas le votre </div>";
+                            echo "<div class = 'alert alert-danger'> Vous ne pouvez pas modifier un profil qui n'est pas le votre.</div>";
                             break;
                     }
                     switch ($success) {
                         case 1:
-                            echo "<div class = 'alert alert-success'> Modification de l'étudiant réussie ! </div>";
+                            echo "<div class = 'alert alert-success'> Modification de l'étudiant réussie !</div>";
                             break;
                         case 2:
                             echo "<div class = 'alert alert-success'> Suppression du commentaire réussie !  </div>";
@@ -79,7 +79,7 @@ ob_start(); ?>
                             echo "<div class = 'alert alert-success'>Ajout d'un commentaire réussi ! </div>";
                             break;
                         case 4:
-                            echo "<div class = 'alert alert-success'>Modification d'un commentaire réussi ! </div>";
+                            echo "<div class = 'alert alert-success'>Modification d'un commentaire réussie ! </div>";
                             break;
                         case 12:
                             echo "<div class = 'alert alert-success'> Modification profil réussie ! </div>";
@@ -108,7 +108,7 @@ ob_start(); ?>
         <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#ModalComs">
             <i class="bi bi-chat-left-text me-2"></i> Ajouter un commentaire
         </button>
-        <?php
+    <?php
     }
     ?>
     <div class="row">
@@ -159,12 +159,13 @@ ob_start(); ?>
     </div>
 </div>
 <!-- Modal update utilisateur-->
-<div class = "modal fade" id = "ModalModifie" data-bs-backdrop = "static" data-bs-keyboard = "false" tabindex = "-1" aria-labelledby = "UpdateUserLabel" aria-hidden = "true" data-type-pwd = "<?= $student->typePwd ?>">
+<div class="modal fade" id="ModalModifie" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="UpdateUserLabel" aria-hidden="true" data-type-pwd="<?= $student->typePwd ?>">
     <div class="modal-dialog">
-        <form enctype="multipart/form-data" action="<?= $_SERVER ["REQUEST_URI"]?>" method="POST">
-            <input type="hidden" id="idUser" name="idUser" value= <?= $student->idUser ?> />
+        <form enctype="multipart/form-data" action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
+            <input type="hidden" id="idUser" name="idUser" value=<?= $student->idUser ?> />
             <input type="hidden" name="action" value="updateUser" />
-            <input type="hidden" name="MAX_FILE_SIZE" value="300000" />   
+            <input type="hidden" name="MAX_FILE_SIZE" value="300000" />
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="newUserLabel">Modifier utilisateur</h5>
@@ -174,7 +175,8 @@ ob_start(); ?>
                     <div class="row">
                         <div class="col-4">
                             <label for="inputImgUser">
-                                <img id="imgUser" src=<?= $student->picture?> class="w-100 border" alt="Image de l'utilisateur">
+                                <img id="imgUser" src=<?= $student->picture ?> class="w-100 border"
+                                    alt="Image de l'utilisateur">
                             </label>
                             <input id="inputImgUser" type="file" class="d-none" name="picture">
                         </div>
@@ -184,7 +186,8 @@ ob_start(); ?>
                                 <label for="inputLastName">Nom</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
-                                    <input id="inputLastName" type="text" class="form-control" name="lastName" value="<?= $student->lastName ?>"> 
+                                    <input id="inputLastName" type="text" class="form-control" name="lastName"
+                                        value="<?= $student->lastName ?>">
                                 </div>
                             </div>
 
@@ -192,19 +195,20 @@ ob_start(); ?>
                                 <label for="inputFirstName">Prénom</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
-                                    <input id="inputFirstName" type="text" class="form-control" name="firstName" value="<?= $student->firstName ?>">
+                                    <input id="inputFirstName" type="text" class="form-control" name="firstName"
+                                        value="<?= $student->firstName ?>">
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-12 mt-3">
                             <label for="inputTypePwd" class="form-label">Type de mot de passe</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
                                 <select class="form-select selectTypePwd" id="inputTypePwd" name="typePwd">
-                                    <option value="1"  <?=$student->typePwd === 1 ? 'selected' : "" ?>> Texte </option>
-                                    <option value="2"  <?=$student->typePwd === 2 ? "selected" : "" ?>> Code </option>
-                                    <option value="3" <?=$student->typePwd === 3 ? "selected" : "" ?>> Schéma </option>
+                                    <option value="1" <?= $student->typePwd === 1 ? 'selected' : "" ?>> Texte </option>
+                                    <option value="2" <?= $student->typePwd === 2 ? "selected" : "" ?>> Code </option>
+                                    <option value="3" <?= $student->typePwd === 3 ? "selected" : "" ?>> Schéma </option>
                                 </select>
                             </div>
                         </div>
@@ -219,7 +223,8 @@ ob_start(); ?>
                             <div class="col-12 mt-3">
                                 <label for="inputConfirmPwd" class="form-label">Confirmation du mot de passe</label>
                                 <div class="input-group">
-                                    <input id="inputVerifPwd" type="password" class="form-control input-pwd" name="verifPwd">
+                                    <input id="inputVerifPwd" type="password" class="form-control input-pwd"
+                                        name="verifPwd">
                                     <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
                                 </div>
                             </div>
@@ -228,14 +233,16 @@ ob_start(); ?>
                             <div class="col-12 mt-3">
                                 <label for="inputPwd" class="form-label">Code</label>
                                 <div class="input-group">
-                                    <input id="inputPwd" type="password" class="form-control input-pwd" name="pwd" pattern="[0-9]{4,6}">
+                                    <input id="inputPwd" type="password" class="form-control input-pwd" name="pwd"
+                                        pattern="[0-9]{4,6}">
                                     <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
                                 </div>
                             </div>
                             <div class="col-12 mt-3">
                                 <label for="inputConfirmPwd" class="form-label">Confirmation du code</label>
                                 <div class="input-group">
-                                    <input id="inputVerifPwd" type="password" class="form-control input-pwd" name="verifPwd" pattern="[0-9]{4,6}">
+                                    <input id="inputVerifPwd" type="password" class="form-control input-pwd"
+                                        name="verifPwd" pattern="[0-9]{4,6}">
                                     <span role="button" class="input-group-text"><i class="bi bi-eye"></i></span>
                                 </div>
                             </div>
@@ -256,14 +263,72 @@ ob_start(); ?>
                                 <i class="bi bi-check-circle me-2"></i>Valider
                             </button>
                         </div>
-                    </div>  
-                </div>  
+                    </div>
+                </div>
             </div>
         </form>
     </div>
 </div>
+<div class="modal fade" id="ModalComs" tabindex="-1" aria-labelledby="ModalComs" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="AddComment">Ajouter un commentaire</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
+                    <input type="hidden" id="idStudent" name="idStudent" value="<?= $student->idUser ?>" />
+                    <input type="hidden" name="action" value="addComment" />
+                    <input type="hidden" name="lastUpdate" value="" />
+                    <div class=" col-12 ">
+                        <label for="Formtext" class="form-label pe-none">Contenu</label>
+                        <textarea class=" form-control" id="Formtext" name="text"></textarea>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel btn-danger me-2" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>Annuler
+                </button>
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle me-2"></i>Valider
+                </button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
 
-<!-- Modal création fiche -->
+<div class="modal fade" id="ModalUpdateComs" tabindex="-1" aria-labelledby="ModalUpdateComs" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="UpdateComment">Modifier un commentaire</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
+                    <input type="hidden" name="action" value="updateComment" />
+                    <input type="hidden" id="idStudent" name="idStudent" value="<?= $student->idUser ?>" />
+                    <input type="hidden" id="idEducator" name="idEducator" />
+                    <div class=" col-12 ">
+                        <label for="formText" class="form-label pe-none">Contenu</label>
+                        <textarea class=" form-control" id="formText" name="text"></textarea>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel btn-danger me-2" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>Annuler
+                </button>
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle me-2"></i>Valider
+                </button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="createFormModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -286,11 +351,15 @@ ob_start(); ?>
     </div>
   </div>
 </div>
-<?php require("../app/views/modalAccount.php"); ?>
+
+<?php 
+    require("../app/views/modalAccount.php");
+?>
 <script>
     const commentsStudentTab = <?= json_encode($comments) ?>;
     console.log(commentsStudentTab);
 </script>
+
 <?php $content = ob_get_clean();
 require("../app/views/layout.php");
 ?>

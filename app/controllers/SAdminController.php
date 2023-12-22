@@ -2,6 +2,7 @@
 namespace App\Controllers;
 use App\Models\TrainingModel;
 use App\Models\UserModel;
+use App\Class\ExportExcel;
 
 /*
 code d'erreur:
@@ -30,9 +31,10 @@ code d'erreur:
 SUCCES
 1 --> succes lors de l'ajout d'un utilisateur
 2 --> succes lors de l'ajout d'une formation
-3 --> succes lors de la suppression d'un utilisateur 
+3 --> succes lors de la suppression d'une formation 
 4 --> succes lors de la modification de la formation
 5 --> succes mors de la modification d'un utilisateur
+6 --> succes lors de la suppression d'une formation
 
 TODO --> code erreur suppression (voir pour l'export) + rajouter les required
 */
@@ -78,8 +80,9 @@ class SAdminController extends UserController {
     }
 
     public function delete_user() {
-        $error = UserModel::deleteUser($_POST["idUser"]);
-        $this->displayTemplateTraining($error, $error===0 ? 3 : 0, $_POST["idTraining"]);
+        //$error = UserModel::deleteUser($_POST["idUser"]);
+        $error = 0;
+        $this->displayTemplateTraining($error, $error===0 ? 6 : 0, $_POST["idTraining"]);
     }
 
     public function add_training() {        
@@ -101,6 +104,8 @@ class SAdminController extends UserController {
     }
 
     public function delete_training() {
+        if(!TrainingModel::existTraining($_POST["idTraining"]))
+            return 1; // training not exist
         $error = TrainingModel::deleteTraining($_POST["idTraining"]);
         $this->displayTemplateHome($error, $error===0 ? 3 : 0);
     }

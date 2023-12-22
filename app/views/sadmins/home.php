@@ -62,7 +62,7 @@ ob_start();
                     <div class="row border mb-3 divTraining">
                         <div class="col-4 my-auto">
                             <div class="text-center">
-                                <img src="<?= $training->picture ?>" class="w-100">
+                                <img src="<?= $training->picture ?>" class="w-50">
                             </div>
                         </div>
                         <div class="col-8 d-flex flex-column justify-content-evenly py-3">
@@ -265,7 +265,7 @@ ob_start();
         </div>  
     </div>
 
-    <?= require("../app/views/modalAccount.php") ?>
+    <?php require("../app/views/modalAccount.php") ?>
        
 </div>
 

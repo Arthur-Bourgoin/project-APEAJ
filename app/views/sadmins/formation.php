@@ -53,13 +53,15 @@ ob_start(); //On bufferise l'affichage
             echo '<div class="row alert alert-success my-3" role="alert">Modification de la formation enregistrée.</div>'; break;
         case 5 :
             echo '<div class="row alert alert-success my-3" role="alert">Modification de l\'utilisateur enregistrée.</div>'; break;
+        case 6 :
+            echo '<div class="row alert alert-success my-3" role="alert">Suppression de l\'utilisateur enregistrée.</div>'; break;
     }
     ?>
 
     <!-- Affichage de l'image de la formation A CHANGER -->
     <div class="row border border-2 border-black rounded pt-2">
       <div class="col-5 col-lg-4 mb-2">
-        <img src="<?= $training->picture ?>" class="w-100" alt="Image formation">
+        <img src="<?= $training->picture ?>" class="w-75" alt="Image formation">
       </div>
       <div class="col-7 col-lg-3 d-flex flex-column justify-content-evenly align-items-center mb-2">
         <div>
