@@ -1,7 +1,7 @@
 <?php
-$title = "Page Choix Modèle Fiche";
+$title = "Modèles Fiche";
 $bsIcons = true;
-define("PATH_PNG",'./assets/pdf/templates/');
+define("PATH_PDF",'./assets/pdf/templates/');
 ?>
 
 <?php ob_start(); ?>
@@ -19,8 +19,8 @@ define("PATH_PNG",'./assets/pdf/templates/');
             <div class="container choose col-4">
                 <div class="row pdf col-12 d-flex justify-content-center">
                     <div class="pdf col-8 position-relative p-0 m-5">
-                        <embed src="<?=PATH_PNG.$formTemplate->form->numero?>.pdf#toolbar=0&view=Fit" type="application/pdf" width="100%" height="388rm">
-                        <a href="<?=PATH_PNG.$formTemplate->form->numero?>.pdf" target="_blank">
+                        <embed src="<?=PATH_PDF.$formTemplate->form->numero?>.pdf#toolbar=0&view=Fit" type="application/pdf" width="100%" height="388rm">
+                        <a href="<?=PATH_PDF.$formTemplate->form->numero?>.pdf" target="_blank">
                             <span class="zoom position-absolute top-100 start-100 translate-middle bg-primary rounded rounded-circle py-1 px-3"><i class="bi bi-eye text-white" style="font-size: 2.5rem;"></i></span>
                         </a>
                     </div>
@@ -46,11 +46,6 @@ define("PATH_PNG",'./assets/pdf/templates/');
     <a href="/etudiants/<?= htmlentities($student->lastName) ?>-<?= htmlentities($student->firstName) ?>-<?= htmlentities($student->idUser) ?>/creer-fiche">
         <button type="button" class="btn btn-primary col-10 my-5">Choix du template</button>
     </a>
-    <style>
-        .container:hover {
-        background-color: #your-hover-color;
-    }
-    </style>
     <div class="div-test bg-success position-relative m-5">
         <p>tu texte ou un pdf</p>
         <span class="position-absolute top-100 start-100 translate-middle"><i class="bi bi-eye bg-primary rounded rounded-circle mx-3" style="font-size: 1.5rem;"></i></span>
