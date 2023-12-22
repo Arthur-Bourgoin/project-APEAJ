@@ -104,9 +104,9 @@ $router->map("POST", "/accueil", function () {
 #######################################################################################*/
 $router->map("GET", "/fiche-[i:id]", function ($id) {
     $controller = new StudentController();
-    $controller->infoForm($_SESSION["id"], $id);
+    $controller->infoForm($id);
 });
-$router->map("GET", "/fiche-[i:id]", function ($idS, $idF) {
+$router->map("GET", "/fiche-[i:id]", function ($id) {
     $controller = new StudentController();
     if(isset($_POST["action"])) {
         switch($_POST["action"]) {
@@ -121,7 +121,7 @@ $router->map("GET", "/fiche-[i:id]", function ($idS, $idF) {
                 break;
         }
     } else {
-        $controller->infoForm($_SESSION["id"], $id);
+        $controller->infoForm($id);
     }
 });
 $router->map("GET", "/fiche-[i:id]/consulter", function ($id) {
