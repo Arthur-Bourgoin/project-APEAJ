@@ -205,6 +205,12 @@ class AdminController extends UserController
         $this->displayTemplateInfoForm($error, $error === 0 ? 5 : 0, $idStudent, $idForm);
     }
 
+    public function chooseTemplate($id){
+        $student = UserModel::getUser($id);
+        $formTemplates = FormModel::getForms(1000);
+        require("../app/views/admins/chooseTemplate.php");
+    }
+
     public function createForm(string $fName, string $lName, int $idStudent)
     {
         //echo "Creation d'une fiche pour " . $fName . " " . $lName . " id :" . $idStudent;
@@ -302,7 +308,7 @@ class AdminController extends UserController
         $form = FormModel::getForm($idForm, $idStudent);
         $currentUser=$this->getCurrentUser();
         if( is_int($student) || is_int($form))     
-            $error = 1;
+            $error = 1; 
         require("../app/views/admins/fiche-info.php");
     }
     private function verifSession(array $args){

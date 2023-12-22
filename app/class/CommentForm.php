@@ -15,6 +15,7 @@ class CommentForm {
     public $idStudent;
     public $author;
     public $note;
+    
     const TAB_ICONS = ["bi-emoji-angry-fill text-danger", "bi-emoji-frown-fill text-warning", "bi-emoji-neutral-fill text-info", "bi-emoji-smile-fill text-success", "bi-emoji-laughing-fill text-success-emphasis"];
     
     public function __construct(Object $obj, User $author) {

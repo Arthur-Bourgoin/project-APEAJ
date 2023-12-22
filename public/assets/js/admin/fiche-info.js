@@ -2,7 +2,7 @@ import * as helpers from '/assets/js/functions.js';
 import { CommentForm } from "../class/CommentForm.js";
 
 helpers.eventChangePicture("#inputImgForm", "#imgForm");
-helpers.removeDivFeedback(".alert");
+console.log("test");
 const comments = new Map();
 commentsTab.forEach(comment => {
     comments.set(comment.idCommentForm, new CommentForm(comment));

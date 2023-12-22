@@ -1,7 +1,10 @@
 <?php
 
 namespace App\Controllers;
-use App\Models\StudentModel;
+use App\Models\{
+    FormModel,
+    UserModel
+};
 use App\Models\AdminModel;
 
 class StudentController extends UserController {
@@ -15,15 +18,24 @@ class StudentController extends UserController {
     }
 
     public function home() {
-        $finishedSheets = StudentModel::getFinishedSheets();
-        $currentSheet = StudentModel::getCurrentSheet();
-        $student = AdminModel::getStudentById($_SESSION['id']);
+        $student = UserModel::getUser($_SESSION['id']);
+        $finishedForms = FormModel::getFinishedForms($student->idUser);
+        $currentForm = FormModel::getCurrentForm($student->idUser);
         require("../app/views/students/home_student.php");
     }
 
-    public function infoForm(int $idF) {
-        echo "Consultation de la fiche " . $idF;
+    public function infoForm(int $idStudent, int $numero) {
+        $error = 0;
+        $success = 0;  
+        //echo "Consultation de la fiche " . $numero;
+        $student = UserModel::getUser($idStudent);
+        $form = FormModel::getForm($numero, $idStudent);
+        if( is_int($student) || is_int($form))     
+            $error = 1; 
+        require("../app/views/students/fiche-info.php");
     }
+
+    
 
     public function consultForm(int $idF) {} 
 
