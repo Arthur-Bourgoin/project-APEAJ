@@ -1,28 +1,27 @@
 <?php $title = "Page Accueil Admin";
 $bsIcons = true;
 $scripts = "<script src='/assets/js/admin/home.js' type='module'></script>
-<script src='/assets/js/CurrentUser.js' type='module'></script>";
+<script src='/assets/js/account.js' type='module'></script>";
 ob_start(); ?>
 
-<div class="container position-relative">
-<div class="col-lg-2 position-absolute top-0 end-0">
-    <a href="/disconnect"><button class="btn btn-danger"><i class="bi bi-power me-2"></i>Se déconnecter</button></a>  
-    <i class="bi bi-person-circle text-black" style="font-size: 3rem;" data-bs-toggle="modal"
-            data-bs-target="#profileConsultation"></i>
-    </div>
+<div class="container">
     <div class="row">
         <h2 class="text-center mt-3">
             <?= $training->wording ?>
         </h2>
-    </div>
-    <div class="row">
-        <div class="col-10 col-lg-11">
-            <button type="button" class="btn btn-primary my-3 btn-account" data-bs-toggle="modal"
-                data-bs-target="#ModalAjouterSession">
-                <i class="bi bi-plus-circle"></i> Ajouter une session
+        <div class="d-flex justify-content-between align-items-center">
+            <button type="button" class="btn btn-primary my-3 btn-account" data-bs-toggle="modal" data-bs-target="#ModalAjouterSession">
+                <i class="bi bi-plus-circle me-2"></i>Ajouter une session
             </button>
+            <div class="d-flex align-items-center">
+                <a href="/disconnect"><button class="btn btn-danger"><i class="bi bi-power me-2"></i>Se déconnecter</button></a> 
+                <button class="btn" data-bs-toggle="modal" data-bs-target="#profileConsultation">
+                    <i class="bi bi-person-circle " style="font-size: 3rem;"></i> 
+                </button>
+            </div>
         </div>
     </div>
+
     <?php
     switch ($error) {
         case 501:
@@ -35,7 +34,7 @@ ob_start(); ?>
             echo "<div class='alert alert-danger'>  </div>";
             break;
         case 707:
-            echo "<div class = 'alert alert-danger'> Vous ne pouvez pas modifier un profil qui n'est pas le votre </div>";
+            echo "<div class = 'alert alert-danger'> Vous ne pouvez pas modifier un profil qui n'est pas le vôtre </div>";
             break;
     }
     switch ($success) {
@@ -49,7 +48,7 @@ ob_start(); ?>
             echo "<div class='alert alert-success'>  </div>";
             break;
         case 12:
-            echo "<div class = 'alert alert-success'> Modification profile réussie ! </div>";
+            echo "<div class = 'alert alert-success'> Modification profil réussie ! </div>";
             break;
     }
     ?>
@@ -389,6 +388,10 @@ ob_start(); ?>
         </form>
     </div>
 </div>
+
+<?php 
+require("../app/views/modalAccount.php");
+    ?>
 
 <script>
     const studentsTab = <?= json_encode($students) ?>;

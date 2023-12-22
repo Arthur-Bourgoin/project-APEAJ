@@ -2,7 +2,7 @@
 $title = "Page Information Elève";
 $bsIcons = true;
 $scripts = "<script src='/assets/js/admin/details.js' type = 'module'></script>
-<script src='/assets/js/CurrentUser.js' type='module'></script>";
+<script src='/assets/js/account.js' type='module'></script>";
 ob_start(); ?>
 <style>
     .comment-container:hover {
@@ -11,11 +11,16 @@ ob_start(); ?>
     }
 </style>
 
-<div class="container position-relative">
-<div class="col-lg-2 position-absolute top-0 end-0">
-    <a href="/disconnect"><button class="btn btn-danger"><i class="bi bi-power me-2"></i>Se déconnecter</button></a>  
-    <i class="bi bi-person-circle text-black" style="font-size: 3rem;" data-bs-toggle="modal"
-            data-bs-target="#profileConsultation"></i>
+<div class="container ">
+<div class="row">
+        <div class="d-flex justify-content-end align-items-center">
+            <div class="d-flex align-items-center ">
+                <a href="/disconnect"><button class="btn btn-danger"><i class="bi bi-power me-2"></i>Se déconnecter</button></a> 
+                <button class="btn" data-bs-toggle="modal" data-bs-target="#profileConsultation">
+                    <i class="bi bi-person-circle " style="font-size: 3rem;"></i> 
+                </button>
+            </div>
+        </div>
     </div>
     <div class="row">
         <div class="col-3 mt-3 mr-3 ">
@@ -59,6 +64,9 @@ ob_start(); ?>
                         case 3:
                             echo "<div class = 'alert alert-danger'> Une erreur s'est produite lors de l'affichage </div>";
                             break;
+                        case 707:
+                            echo "<div class = 'alert alert-danger'> Vous ne pouvez pas modifier un profil qui n'est pas le votre </div>";
+                            break;
                     }
                     switch ($success) {
                         case 1:
@@ -68,13 +76,13 @@ ob_start(); ?>
                             echo "<div class = 'alert alert-success'> Suppression du commentaire réussie !  </div>";
                             break;
                         case 3:
-                            echo "<div class = 'alert alert-success'>Ajout d'un commenttaire réussi ! </div>";
+                            echo "<div class = 'alert alert-success'>Ajout d'un commentaire réussi ! </div>";
                             break;
                         case 4:
-                            echo "<div class = 'alert alert-success'>Modification d'un commenttaire réussi ! </div>";
+                            echo "<div class = 'alert alert-success'>Modification d'un commentaire réussi ! </div>";
                             break;
                         case 12:
-                            echo "<div class = 'alert alert-success'> Modification profile réussie ! </div>";
+                            echo "<div class = 'alert alert-success'> Modification profil réussie ! </div>";
                             break;
                     }
                     ?>
@@ -278,6 +286,11 @@ ob_start(); ?>
     </div>
   </div>
 </div>
+<?php require("../app/views/modalAccount.php"); ?>
+<script>
+    const commentsStudentTab = <?= json_encode($comments) ?>;
+    console.log(commentsStudentTab);
+</script>
 <?php $content = ob_get_clean();
 require("../app/views/layout.php");
 ?>
