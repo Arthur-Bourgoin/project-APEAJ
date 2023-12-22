@@ -1,7 +1,8 @@
 <?php
 $bsIcons = true;
 $title = "Accueil";
-$scripts = "<script src='./assets/js/sadmin/home.js' type='module'></script>";
+$scripts = "<script src='./assets/js/sadmin/home.js' type='module'></script>
+            <script src='./assets/js/account.js' type='module'></script>";
 define("PATH", "/assets/images/trainings/");
 ob_start();
 ?>
@@ -18,7 +19,7 @@ ob_start();
                         <i class="bi bi-power me-2"></i>Se déconnecter 
                     </button>
                 </a>
-                <button class="btn p-0 ms-3">
+                <button class="btn p-0 ms-3" data-bs-toggle="modal" data-bs-target="#profileConsultation">
                     <i class="bi bi-person-circle" style="font-size: 2.5rem"></i>
                 </button>
             </div>
@@ -263,6 +264,8 @@ ob_start();
             </form>
         </div>  
     </div>
+
+    <?= require("../app/views/modalAccount.php") ?>
        
 </div>
 

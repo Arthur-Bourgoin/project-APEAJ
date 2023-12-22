@@ -109,7 +109,8 @@ class SAdminController extends UserController {
         $error = $p_error;
         $success = $p_success;
         $trainings = TrainingModel::getTrainings();
-        if(!is_array($trainings) ) 
+        $currentUser = UserModel::getUser($_SESSION["id"]);
+        if(!is_array($trainings)) 
             $error = 1;
         require("../app/views/sadmins/home.php");
     }
@@ -120,6 +121,7 @@ class SAdminController extends UserController {
         $admins = UserModel::getAdmins();
         $students = UserModel::getStudents($idTraining);
         $training = TrainingModel::getTraining($idTraining);
+        $currentUser = UserModel::getUser($_SESSION["id"]);
         if(!is_array($admins) || !is_array($students)  || is_int($training)) 
             $error = 1;
         require("../app/views/sadmins/formation.php");
