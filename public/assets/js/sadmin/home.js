@@ -2,7 +2,7 @@ import * as helpers from '/assets/js/functions.js';
 
 helpers.eventChangePicture("#inputImgUser", "#imgUser");
 helpers.eventChangePicture("#inputImgTraining", "#imgTraining");
-helpers.removeDivFeedback(".alert");
+helpers.removeDivFeedback();
 helpers.changeModalPwd("#newUser");
 helpers.initModalPwd("#newUser", 1, true);
 

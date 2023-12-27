@@ -8,17 +8,19 @@ class SessionModel {
 
     public static function getSessions(int $idTraining) {
         try {
-            if(!TrainingModel::existTraining($idTraining))
-                return 2; // training not exist
             $sessions = [];
             $res = Database::getInstance()->prepare("SELECT * FROM session WHERE idTraining = :id");
             $res->execute(array("id" => $idTraining));
+            if($res->rowCount() === 0) {
+                Feedback::setError("Aucune session n'est associée à cette formation.");
+                return;
+            }
             while($session = $res->fetch()) {
                 $sessions[] = new Session($session);
             }
             return $sessions;
         } catch (\Exception $e) {
-            return 1; // query error
+            Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -27,13 +29,15 @@ class SessionModel {
 
     public static function getSession(int $idSession) {
         try {
-            if(!self::existSession($idSession))
-                return 1; // session not exist
             $res = Database::getInstance()->prepare("SELECT * FROM session WHERE idSession = :id");
             $res->execute(array("id" => $idSession));
+            if($res->rowCount() === 0) {
+                Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
+                return;
+            }
             return $res->fetch();
         } catch (\Exception $e) {
-            return 2; // query error
+            Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -42,20 +46,26 @@ class SessionModel {
 
     public static function addSession(array $args) {
         try {
+            if(!TrainingModel::existTraining($args["idTraining"])) {
+                Feedback::setError("Impossible d'ajouter la session, la formation associée n'existe pas.");
+                return;
+            }
             Database::getInstance()
                 ->prepare("INSERT INTO session (wording, theme, description, timeBegin, idTraining) 
                            VALUES (:wording, :theme, :description, :timeBegin, :idTraining)")
                 ->execute(array_intersect_key($args, array_flip(["wording", "theme", "description", "timeBegin", "idTraining"])));
-            return 0; //success
+            Feedback::setSuccess("Ajout de la session enregistré.");
         } catch (\Exception $e) {
-            return 2; // query error;
+            Feedback::setError("Une erreur s'est produite lors de l'ajout de la session.");
         }
     }
 
     public static function updateSession(array $args) {
         try {
-            if(!self::existSession($args["idSession"]))
-                return 2; // session not exist
+            if(!self::existSession($args["idSession"])) {
+                Feedback::setErro("Mise à jour impossible, la session n'existe pas.");
+                return;
+            }
             Database::getInstance()
                 ->prepare("UPDATE session
                            SET wording = :wording,
@@ -64,23 +74,24 @@ class SessionModel {
                                timeBegin = :timeBegin
                            WHERE idSession = :idSession")
                 ->execute(array_intersect_key($args, array_flip(["wording", "theme", "description", "timeBegin", "idSession"])));
-            return 0;
+            Feedback::setSuccess("Modification de la session enregistrée.");
         } catch (\Exception $e) {
-            throw($e);
-            //return 1; // query error
+            Feedback::setError("Une erreur s'est produite lors de la modification de la session.");
         }
     }
 
     public static function closeSession(int $idSession) {
         try {
-            if(!self::existSession($idSession))
-                return 2; // session not exist
+            if(!self::existSession($idSession)) {
+                Feedback::setError("Erreur, la session n'existe pas.");
+                return;
+            }
             Database::getInstance()
                 ->prepare("UPDATE session SET timeEnd = :timeEnd WHERE idSession = :id")
                 ->execute(array("id" => $idSession, "timeEnd" => date('Y-m-d H:i:s')));
-            return 0;
+            Feedback::setSuccess("Fin de la session enregistrée à " . date('Y-m-d H:i:s')); //format
         } catch (\Exception $e) {
-            return 1; // query error
+            Feedback::setError("Une erreur s'est produite lors de la fermeture de la session.");
         }
     }
     

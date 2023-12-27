@@ -146,10 +146,9 @@ export function eventChangePicture(input, img) {
 /**
  * reduces the opacity of the feddback div until it is removed
  * @export
- * @param {string} selectors ".alert"
  */
-export function removeDivFeedback(selectors) {
-    const divAlert = document.querySelector(selectors);
+export function removeDivFeedback() {
+    const divAlert = document.querySelector(".divFeedback");
     if(divAlert) {
         setTimeout(() => {
             divAlert.style.opacity = 1;

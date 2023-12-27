@@ -3,6 +3,7 @@ namespace App\Models;
 use Config\Database;
 use App\Class\User;
 use App\Models\CommentStudentModel;
+use App\Class\Feedback;
 
 class UserModel {
 
@@ -11,15 +12,17 @@ class UserModel {
             $users = [];
             $res = Database::getInstance()->prepare("SELECT * FROM users WHERE idTraining = :id ORDER BY role DESC");
             $res->execute(array("id" => $idTraining));
+            if($res->rowCount() === 0) {
+                Feedback::setError("Aucun utilisateur n'est associé à cette formation.");
+                return;
+            }
             while($user = $res->fetch()) {
                 $comments = CommentStudentModel::getComments($user->idUser);
-                if(!is_array($comments))
-                    return 14; // Error on CommentStudensModel::getComments() method
                 $users[] = new User($user, $comments);
             }
             return $users;
         } catch (\Exception $e) {
-            return 1; // query error
+            Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -28,20 +31,20 @@ class UserModel {
 
     public static function getStudents(int $idTraining) {
         try {
-            if(!TrainingModel::existTraining($idTraining))
-                return 47; // training not exist
             $users = [];
             $res = Database::getInstance()->prepare("SELECT * FROM users WHERE idTraining = :id AND role = 'student'");
             $res->execute(array("id" => $idTraining));
+            if($res->rowCount() === 0) {
+                Feedback::setError("Aucun étudiant n'est associé à cette formation.");
+                return;
+            }
             while($user = $res->fetch()) {
                 $comments = CommentStudentModel::getComments($user->idUser);
-                if(!is_array($comments))
-                    return 14; // Error on CommentStudensModel::getComments() method
                 $users[] = new User($user, $comments);
             }
             return $users;
         } catch (\Exception $e) {
-            return 1; // query error
+            Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -57,7 +60,7 @@ class UserModel {
             }
             return $admins;
         } catch (\Exception $e) {
-            return 1; // query error
+            Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -68,15 +71,15 @@ class UserModel {
         try {
             $res = Database::getInstance()->prepare("SELECT * from users WHERE idUser = :id");
             $res->execute(array("id" => $idUser));
-            if($res->rowCount() === 0)
-                return 2; // user not exist
+            if($res->rowCount() === 0) {
+                Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
+                return;
+            }
             $user = $res->fetch();
             $comments = CommentStudentModel::getComments($user->idUser);
-            if(!is_array($comments))
-                return 73; // Error on CommentStudensModel::getComments() method
             return new User($user, $comments);
         } catch (\Exception $e) {
-            return 1; // query error
+            Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -99,29 +102,34 @@ class UserModel {
         }
     }
 
-    public static function addUser(array $args, int $idTraining) {
+    public static function addUser(array $args) {
         try {
+            if(!TrainingModel::existTraining($args["idTraining"])) {
+                Feedback::setError("Impossible d'ajouter l'utilisateur, la formation associée n'existe pas.");
+                return;
+            }
             $keys = ["login", "lastName", "firstName", "picture", "typePwd", "pwd", "role", "idTraining"];
             $args["login"] = self::generateLogin($args["firstName"], $args["lastName"]);
-            $args["idTraining"] = $idTraining;
             $args["pwd"] = password_hash($args["pwd"], PASSWORD_BCRYPT);
             Database::getInstance()
                 ->prepare("INSERT INTO users (login, lastName, firstName, picture, typePwd, pwd, role, idTraining)
                            VALUES (:login, :lastName, :firstName, :picture, :typePwd, :pwd, :role, :idTraining)")
                 ->execute(array_intersect_key($args, array_flip($keys)));
-            return 0;
+            Feedback::setSuccess("Ajout de l'utilisateur enregistré.");
         } catch (\Exception $e) {
-            return 101; // query error
+            Feedback::setError("Une erreur s'est produite lors de l'ajout de l'utilisateur.");
         }
     }
 
     public static function updateUser(array $args) {
         try {
-            if(!self::existUser($args["idUser"]))
-                return 401; // user not exist
+            if(!self::existUser($args["idUser"])) {
+                Feedback::setError("Mise à jour impossible, l'utilisateur n'existe pas.");
+                return;
+            }
             $keys = ["login", "lastName", "firstName", "picture", "idUser"];
-            $args["login"] = self::generateLogin($args["firstName"], $args["lastName"]);
-            
+            $args["login"] = self::generateLogin($args["firstName"], $args["lastName"]);    
+            //var_dump($_POST); exit();        
             Database::getInstance()
                 ->prepare("UPDATE users 
                         SET login = :login,
@@ -130,16 +138,18 @@ class UserModel {
                             picture = :picture
                         WHERE idUser = :idUser")
                 ->execute(array_intersect_key($args, array_flip($keys)));
-                return 0; // success
+                Feedback::setSuccess("Mise à jour de l'utilisateur enregistrée.");
         } catch (\Exception $e) {
-            return 201; // query error
+            Feedback::setError("Une erreur est survenue lors de la mise à jour de l'utilisateur.");
         }
     }
 
     public static function updateUserAndPwd(array $args) {
         try {
-            if(!self::existUser($args["idUser"]))
-                return 401; // user not exist
+            if(!self::existUser($args["idUser"])) {
+                Feedback::setError("Mise à jour impossible, l'utilisateur n'existe pas.");
+                return;
+            }
             $keys = ["login", "lastName", "firstName", "picture", "typePwd", "pwd", "idUser"];
             $args["login"] = self::generateLogin($args["firstName"], $args["lastName"]);
             $args["pwd"] = password_hash($args["pwd"], PASSWORD_BCRYPT);
@@ -153,9 +163,9 @@ class UserModel {
                             pwd = :pwd
                         WHERE idUser = :idUser")
                 ->execute(array_intersect_key($args, array_flip($keys)));
-                return 0; // success
+                Feedback::setSuccess("Mise à jour de l'utilisateur enregistrée.");
         } catch (\Exception $e) {
-            return 201; // query error
+            Feedback::setError("Une erreur est survenue lors de la mise à jour de l'utilisateur.");
         }
     }
 
@@ -163,7 +173,7 @@ class UserModel {
      * @todo export excel
      */
     public static function deleteUser(int $idUser) {
-        return 0; // query error
+        return 0;
     }
 
     public static function existUser(int $idUser) {
@@ -182,8 +192,8 @@ class UserModel {
     private static function generateLogin(string $fName, string $lName) {
         $res = Database::getInstance()->prepare("SELECT * FROM users WHERE lastName = :lName AND firstName = :fName");
         $res->execute(array("lName" => $lName, "fName" => $fName));
-        if( ($num=$res->rowCount()) !== 0)
-            return strtolower($fName) . "." . strtolower($lName) . $num;
+        if( ($num=$res->rowCount()) > 1)
+            return strtolower($fName) . "." . strtolower($lName) . ($num+1);
         else
             return strtolower($fName) . "." . strtolower($lName);
     }

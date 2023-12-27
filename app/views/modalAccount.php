@@ -13,8 +13,7 @@
                     <div class="row">
                         <div class="col-4">
                             <label for="inputImgCurrentUser">
-                                <img id="imgCurrentUser" src="<?= $currentUser->picture ?>" class="w-100 border"
-                                    alt="Image de l'utilisateur">
+                                <img id="imgCurrentUser" src="<?= $currentUser->picture ?>" class="w-100 border" alt="Image de l'utilisateur">
                             </label>
                             <input id="inputImgCurrentUser" type="file" class="d-none" name="picture">
                         </div>

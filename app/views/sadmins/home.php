@@ -24,37 +24,17 @@ ob_start();
                 </button>
             </div>
         </div>
-    <?php
-    switch ($error) {
-        case 1 :
-            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Une erreur s\'est produite lors de l\'initialisation de la page.</div>'; break;
-        case 101:
-            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Une erreur s\'est produite lors de l\'ajout d\'un utilisateur.</div>'; break;
-        case 102:
-            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Une erreur s\'est produite lors de l\'ajout d\'une formation.</div>'; break;
-        case 301:
-            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Une erreur s\'est produite lors de la suppression d\'une formation.</div>'; break;
-        case 404:
-            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Erreur, la formation n\'existe pas.</div>'; break;
-        case 501:
-            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Les informations de l\'utilisateur ne sont pas valides.</div>'; break;
-        case 503:
-            echo '<div class="alert alert-danger mt-3 mb-1" role="alert">Les informations de la formation ne sont pas valides.</div>'; break;
-    }
-
-    switch ($success) {
-        case 1 :
-            echo '<div class="alert alert-success mt-3 mb-1" role="alert">Ajout de l\'utilisateur enregistré.</div>'; break;
-        case 2 :
-            echo '<div class="alert alert-success mt-3 mb-1" role="alert">Ajout de la formation enregistré.</div>'; break;
-        case 3 :
-            echo '<div class="alert alert-success mt-3 mb-1" role="alert">Suppression de la formation enregistrée.</div>'; break;
-    }
-    ?>
     </div>
 
+    <!-- 
+    ########################################
+    #####      AFFICHAGE FEEDBACK      #####
+    ########################################
+    -->
+    <?= App\Class\Feedback::getMessage() ?>
+
     
-    <!-- Affichge grand écran-->
+    <!-- Affichage grand écran -->
     <div class ="">
         <?php
             if(is_array($trainings)) {
@@ -96,7 +76,7 @@ ob_start();
     <!-- Modal ajout utilisateur-->
     <div class="modal fade" id="newUser" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newUserLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form action="<?= $_SERVER ["REQUEST_URI"]?>" method="POST">
+            <form action="<?= $_SERVER["REQUEST_URI"]?>" method="POST">
                 <input type="hidden" name="action" value="addUser">
                 <input type="hidden" name="idTraining">
                     
@@ -228,7 +208,6 @@ ob_start();
                     </div>
                     <div class="modal-body">     
                         <div class="row">
-                            <!--Selection de l'image -->
                             <div class="col-4">
                                 <label for="inputImgTraining">
                                     <img id="imgTraining" src="/assets/images/users/user.png" class="w-100 border border-black border-2 rounded" alt="Photo de la formation">

@@ -10,8 +10,6 @@ class CommentStudentModel {
     public static function getComments(int $idStudent) {
         try {
             $comments = [];
-            if(!UserModel::existUser($idStudent))
-                return 1; // user not exist
             $res = Database::getInstance()->prepare("SELECT * FROM commentStudent WHERE idStudent = :id");
             $res->execute(array("id" => $idStudent));
             while($comment = $res->fetch()) {
@@ -20,55 +18,61 @@ class CommentStudentModel {
             }
             return $comments;
         } catch (\Exception $e) {
-            return 2; // query error
+            Feedback::setError("Une erreur est survenue lors du chargement de la page.");
         } finally {
             if(!empty($res))
                 $res->closeCursor();
         }
     }
 
-    public static function addComment(array $args, int $idEducator) {
+    // idEducator in $_POST, not in parameters
+    public static function addComment(array $args) {
         try {
-            if(!UserModel::existUser($args["idStudent"]))
-                return 2; // student not exist
-            $args["idEducator"] = $idEducator;
+            if(!UserModel::existUser($args["idStudent"])) {
+                Feedback::setError("Ajout du commentaire impossible, l'étudiant associé n'existe pas.");
+                return;
+            }
             $args["lastModif"] = date('Y-m-d H:i:s');
             Database::getInstance()
                 ->prepare("INSERT INTO commentStudent (idStudent, idEducator, text, lastModif)
                            VALUES (:idStudent, :idEducator, :text, :lastModif)")
                 ->execute(array_intersect_key($args, array_flip(["idStudent", "idEducator", "text", "lastModif"])));
-            return 0; // success
+            Feedback::setSuccess("Ajout du commentaire enregistré.");
         } catch (\Exception $e) {
-            return 1; // query error
+            Feedback::setError("Une erreur s'est produite lors de l'ajout du commentaire.");
         }
     }   
     
-    public static function updateComment(array $args, int $idEducator) {
+    // idEducator in $_POST, not in parameters
+    public static function updateComment(array $args) {
         try {
-            if(!self::existCommentStudent($args["idStudent"], $idEducator))
-                return 2; // commentStudent not exist
-            $args["idEducator"] = $idEducator;
+            if(!self::existCommentStudent($args["idStudent"], $args["idEducator"])) {
+                Feedback::setError("Mise à jour impossible, le commentaire n'existe pas.");
+                return;
+            }
             $args["lastModif"] = date('Y-m-d H:i:s');
             Database::getInstance()
                 ->prepare("UPDATE commentStudent SET text = :text, lastModif = :lastModif WHERE idStudent = :idStudent AND idEducator = :idEducator")
                 ->execute(array_intersect_key($args, array_flip(["idStudent", "idEducator", "text", "lastModif"])));
-            return 0; // success
+            Feedback::setSuccess("Mise à jour du commentaire enregistrée.");
         } catch (\Exception $e) {
-            return 1; // query error
+            Feedback::setError("Une erreur s'est produite lors de la mise à jour du commentaire.");
         }
 
     }
 
     public static function deleteComment( int $idStudent, int $idEducator,) {
         try {
-            if(!self::existCommentStudent($idStudent, $idEducator))
-                return 2; 
+            if(!self::existCommentStudent($idStudent, $idEducator)) {
+                Feedback::setError("Suppression impossible, le commentaire n'existe pas.");
+                return;
+            }
             Database::getInstance()
                 ->prepare("DELETE FROM commentStudent WHERE idEducator = :idEducator AND idStudent = :idStudent")
                 ->execute(array("idEducator" => $idEducator, "idStudent" => $idStudent));
-            return 0; // success
+            Feedback::setSuccess("Suppression du commentaire enregistrée.");
         } catch (\Exception $e) {
-            return 1; // query error
+            Feedback::setError("Une erreur s'est produite lors de la suppression du commentaire.");
         }
     }
 

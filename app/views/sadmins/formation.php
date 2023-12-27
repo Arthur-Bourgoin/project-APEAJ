@@ -3,11 +3,12 @@ $bsIcons = true;
 $title = "Consultation Formation";
 $scripts = "<script src='./assets/js/sadmin/formation.js' type='module'></script>
             <script src='./assets/js/account.js' type='module'></script>";
-ob_start(); //On bufferise l'affichage
+ob_start();
 ?>
+
 <div class="container">
 
-    <h2 class="text-center"><?= htmlentities($training->wording)?></h2>
+    <h2 class="text-center"><?= !empty($training) ? htmlentities($training->wording) : "" ?></h2>
     <div class="d-flex align-items-center justify-content-end">
         <a href="/disconnect">
             <button class="btn btn-danger">
@@ -19,72 +20,36 @@ ob_start(); //On bufferise l'affichage
         </button>
     </div>
 
-    <?php
-    switch ($error) {
-        case 1 :
-          echo '<div class="row alert alert-danger my-3" role="alert">Une erreur s\'est produite lors de l\'initialisation de la page.</div>';
-          $content = ob_get_clean();
-          require("../app/views/layout.php");
-          exit();
-        case 101 :
-            echo '<div class="row alert alert-danger my-3" role="alert">Une erreur est survenue lors de l\'ajout de l\'utilisateur.</div>'; break;
-        case 201 :
-            echo '<div class="row alert alert-danger my-3" role="alert">Une erreur est survenue lors de la modification de l\'utilisateur.</div>'; break;
-        case 202 :
-            echo '<div class="row alert alert-danger my-3" role="alert">Une erreur est survenue lors de la modification de la formation.</div>'; break;
-        case 301 :
-            echo '<div class="row alert alert-danger my-3" role="alert">Une erreur est survenue lors de la suppression de la formation.</div>'; break;
-        case 401 :
-            echo '<div class="row alert alert-danger my-3" role="alert">Erreur, l\'utilisateur n\'existe pas.</div>'; break;
-        case 404 :
-            echo '<div class="row alert alert-danger my-3" role="alert">Erreur, la formation n\'existe pas.</div>'; break;
-        case 501:
-            echo '<div class="row alert alert-danger my-3" role="alert">Les informations de l\'utilisateur ne sont pas valides.</div>'; break;
-        case 503:
-            echo '<div class="row alert alert-danger my-3" role="alert">Les informations de la formation ne sont pas valides.</div>'; break;
-    }
+    <?= App\Class\Feedback::getMessage() ?>
 
-    switch ($success) {
-        case 1 :
-            echo '<div class="row alert alert-success my-3" role="alert">Ajout de l\'utilisateur enregistré.</div>'; break;
-        case 3 :
-            echo '<div class="row alert alert-success my-3" role="alert">Suppression de la formation enregistrée.</div>'; break;
-        case 4 :
-            echo '<div class="row alert alert-success my-3" role="alert">Modification de la formation enregistrée.</div>'; break;
-        case 5 :
-            echo '<div class="row alert alert-success my-3" role="alert">Modification de l\'utilisateur enregistrée.</div>'; break;
-        case 6 :
-            echo '<div class="row alert alert-success my-3" role="alert">Suppression de l\'utilisateur enregistrée.</div>'; break;
-    }
-    ?>
-
-    <!-- Affichage de l'image de la formation A CHANGER -->
-    <div class="row border border-2 border-black rounded pt-2">
-      <div class="col-5 col-lg-4 mb-2">
-        <img src="<?= $training->picture ?>" class="w-75" alt="Image formation">
-      </div>
-      <div class="col-7 col-lg-3 d-flex flex-column justify-content-evenly align-items-center mb-2">
-        <div>
-          <span>Niveau de qualification</span>
-          <div class="border rounded mt-2 p-2"><?= htmlentities($training->qualifLevel)?></div>
+    <?php if(!empty($training)) { ?>
+        <div class="row border border-2 border-black rounded pt-2">
+        <div class="col-5 col-lg-4 mb-2">
+            <img src="<?= htmlentities($training->picture) ?>" class="w-75" alt="Image formation">
         </div>
-        <div>
-          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateTraining">
-            <i class="bi bi-pencil-square me-2"></i>Modification
-          </button></div>
-        <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
-          <input type="hidden" name="action" value="deleteTraining">
-          <input type="hidden" name="idTraining" value="<?= $training->idTraining ?>">
-          <button type="submit" class="btn btn-primary btn-removed-training">
-            <i class="bi bi-trash me-2"></i>Suppression
-          </button>
-        </form> 
-      </div>
-      <div class="col-12 col-lg-5 d-flex flex-column mb-2">
-        <span>Description de la formation</span>  
-        <div class="border rounded h-100 mt-2 p-2"><?= htmlentities($training->description)?></div>
-      </div>
-    </div>
+        <div class="col-7 col-lg-3 d-flex flex-column justify-content-evenly align-items-center mb-2">
+            <div>
+            <span>Niveau de qualification</span>
+            <div class="border rounded mt-2 p-2"><?= htmlentities($training->qualifLevel)?></div>
+            </div>
+            <div>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateTraining">
+                <i class="bi bi-pencil-square me-2"></i>Modification
+            </button></div>
+            <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
+            <input type="hidden" name="action" value="deleteTraining">
+            <input type="hidden" name="idTraining" value="<?= $training->idTraining ?>">
+            <button type="submit" class="btn btn-primary btn-removed-training">
+                <i class="bi bi-trash me-2"></i>Suppression
+            </button>
+            </form> 
+        </div>
+        <div class="col-12 col-lg-5 d-flex flex-column mb-2">
+            <span>Description de la formation</span>  
+            <div class="border rounded h-100 mt-2 p-2"><?= htmlentities($training->description)?></div>
+        </div>
+        </div>
+    <?php } ?>
 
     <div class="row">
       <div class="d-flex justify-content-between p-0 my-4">
@@ -98,13 +63,14 @@ ob_start(); //On bufferise l'affichage
     <div class="row g-3">
       <!-- Tableau pour parcourir la liste des éducateur de la formation-->
       <?php
-      if(is_array($admins)){
+      if(is_array($admins)) {
         foreach($admins as $admin) {
           echo $admin->getCardTemplateSAdmin();
         }
       }
       ?>
     </div>
+
     <!-- Liste des étudiants de la formation -->
     <div class="row">
       <div class="fw-bold fs-4 my-4">Liste des Etudiants de la formation</div>
@@ -124,7 +90,7 @@ ob_start(); //On bufferise l'affichage
     
     <div class="modal fade" id="updateTraining" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newTrainingLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form action="<?= $_SERVER ["REQUEST_URI"]?>" method="POST">
+            <form action="<?= $_SERVER["REQUEST_URI"]?>" method="POST">
                 <input type="hidden" name="action" value="updateTraining">
                 <input type="hidden" name="idTraining" value="<?= $training->idTraining ?>">
 
@@ -296,7 +262,7 @@ ob_start(); //On bufferise l'affichage
     <!-- Modal modifier utilisateur-->
     <div class="modal fade" id="updateUserModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newUserLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form action="<?= $_SERVER ["REQUEST_URI"]?>" method="POST">
+            <form action="<?= $_SERVER["REQUEST_URI"]?>" method="POST">
                 <input type="hidden" name="action" value="updateAdmin">
                 <input id="idUser" type="hidden" name="idUser">
                 <input type="hidden" name="idTraining" value="<?= $training->idTraining ?>">
@@ -424,5 +390,4 @@ ob_start(); //On bufferise l'affichage
 <?php
 $content = ob_get_clean(); //On récupère le contenu bufferisé
 
-require("../app/views/layout.php"); //On require le fichier avec toutes les variables définies
-//pas obligatoire de définir toutes les variables, voir fichier layout.php
+require("../app/views/layout.php");

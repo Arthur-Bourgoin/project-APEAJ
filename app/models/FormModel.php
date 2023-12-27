@@ -13,18 +13,20 @@ class FormModel {
 
     public static function getForms(int $idStudent){
         try {
-            if(!UserModel::existUser($idStudent))
-                return 2; // student not exist
             $forms = [];
             $res = Database::getInstance()->prepare("SELECT * FROM form WHERE idStudent = :id");
             $res->execute(array("id" => $idStudent));
+            if($res->rowCount() === 0) {
+                Feedback::setError("Aucune fiche n'est associée à cet étudiant.");
+                return;
+            }
             while ($form = $res->fetch()) {
                 $comments = CommentFormModel::getComments($form->numero, $form->idStudent);
                 $forms[] = new Form($form, $comments, null, null, null, null, null, null);
             }
             return $forms;
         } catch (\Exception $e) {
-            return 3; // query error
+            Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -33,11 +35,13 @@ class FormModel {
 
     public static function getFinishedForms(int $idStudent) {
         try {
-            if(!UserModel::existUser($idStudent))
-                return 2; // student not exist
             $forms = [];
             $res = Database::getInstance()->prepare("SELECT * FROM form WHERE idStudent = :id AND finish = true");
             $res->execute(array("id" => $idStudent));
+            if($res->rowCount() === 0) {
+                Feedback::setError("Aucune fiche finie n'est associée à cet étudiant.");
+                return;
+            }
             while ($form = $res->fetch()) {
                 $session = SessionModel::getSession($form->idSession);
                 $student = UserModel::getUser($form->idStudent);
@@ -45,7 +49,7 @@ class FormModel {
             }
             return $forms;
         } catch (\Exception $e) {
-            return 3; // query error
+            Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -54,18 +58,18 @@ class FormModel {
 
     public static function getCurrentForm(int $idStudent) {
         try {
-            if(!UserModel::existUser($idStudent))
-                return 2; // student not exist
             $res = Database::getInstance()->prepare("SELECT * FROM form WHERE idStudent = :id AND finish = false");
             $res->execute(array("id" => $idStudent));
+            if($res->rowCount() === 0) {
+                Feedback::setError("Aucune fiche en cours n'est associée à cet étudiant.");
+                return;
+            }
             $form = $res->fetch();
-            if(!$form)
-                return 1; // no current form
             $session = SessionModel::getSession($form->idSession);
             $student = UserModel::getUser($form->idStudent);
             return new Form($form, null, null, null, null, $session, $student, null);
         } catch (\Exception $e) {
-            return 3; // query error
+            Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -74,16 +78,18 @@ class FormModel {
 
     public static function getFormsBySession(int $idSession) {
         try {
-            if(!SessionModel::existSession($idSession))
-                return 2; // session not exist
             $forms = [];
             $res = Database::getInstance()->prepare("SELECT * FROM form WHERE idSession = :id");
             $res->execute(array("id" => $idSession));
+            if($res->rowCount() === 0) {
+                Feedback::setError("Aucune fiche n'est associée à cette session.");
+                return;
+            }
             while ($form = $res->fetch())
                 $forms[] = new Form($form, null, null, null, null, null, UserModel::getUser($form->idStudent), null);
             return $forms;
         } catch (\Exception $e) {
-            return 1; // query error
+            Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -92,18 +98,20 @@ class FormModel {
 
     public static function getFormsByTraining(int $idTraining) {
         try {
-            if(!TrainingModel::existTraining($idTraining))
-                return 2; // session not exist
             $forms = [];
             $res = Database::getInstance()->prepare("SELECT * FROM form, session WHERE form.idSession = session.idSession AND session.idTraining = :id");
             $res->execute(array("id" => $idTraining));
+            if($res->rowCount() === 0) {
+                Feedback::setError("Aucune fiche n'est associée à cette formation.");
+                return;
+            }
             while ($form = $res->fetch()) {
                 $comments = CommentFormModel::getComments($form->numero, $form->idStudent);
                 $forms[] = new Form($form, $comments, null, null, null, null, null, null);
             }
             return $forms;
         } catch (\Exception $e) {
-            return 1; // query error
+            Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -115,7 +123,8 @@ class FormModel {
             $res = Database::getInstance()->prepare("SELECT * FROM form WHERE numero = :numero AND idStudent = :idStudent");
             $res->execute(array("numero" => $numero, "idStudent" => $idStudent));
             if($res->rowCount() === 0) {
-                return 1; // form not exist
+                Feedback::setError("Erreur, la fiche demandée n'existe pas.");
+                return;
             }
             $form = $res->fetch();
             $comments = CommentFormModel::getComments($numero, $idStudent);
@@ -125,11 +134,13 @@ class FormModel {
             $session = SessionModel::getSession($form->idSession);
             $student = UserModel::getUser($idStudent);
             $educator = UserModel::getUser($form->idEducator);
-            if(!is_array($comments) || !is_array($pictures) || !is_array($elements) || !is_array($materials))
-                return 2; // query error
+            if(!is_array($comments) || !is_array($pictures) || !is_array($elements) || !is_array($materials)) {
+                Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
+                return;
+            }
             return new Form($form, $comments, $pictures, $elements, $materials, $session, $student, $educator);
         } catch (\Exception $e) {
-            return 2; // query error
+            Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -138,14 +149,16 @@ class FormModel {
 
     public static function finishForm(int $numero, int $idStudent) {
         try {
-            if(!self::existForm($numero, $idStudent))
-                return 2; // form not exist
+            if(!self::existForm($numero, $idStudent)) {
+                Feedback::setError("Mise à jour impossible, la fiche n'existe pas.");
+                return;
+            }
             Database::getInstance()
                 ->prepare("UPDATE form SET finish = true WHERE numero = :numero AND idStudent = :idStudent")
                 ->execute(array("numero" => $numero, "idStudent" => $idStudent));
-            return 0; // success
+            Feedback::setSuccess("Mise à jour de la fiche enregistrée.");
         } catch (\Exception $e) {
-            return 1; // query error
+            Feedback::setError("Une erreur s'est produite lors de la mise à jour de la fiche.");
         }
     }
 

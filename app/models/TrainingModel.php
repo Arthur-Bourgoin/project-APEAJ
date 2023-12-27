@@ -3,6 +3,7 @@ namespace App\Models;
 use Config\Database;
 use App\Class\Training;
 use App\Class\ExportExcel;
+use App\Class\Feedback;
 
 class TrainingModel {
 
@@ -15,7 +16,7 @@ class TrainingModel {
             }
             return $trainings;
         } catch (\Exception $e) {
-            return 1; // query error
+            Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -26,11 +27,13 @@ class TrainingModel {
         try {
             $res = Database::getInstance()->prepare("SELECT * FROM training WHERE idTraining = :id");
             $res->execute(array("id" => $idTraining));
-            if($res->rowCount() === 0)
-                return 2; // training not exist
+            if($res->rowCount() === 0) {
+                Feedback::setError("Erreur, la formation demandée n'existe pas.");
+                return;
+            }
             return new Training($res->fetch());
         } catch (\Exception $e) {
-            return 1; // query error
+            Feedback::setError("Une erreur s'est produite lors de l'initialisation de la page.");
         } finally {
             if(!empty($res))
                 $res->closeCursor();
@@ -43,24 +46,26 @@ class TrainingModel {
                 ->prepare("INSERT INTO training (wording, description, qualifLevel)
                         VALUES (:wording, :description, :qualifLevel)")
                 ->execute(array_intersect_key($args, array_flip(["wording", "description", "qualifLevel"])));
-            return 0;
+            Feedback::setSuccess("Ajout de la formation enregistré.");
         } catch (\Exception $e) {
-            return 102; // query error
+            Feedback::setError("Une erreur s'est produite lors de l'ajout de la formation.");
         }
     }
 
     public static function updateTraining(array $args) {
         try {
-            if(!self::existTraining($args["idTraining"]))
-                return 404; // training not exist
+            if(!self::existTraining($args["idTraining"])) {
+                Feedback::setError("Mise à jour impossible, la formation n'existe pas.");
+                return;
+            }
             Database::getInstance()
                 ->prepare("UPDATE training
                            SET wording = :wording, description = :description, qualifLevel = :qualifLevel
                            WHERE idTraining = :idTraining")
                 ->execute(array_intersect_key($args, array_flip(["wording", "description", "qualifLevel", "idTraining"])));
-            return 0;
+            Feedback::setSuccess("Mise à jour de la formation enregistrée.");
         } catch (\Exception $e) {
-            return 202; // query error
+            Feedback::setError("Une erreur s'est produite lors de la modification de la formation.");
         }
     }
 
@@ -68,18 +73,19 @@ class TrainingModel {
      * Undocumented function
      * @TODO export excel
      * @param integer $idTraining
-     * @return void
      */
     public static function deleteTraining(int $idTraining) {
         try {
-            if(!self::existTraining($idTraining))
-                return 404; // training not exist
+            if(!self::existTraining($idTraining)) {
+                Feedback::setError("Suppression impossible, la formation n'existe pas.");
+                return;
+            }
             Database::getInstance()
                 ->prepare("DELETE FROM training WHERE idTraining = :id")
                 ->execute(array("id" => $idTraining));
-            return 0;
+            Feedback::setSuccess("Suppression de la formation enregistrée.");
         } catch (\Exception $e) {
-            return 301; // query error
+            Feedback::setError("Une erreur s'est produite lors de la suppression de la formation.");
         }
     }
 

@@ -257,7 +257,7 @@ $router->map("POST", "/formation-[i:id]", function ($id) {
                 $controller->delete_training();
                 break;
             case "addUser":
-                $controller->add_user("training");
+                $controller->add_user();
                 break;
             case "updateAdmin":
                 $controller->update_user();
@@ -266,6 +266,7 @@ $router->map("POST", "/formation-[i:id]", function ($id) {
                 $controller->delete_user();
                 break;
         }
+        header("Location: " . $_SERVER["REQUEST_URI"]);
     } else {
         $controller->infoTraining($id);
     }

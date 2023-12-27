@@ -71,9 +71,10 @@ class UserController {
                         $controller->delete_training();
                         break;
                     case "addUser":
-                        $controller->add_user("home");
+                        $controller->add_user();
                         break;
                 }
+                header("Location: " . $_SERVER["REQUEST_URI"]);
             } else {
                 $controller->home();
             }

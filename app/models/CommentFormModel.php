@@ -9,8 +9,10 @@ class CommentFormModel {
 public static function getComments(int $numero, int $idStudent) {
     try {
         $comments = [];
-        if(!FormModel::existForm($numero, $idStudent))
-            return 2; // form not exist
+        if(!FormModel::existForm($numero, $idStudent)) {
+            Feedback::setError("Erreur, la fiche demandée n'existe pas.");
+            return;
+        }
         $res = Database::getInstance()->prepare("SELECT * FROM commentForm WHERE numero = :numero AND idStudent = :id");
         $res->execute(array("id" => $idStudent, "numero" => $numero));
         while($comment = $res->fetch()) {
@@ -19,7 +21,7 @@ public static function getComments(int $numero, int $idStudent) {
         }
         return $comments;
     } catch (\Exception $e) {
-        return 1; // query error
+        Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
     } finally {
         if(!empty($res))
             $res->closeCursor();
@@ -28,8 +30,10 @@ public static function getComments(int $numero, int $idStudent) {
 
     public static function addComment(array $args, int $idAuthor) {
         try {
-            if(!FormModel::existForm($args["numero"], $args["idStudent"]))
-                return 2; // form not exist
+            if(!FormModel::existForm($args["numero"], $args["idStudent"])) {
+                Feedback::setError("Impossible d'ajouter le commentaire, la fiche associée n'existe pas.");
+                return;
+            }
             $keys = ["wording", "text", "audio", "admin", "lastModif", "numero", "idStudent", "idAuthor","note"];
             $args["idAuthor"] = $idAuthor;
             $args["lastModif"] = date('Y-m-d H:i:s');
@@ -37,17 +41,18 @@ public static function getComments(int $numero, int $idStudent) {
             ->prepare("INSERT INTO commentForm (wording, text, audio, admin, lastModif, numero, idStudent, idAuthor,note)
                        VALUES (:wording, :text, :audio, :admin, :lastModif, :numero, :idStudent, :idAuthor, :note)")
             ->execute(array_intersect_key($args, array_flip($keys)));
-            return 0;
+            Feedback::setSuccess("Ajout du commentaire enregistré.");
         } catch (\Exception $e) {
-            //return 1; // query error
-            throw($e);
+            Feedback::setError("Une erreur s'est produite lors de l'ajout du commentaire.");
         }
     }
 
     public static function updateComment(array $args) {
         try {
-            if(!self::existCommentForm($args["idCommentForm"]))
-                return 1; // commentForm not exist
+            if(!self::existCommentForm($args["idCommentForm"])) {
+                Feedback::setError("Mise à jour impossible, le commentaire n'existe pas.");
+                return;
+            }
             $args["lastModif"] = date('Y-m-d H:i:s');
             Database::getInstance()
                 ->prepare("UPDATE commentForm
@@ -59,34 +64,39 @@ public static function getComments(int $numero, int $idStudent) {
                                note = :note
                            WHERE idCommentForm = :idCommentForm")
                 ->execute(array_intersect_key($args, array_flip(["wording", "text", "audio", "admin", "lastModif", "idCommentForm","note"])));
-            return 0;
+                Feedback::setSuccess("Mise à jour du commentaire enregistré.");
         } catch (\Exception $e) {
-            throw($e);
-            return 2; // query error
+            Feedback::setError("Une erreur s'est produite lors de la mise à jour du commentaire.");
         }
     }
 
     public static function deleteComment(int $idCommentForm) {
         try {
-            if(!self::existCommentForm($idCommentForm))
-                return 2; // comment not exist
+            if(!self::existCommentForm($idCommentForm)) {
+                Feedback::setError("Suppression impossible, le commentaire n'existe pas.");
+                return;
+            }
             Database::getInstance()
                 ->prepare("DELETE FROM commentForm WHERE idCommentForm = :id")
                 ->execute(array("id" => $idCommentForm));
-            return 0;
+            Feddback::setSuccess("Suppression du commentaire enregistrée.");
         } catch (\Exception $e) {
-            return 1; // query error
+            Feedback::setError("Une erreur s'est produite lors de la suppression du commentaire.");
         }
     }
+
+    // useless function ?
     public static function getComment(int $idCommentForm) {
         try {
-            if(!self::existCommentForm($idCommentForm))
-                return 1; // comment form not exist
+            if(!self::existCommentForm($idCommentForm)) {
+                Feedback::setError("Le commentaire demandée n'existe pas.");
+                return;
+            }
             $res = Database::getInstance()->prepare("SELECT * FROM commentForm WHERE idCommentForm = :id");
             $res->execute(array("id" => $idCommentForm));
             return $res->fetch();
         } catch (\Exception $e) {
-            return 2; // query error
+            Feedback::setError("Une erreur s'est produite lors de la récupération du commentaire.");
         } finally {
             if(!empty($res))
                 $res->closeCursor();
