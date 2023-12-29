@@ -11,8 +11,8 @@ use App\Models\{
     PictureModel,
     CommentStudentModel,
     TrainingModel
-
 };
+use App\Class\Feedback;
 
 class AdminController extends UserController
 {
@@ -121,6 +121,11 @@ class AdminController extends UserController
     {
         $error = SessionModel::closeSession($_POST["idSession"]);
         $this->displayTemplateInfoSession($error, $error===0 ? 2 : 0, $_POST["idSession"]);
+    }
+
+    public function delete_session() {
+        // vérifier que les $_POST["idSession"] existe
+        // appel au model
     }
 
     public function add_commentStudent() {
