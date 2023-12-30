@@ -52,41 +52,7 @@ ob_start(); ?>
                     </div>
                 </div>
                 <div class="col-12 mt-4">
-                    <?php
-
-                    switch ($error) {
-                        case 501:
-                            echo "<div class = 'alert alert-danger'> Les données ne sont pas valides.</div>";
-                            break;
-                        case 2:
-                            echo "<div class = 'alert alert-danger'> Une erreur s'est produite lors de l'affichage.</div>";
-                            break;
-                        case 3:
-                            echo "<div class = 'alert alert-danger'> Une erreur s'est produite lors de l'affichage.</div>";
-                            break;
-                        case 707:
-                            echo "<div class = 'alert alert-danger'> Vous ne pouvez pas modifier un profil qui n'est pas le votre.</div>";
-                            break;
-                    }
-                    switch ($success) {
-                        case 1:
-                            echo "<div class = 'alert alert-success'> Modification de l'étudiant réussie !</div>";
-                            break;
-                        case 2:
-                            echo "<div class = 'alert alert-success'> Suppression du commentaire réussie !  </div>";
-                            break;
-                        case 3:
-                            echo "<div class = 'alert alert-success'>Ajout d'un commentaire réussi ! </div>";
-                            break;
-                        case 4:
-                            echo "<div class = 'alert alert-success'>Modification d'un commentaire réussie ! </div>";
-                            break;
-                        case 12:
-                            echo "<div class = 'alert alert-success'> Modification profil réussie ! </div>";
-                            break;
-                    }
-                    ?>
-
+                    <?= App\Class\Feedback::getMessage() ?>
                 </div>
             </div>
         </div>

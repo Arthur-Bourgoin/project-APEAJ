@@ -10,9 +10,10 @@ use App\Models\{
     CommentFormModel,
     PictureModel,
     CommentStudentModel,
-    TrainingModel
-
+    TrainingModel,
 };
+use App\Class\Feedback;
+use PHPUnit\Framework\Constraint\IsEmpty;
 
 class AdminController extends UserController
 {
@@ -27,12 +28,25 @@ class AdminController extends UserController
 
     public function home()
     {
-      $this->displayTemplatehome(0,0);
+        $currentUser=$this->getCurrentUser();
+        $training = TrainingModel::getTraining($_SESSION["training"]);
+        $students = UserModel::getStudents($training->idTraining);
+        $sessions = SessionModel::getSessions($training->idTraining);
+        require("../app/views/admins/home.php");
     }
 
     public function infoStudent(int $id)
     {
-        $this->displayTemplateInfoStudent(0,0,$id);
+        if(!UserModel::existUser($id)) {
+            require("../app/views/error404.php");
+            exit();
+        }
+        $student = UserModel::getUser($id);
+        $comments =CommentStudentModel::getComments($id);
+        $currentForm = FormModel::getCurrentForm($id);
+        $finishedForms = FormModel::getFinishedForms($id);
+        $currentUser=$this->getCurrentUser();
+        require("../app/views/admins/details.php");
     }
 
     /**
@@ -45,145 +59,157 @@ class AdminController extends UserController
         $allowed_roles = array('educator-admin', 'educator', 'CIP', 'super-admin');
         $this->saveProfilePicture('picture');
         if(!$this->verifUser($_POST)){
-            $error = 501;
+            Feedback::setError("Les informations de l'utilisateur ne sont pas valides.");
         }
         
         if($_POST["action"] === "updateStudent") {
             if (in_array($_SESSION['role'], $allowed_roles)){
             switch(true) {
                 case empty(trim($_POST['pwd'])):
-                    $error = UserModel::updateUser($_POST);
+                    UserModel::updateUser($_POST);
                     break;
                 default:
-                    $error = UserModel::updateUserAndPwd($_POST);
+                    if(!$this->verifPwd($_POST))
+                        Feedback::setError("Le code ne respecte pas le format attendu");
+                    else
+                        UserModel::updateUserAndPwd($_POST);
                     break;
                 }
             }else {
                 require("../app/views/error403.php");
-            }
-            switch($page) {
-                case "home":
-                    $this->displayTemplateHome($error,$error===0 ? 2 : 0); break;
-                case "infoStudent":
-                    $this->displayTemplateInfoStudent($error,$error===0 ? 1 : 0, $id); break;
             }
         }
         else {
             if($_SESSION['id']==$_POST["idUser"]){
                 switch(true) {
                     case empty(trim($_POST['pwd'])):
-                        $error = UserModel::updateUser($_POST);
+                        UserModel::updateUser($_POST);
                         break;
                     default:
-                        $error = UserModel::updateUserAndPwd($_POST);
+                        if(!$this->verifPwd($_POST))
+                            Feedback::setError("Le code ne respecte pas le format attendu");
+                        else
+                            UserModel::updateUserAndPwd($_POST);
                         break;
                     }
-            }else{
-                $error=707;
-            }
-            switch($page) {
-                case "home":
-                    $this->displayTemplateHome($error,$error===0 ? 12 : 0); break;
-                case "infoStudent":
-                    $this->displayTemplateInfoStudent($error,$error===0 ? 12 : 0, $id); break;
-                case "infoSession":
-                    $this->displayTemplateInfoSession($error,$error===0 ? 12 : 0, $id); break;
-                case "infoForm":
-                    $this->displayTemplateInfoForm($error,$error===0 ? 12 : 0, $id,$id2); break;
-            }
+            }else
+                Feedback::setError("Vous navez pas les droits de modifier ce compte");    
         }
     }
 
-    public function infoSession(int $idSession)
+    public function infoSession(int $id)
     {
-        $this->displayTemplateInfoSession(0,0,$idSession);
+        $students = UserModel::getStudents(1);
+        $forms = FormModel::getFormsBySession($id);
+        $session = SessionModel::getSession($id);
+        $currentUser=$this->getCurrentUser();
+        require("../app/views/admins/details-session.php");
     }
 
     public function add_session()
     {   
-        if(!$this->verifSession($_POST))
-            $error=1;
+        if(!$this->verifSession($_POST)){
+            Feedback::setError("Les informations de la session ne sont pas valides.");
+        }
         else
-            $error = SessionModel::addSession($_POST);
-        $this->displayTemplatehome($error,$error===0 ? 1 : 0);
+            SessionModel::addSession($_POST);
     }
 
     public function update_session()
     {
-        if(!$this->verifSession($_POST))
-            $error=1;
+        if(!$this->verifSession($_POST)){
+            Feedback::setError("Les informations de la session ne sont pas valides.");
+        }
         else
-            $error = SessionModel::updateSession($_POST);
-        $this->displayTemplateInfoSession($error, $error===0 ? 1 : 0, $_POST["idSession"]);
+            SessionModel::updateSession($_POST);
     }
 
     public function closeSession() 
     {
-        $error = SessionModel::closeSession($_POST["idSession"]);
-        $this->displayTemplateInfoSession($error, $error===0 ? 2 : 0, $_POST["idSession"]);
-    }
+        if(!SessionModel::existSession($_POST["idSession"])) 
+            Feedback::setError("La session n'existe pas.");
+        else
+            SessionModel::closeSession($_POST["idSession"]);
+    
+    }   
+
+    public function deleteSession() 
+    {  
+        SessionModel::deleteSession($_POST["idSession"]);
+        header("Location: /");
+        exit();
+    
+    } 
 
     public function add_commentStudent() {
-        $error=CommentStudentModel::addComment($_POST,$_SESSION["id"]);
-        $this->displayTemplateInfoStudent($error, $error===0 ? 3 : 0, $_POST["idStudent"]);
+            CommentStudentModel::addComment($_POST,$_SESSION["id"]);
+        
     }
     public function update_commentStudent() {
-        $error=CommentStudentModel::updateComment($_POST,$_SESSION["id"]);
-        $this->displayTemplateInfoStudent($error, $error===0 ? 4 : 0, $_POST["idStudent"]);
-        }
+        CommentStudentModel::updateComment($_POST,$_SESSION["id"]);
+    
+}
     public function delete_commentStudent() {
-        $error=CommentStudentModel::deleteComment($_POST["idStudent"],$_POST["idEducator"]);
-        $this->displayTemplateInfoStudent($error, $error===0 ? 2 : 0, $_POST["idStudent"]);
-    }
+        if(!CommentStudentModel::existCommentForm())
+            Feedback::setError("Le commentaire n'existe pas");      
+        else
+            CommentStudentModel::deleteComment($_POST,$_SESSION["id"]);
+    
+        }
+
 
     public function infoForm(int $idStudent, int $idForm)
-    {
-        $this->displayTemplateInfoForm(0,0,$idStudent,$idForm);
+    {   
+        $student = UserModel::getUser($idStudent);
+        $form = FormModel::getForm($idForm, $idStudent);
+        $currentUser=$this->getCurrentUser();
+        require("../app/views/admins/fiche-info.php");
     }
 
-    public function finishForm() {}
-
+    public function finishForm() {
+        FormModel::finishForm($_POST["numero"],$_POST["idStudent"]);
+    }
+    
     public function deleteForm() {}
 
     public function add_commentForm($idStudent, $idForm) {
         $_POST["admin"] = isset($_POST["admin"]) ? true : false;
         $_POST["idAuthor"] = $_SESSION['id'];
         if(!$this->verifComment($_POST)){
-            $error = 1;}
+            Feedback::setError("Les données du commentaire ne sont pas valides");      
+        }
         else
-        $error = CommentFormModel::addComment($_POST,$_SESSION["id"]);
-    $this->displayTemplateInfoForm($error, $error===0 ? 1 : 0, $idStudent, $idForm);
+            CommentFormModel::addComment($_POST,$_SESSION["id"]);
     }
     public function update_commentForm($idStudent, $idForm) {
         $_POST["admin"] = isset($_POST["admin"]) ? true : false;
     if(!$this->verifComment($_POST))
-        $error = 1;
+        Feedback::setError("Les données du commentaire ne sont pas valides");   
     else
-        $error = CommentFormModel::updateComment($_POST);
-        
-    $this->displayTemplateInfoForm($error, $error===0 ? 2 : 0, $idStudent, $idForm);
+        CommentFormModel::updateComment($_POST);
     }
     public function delete_commentForm($idStudent, $idForm) {
-        $error = CommentFormModel::deleteComment($_POST["idCommentForm"]);
-        $this->displayTemplateInfoForm($error, $error===0 ? 3 : 0, $idStudent, $idForm);
+        if(!CommentFormModel::existCommentForm($_POST["idCommentForm"]))
+            Feedback::setError("Le commentaire n'existe pas");      
+        else
+            CommentFormModel::deleteComment($_POST["idCommentForm"]);
     }
 
     public function add_picture($idStudent, $idForm) {
         $idAuthor = $_SESSION['id'];
         $_POST['numero'] = $idForm;
         $_POST['idStudent'] = $idStudent;
-        $error=$this->saveFormPicture('path');
-        if($error !==0){
-            $this->displayTemplateInfoForm($error, $error===0 ? 4 : 0, $idStudent, $idForm); 
-        }
-        else{
-            if(!$this->verifPicture($_POST))
-                $error = 4;
-            else
-                $error = PictureModel::addPicture($_POST,$idAuthor);
-            $this->displayTemplateInfoForm($error, $error===0 ? 4 : 0, $idStudent, $idForm);   
-        }
-    } 
+        $_POST['idAuthor']= $_SESSION['id'];
+        $this->saveFormPicture('path');
+        if(!$this->verifPicture($_POST))
+            Feedback::setError("Les informations de la photo ne sont pas bonnes");
+        elseif(empty($_POST['path']))
+            Feedback::setError("Vous n'avez pas renseigné de photo");
+        else
+            PictureModel::addPicture($_POST);
+           
+    }
+     
     public function delete_picture($idStudent, $idForm) {
         $idPicture = $_POST["idPicture"];
         $uploadDir = 'assets/images/pictures/'; // Chemin vers ton dossier d'images
@@ -192,17 +218,14 @@ class AdminController extends UserController
         if (file_exists($picturePath)) {
             if (unlink($picturePath)) {
                 // Suppression réussie du fichier, maintenant supprime de la base de données
-                $error = PictureModel::deletePicture($idPicture);
+                PictureModel::deletePicture($idPicture);
             } else {
-                // Erreur lors de la suppression du fichier
-                $error = 6; // Par exemple, code d'erreur personnalisé pour la suppression du fichier
+                Feedback::setError("Erreur lors de la suppresion du fichiers");
             }
         } else {
-            // Le fichier n'existe pas
-            $error = 7; // Par exemple, code d'erreur personnalisé pour fichier non trouvé
+            Feedback::setError("Fichier non trouvé");
         }
     
-        $this->displayTemplateInfoForm($error, $error === 0 ? 5 : 0, $idStudent, $idForm);
     }
 
     public function chooseTemplate($id){
@@ -261,56 +284,7 @@ class AdminController extends UserController
         $pictos = json_encode($files);
         require("../app/views/admins/fiche.php");
     }
-
-    private function displayTemplatehome(int $p_error, int $p_success) {
-        $error = $p_error;
-        $success = $p_success;
-        $currentUser=$this->getCurrentUser();
-        $training = TrainingModel::getTraining($_SESSION["training"]);
-        $students = UserModel::getStudents($training->idTraining);
-        $sessions = SessionModel::getSessions($training->idTraining);
-        
-        if(!is_array($students) || !is_array($sessions)) 
-            $error = 1;
-        require("../app/views/admins/home.php");
-    }
-
-    private function displayTemplateInfoStudent(int $p_error, int $p_success,int $id){
-        $error = $p_error;
-        $success = $p_success;
-        $student = UserModel::getUser($id);
-        $comments =CommentStudentModel::getComments($id);
-        $currentForm = FormModel::getCurrentForm($id);
-        $finishedForms = FormModel::getFinishedForms($id);
-        $currentUser=$this->getCurrentUser();
-        if(is_int($currentForm) || !is_array($finishedForms) || is_int($student)|| is_int($comments)) 
-            $error = 1;
-        require("../app/views/admins/details.php");
-
-    }
     
-    private function displayTemplateInfoSession(int $p_error, int $p_success,int $id){
-        $error = $p_error;
-        $success = $p_success;
-        $students = UserModel::getStudents(1);
-        $forms = FormModel::getFormsBySession($id);
-        $session = SessionModel::getSession($id);
-        $currentUser=$this->getCurrentUser();
-        if(!is_array($students) || !is_array($forms) || is_int($session)) 
-            $error = 1;
-        require("../app/views/admins/details-session.php");
-
-    }
-    private function displayTemplateInfoForm(int $p_error, int $p_success,int $idStudent, int $idForm){
-        $error = $p_error;
-        $success = $p_success;    
-        $student = UserModel::getUser($idStudent);
-        $form = FormModel::getForm($idForm, $idStudent);
-        $currentUser=$this->getCurrentUser();
-        if( is_int($student) || is_int($form))     
-            $error = 1; 
-        require("../app/views/admins/fiche-info.php");
-    }
     private function verifSession(array $args){
         if(
             empty($args["wording"]) ||
@@ -340,7 +314,8 @@ class AdminController extends UserController
     private function verifComment(array $args){
         if(
             empty($args["wording"]) ||
-            empty($args["text"])  
+            empty($args["text"])  ||
+            !is_int($args["note"])
         )
             return false;
         return true;
@@ -352,6 +327,13 @@ class AdminController extends UserController
         )
             return false;
         return true;
+    }
+
+    private function verifPwd(array $args) {
+        if ($args["typePwd"] == 2 && ctype_digit($args["pwd"])) {
+            return true; // Si la chaîne représente un entier
+        }
+        return false; // Sinon
     }
     
     private function saveProfilePicture(String $name){
@@ -388,15 +370,16 @@ class AdminController extends UserController
     
                 if (move_uploaded_file($_FILES[$name]['tmp_name'], $uploadFile)) {
                     $_POST['path'] = ($photoCount + 1) . '.' . $extension;
-                    return $error=0;
                 } else {
-                    return $error=10;
+                    Feedback::setError("Erreur lors du téléchargement du fichier");
+                    exit();
                 }
             } else { 
-                return $error=102;
+                Feedback::setError("Le fichier envoyé n'est pas une image");
+                exit();
             }
         } else {
-            return $error=102;
+            Feedback::setError("Le fichier n'est pas une image ou rencontre un problème");
         }
     }
     private function getCurrentUser(){

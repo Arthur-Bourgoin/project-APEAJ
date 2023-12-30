@@ -17,6 +17,11 @@ $scripts = "<script src = '/assets/js/admin/details-session.js' type = 'module'>
                 data-bs-target="#ModalModifierSession">
                 <i class="bi bi-pencil"></i> Modifier la session
             </button>
+            <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
+                <button type="submit" class="btn btn-primary btn-delete-session "> <i class="bi bi-x-lg"></i>Supprimer la session</button>
+                <input type="hidden" name="action" value="deleteSession">
+                <input type="hidden" name="idSession" value="<?= $session->idSession ?>">
+            </form>
             <div class="d-flex align-items-center">
                 <a href="/disconnect"><button class="btn btn-danger"><i class="bi bi-power me-2"></i>Se
                         déconnecter</button></a>
@@ -40,36 +45,12 @@ $scripts = "<script src = '/assets/js/admin/details-session.js' type = 'module'>
     <?php } ?>
 
 <div class="mt-2">
-    <?php
-    switch ($error) {
-        case 501:
-            echo "<div class = 'alert alert-danger'> Les données ne sont pas valides </div>";
-            break;
-        case 2:
-            echo "<div class = 'alert alert-danger'> Erreur de requête ! </div>";
-            break;
-        case 3:
-            echo "<div class = 'alert alert-danger'> Une erreur s'est produite lors de l'affichage </div>";
-            break;
-        case 707:
-            echo "<div class = 'alert alert-danger'> Vous ne pouvez pas modifier un profil qui n'est pas le votre </div>";
-            break;
-    }
-    switch ($success) {
-        case 1:
-            echo "<div class = 'alert alert-success'> Modification de la session réussie ! </div>";
-            break;
-        case 2:
-            echo "<div class = 'alert alert-success'> Fermeture de la session réussie ! </div>";
-            break;
-        case 3:
-            echo "<div class = 'alert alert-success'>  </div>";
-            break;
-        case 12:
-            echo "<div class = 'alert alert-success'> Modification profil réussie ! </div>";
-            break;
-    }
-    ?>
+     <!-- 
+    ########################################
+    #####      AFFICHAGE FEEDBACK      #####
+    ########################################
+    -->
+    <?= App\Class\Feedback::getMessage() ?>
 </div>
 <div class="row  my-3">
     <div class="col-12">
@@ -82,21 +63,24 @@ $scripts = "<script src = '/assets/js/admin/details-session.js' type = 'module'>
     </div>
 </div>
 <div class="row">
-    <?php foreach ($forms as $form) { ?>
-        <div class="col-6 col-lg-3 col-md-4 col-sm-6 mb-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <a
-                        href="/etudiants/<?= htmlentities($form->student->lastName) ?>-<?= htmlentities($form->student->firstName) ?>-<?= htmlentities($form->student->idUser) ?>/fiche-<?= htmlentities($form->form->numero) ?>">
-                        <i class="bi bi-file-earmark-text" style="font-size: 5rem;"></i>
-                    </a>
-                    <h5 class="card-title mt-3">
-                        <?= htmlentities($form->student->lastName . " " . $form->student->firstName) ?>
-                    </h5>
+    <?php 
+    if($forms != NULL){
+        foreach ($forms as $form) { ?>
+            <div class="col-6 col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <a
+                            href="/etudiants/<?= htmlentities($form->student->lastName) ?>-<?= htmlentities($form->student->firstName) ?>-<?= htmlentities($form->student->idUser) ?>/fiche-<?= htmlentities($form->form->numero) ?>">
+                            <i class="bi bi-file-earmark-text" style="font-size: 5rem;"></i>
+                        </a>
+                        <h5 class="card-title mt-3">
+                            <?= htmlentities($form->student->lastName . " " . $form->student->firstName) ?>
+                        </h5>
+                    </div>
                 </div>
             </div>
-        </div>
-    <?php } ?>
+    <?php }
+    } ?>
     <?php if ($session->timeEnd == NULL) { ?>
         <div class="col-6 col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card">

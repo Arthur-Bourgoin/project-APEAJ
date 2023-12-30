@@ -8,6 +8,7 @@ use App\Models\ {
     PictureModel
 };
 use App\Class\Form;
+use App\Class\Feedback;
 
 class FormModel {
 
@@ -81,10 +82,6 @@ class FormModel {
             $forms = [];
             $res = Database::getInstance()->prepare("SELECT * FROM form WHERE idSession = :id");
             $res->execute(array("id" => $idSession));
-            if($res->rowCount() === 0) {
-                Feedback::setError("Aucune fiche n'est associée à cette session.");
-                return;
-            }
             while ($form = $res->fetch())
                 $forms[] = new Form($form, null, null, null, null, null, UserModel::getUser($form->idStudent), null);
             return $forms;

@@ -21,37 +21,7 @@ ob_start(); ?>
             </div>
         </div>
     </div>
-
-    <?php
-    switch ($error) {
-        case 501:
-            echo "<div class='alert alert-danger'> Les données ne sont pas valides </div>";
-            break;
-        case 2:
-            echo "<div class='alert alert-danger'> Une erreur s'est produite lors de l'affichage </div>";
-            break;
-        case 3:
-            echo "<div class='alert alert-danger'>  </div>";
-            break;
-        case 707:
-            echo "<div class = 'alert alert-danger'> Vous ne pouvez pas modifier un profil qui n'est pas le vôtre </div>";
-            break;
-    }
-    switch ($success) {
-        case 1:
-            echo "<div class='alert alert-success'> Création de la session réussie ! </div>";
-            break;
-        case 2:
-            echo "<div class='alert alert-success'> Modification de l'utilisateur réussie ! </div>";
-            break;
-        case 3:
-            echo "<div class='alert alert-success'>  </div>";
-            break;
-        case 12:
-            echo "<div class = 'alert alert-success'> Modification profil réussie ! </div>";
-            break;
-    }
-    ?>
+    <?= App\Class\Feedback::getMessage() ?>
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="sessions-tab" data-bs-toggle="tab" data-bs-target="#sessions"

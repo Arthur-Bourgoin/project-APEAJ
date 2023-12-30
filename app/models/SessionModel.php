@@ -3,6 +3,7 @@ namespace App\Models;
 use Config\Database;
 use App\Class\Session;
 use App\Models\TrainingModel;
+use App\Class\Feedback;
 
 class SessionModel {
 
@@ -11,10 +12,6 @@ class SessionModel {
             $sessions = [];
             $res = Database::getInstance()->prepare("SELECT * FROM session WHERE idTraining = :id");
             $res->execute(array("id" => $idTraining));
-            if($res->rowCount() === 0) {
-                Feedback::setError("Aucune session n'est associée à cette formation.");
-                return;
-            }
             while($session = $res->fetch()) {
                 $sessions[] = new Session($session);
             }
@@ -63,7 +60,7 @@ class SessionModel {
     public static function updateSession(array $args) {
         try {
             if(!self::existSession($args["idSession"])) {
-                Feedback::setErro("Mise à jour impossible, la session n'existe pas.");
+                Feedback::setError("Mise à jour impossible, la session n'existe pas.");
                 return;
             }
             Database::getInstance()
@@ -77,6 +74,21 @@ class SessionModel {
             Feedback::setSuccess("Modification de la session enregistrée.");
         } catch (\Exception $e) {
             Feedback::setError("Une erreur s'est produite lors de la modification de la session.");
+        }
+    }
+
+    public static function deleteSession(int $idSession) {
+        try {
+            if(!self::existSession($idSession)) {
+                Feedback::setError("Suppression impossible, la session n'existe pas.");
+                return;
+            }
+            Database::getInstance()
+                ->prepare("DELETE FROM session WHERE idSession = :id")
+                ->execute(array("id" => $idSession));
+            Feedback::setSuccess("Suppression de la session enregistrée.");
+        } catch (\Exception $e) {
+            Feedback::setError("Une erreur s'est produite lors de la suppression de la formation.");
         }
     }
 

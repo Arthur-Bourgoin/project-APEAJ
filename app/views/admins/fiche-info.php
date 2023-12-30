@@ -50,68 +50,21 @@ define("PATH", "/assets/images/pictures/");
                         ?>
                     </h4>
                 </div>
-                <!---<div class="col-12 my-2">
-                    <h4> Dernière modification :
-                    </h4>
-                </div>
-                ---->
             </div>
         </div>
     </div>
-    <?php
-    switch ($error) {
-        case 501:
-            echo "<div class = 'alert alert-danger'> Les données ne sont pas valides </div>";
-            break;
-        case 2:
-            echo "<div class = 'alert alert-danger'> Une erreur s'est produite lors de l'affichage </div>";
-            break;
-        case 3:
-            echo "<div class = 'alert alert-danger'> Vous ne pouvez modifier ou supprimer que les commentaires dont vous êtes l'auteur </div>";
-            break;
-        case 4:
-            echo "<div class = 'alert alert-danger'> Informations de la photo incorrectes </div>";
-            break;
-        case 5:
-            echo "<div class = 'alert alert-danger'> Photo non renseignée </div>";
-            break;
-        case 6:
-            echo "<div class = 'alert alert-danger'> Erreur lors de la suppression!  </div>";
-            break;
-        case 7:
-            echo "<div class = 'alert alert-danger'> Erreur: fichier à supprimer non trouvé  </div>";
-            break;
-        case 10:
-            echo "<div class = 'alert alert-danger'> Erreur lors du téléchargement du fichier  </div>";
-            break;
-        case 102:
-            echo "<div class = 'alert alert-danger'> L'image n'est pas renseignée ou le fichier n'est pas une image ! </div>";
-            break;
-        case 707:
-            echo "<div class = 'alert alert-danger'> Vous ne pouvez pas modifier un profil qui n'est pas le votre </div>";
-            break;
-    }
-    switch ($success) {
-        case 1:
-            echo "<div class = 'alert alert-success'> Ajout du commentaire réussi </div>";
-            break;
-        case 2:
-            echo "<div class = 'alert alert-success'> Modification du commentaire réussi </div>";
-            break;
-        case 3:
-            echo "<div class = 'alert alert-success'> Supression du commenttaire réussi </div>";
-            break;
-        case 4:
-            echo "<div class = 'alert alert-success'> Ajout d'une photo réussi </div>";
-            break;
-        case 5:
-            echo "<div class = 'alert alert-success'> Suprression de la photo réussi </div>";
-            break;
-        case 12:
-            echo "<div class = 'alert alert-success'> Modification profil réussie ! </div>";
-            break;
-    }
+    <?php if($form->form->finish == 0){ ?>
+    <div class="mb-2" >
+        <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
+            <button type="submit" class="btn btn-primary btn-finish-form "> <i class="bi bi-x-lg"></i>Marquer la fiche comme finie</button>
+            <input type="hidden" name="action" value="finishForm">
+            <input type="hidden" name="idStudent" value="<?= $student->idUser ?>">
+            <input type="hidden" name="numero" value="<?= $form->form->numero ?>">
+        </form>
+    </div>
+    <?php }
     ?>
+        <?= App\Class\Feedback::getMessage() ?>
     <div class="row">
         <?php foreach ($form->comments as $com) {
             echo $com->getTemplateComment();
