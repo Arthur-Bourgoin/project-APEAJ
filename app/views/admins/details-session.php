@@ -33,7 +33,7 @@ $scripts = "<script src = '/assets/js/admin/details-session.js' type = 'module'>
     </div>
 
     <?php
-    if ($session->timeEnd == NULL) { ?>
+    if ($session->timeEnd === NULL) { ?>
         <div class="col-12 mt-2">
             <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
                 <button type="submit" class="btn btn-primary btn-close-session "> <i class="bi bi-x-lg"></i> Fermer la
@@ -64,7 +64,7 @@ $scripts = "<script src = '/assets/js/admin/details-session.js' type = 'module'>
 </div>
 <div class="row">
     <?php 
-    if($forms != NULL){
+    if($forms !== NULL){
         foreach ($forms as $form) { ?>
             <div class="col-6 col-lg-3 col-md-4 col-sm-6 mb-4">
                 <div class="card">
@@ -81,7 +81,7 @@ $scripts = "<script src = '/assets/js/admin/details-session.js' type = 'module'>
             </div>
     <?php }
     } ?>
-    <?php if ($session->timeEnd == NULL) { ?>
+    <?php if ($session->timeEnd === NULL) { ?>
         <div class="col-6 col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card">
                 <div class="card-body text-center">
@@ -119,7 +119,7 @@ $scripts = "<script src = '/assets/js/admin/details-session.js' type = 'module'>
                         <input type="text" class="form-control" id="theme" name="theme"
                             value="<?= htmlentities($session->theme) ?>" required>
                     </div>
-                    <?php if ($session->timeEnd == NULL) { ?>
+                    <?php if ($session->timeEnd === NULL) { ?>
                         <div class="mb-3">
                             <label for="startTime" class="form-label">Date/Heure de début</label>
                             <input type="datetime-local" class="form-control" id="startTime" name="timeBegin"

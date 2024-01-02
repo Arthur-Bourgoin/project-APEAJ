@@ -4,7 +4,7 @@ use Config\Database;
 use App\Models\UserModel;
 use App\Class\CommentForm;
 use App\Class\CommentStudent;
-
+use App\Class\Feedback;
 class CommentStudentModel {
 
     public static function getComments(int $idStudent) {
@@ -61,7 +61,7 @@ class CommentStudentModel {
 
     }
 
-    public static function deleteComment( int $idStudent, int $idEducator,) {
+    public static function deleteComment(int $idStudent, int $idEducator) {
         try {
             if(!self::existCommentStudent($idStudent, $idEducator)) {
                 Feedback::setError("Suppression impossible, le commentaire n'existe pas.");

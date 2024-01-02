@@ -37,9 +37,9 @@ define("PATH", "/assets/images/pictures/");
             <div class="row align-items-center">
                 <div class="col-12 my-2">
                     <h4>
-                        <?= $form->session->wording ?> -
-                        <?= $student->lastName ?>
-                        <?= $student->firstName ?>
+                        <?= !empty($form) ? htmlentities($form->session->wording) : "" ?> -
+                        <?= !empty($student) ? htmlentities($student->lastName) : "" ?>
+                        <?= !empty($student) ? htmlentities($student->firstName) : ""?>
                     </h4>
                 </div>
                 <div class="col-12 mt-2">
@@ -53,7 +53,7 @@ define("PATH", "/assets/images/pictures/");
             </div>
         </div>
     </div>
-    <?php if($form->form->finish == 0){ ?>
+    <?php if(!empty($form) && $form->form->finish == 0){ ?>
     <div class="mb-2" >
         <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
             <button type="submit" class="btn btn-primary btn-finish-form "> <i class="bi bi-x-lg"></i>Marquer la fiche comme finie</button>
@@ -66,8 +66,10 @@ define("PATH", "/assets/images/pictures/");
     ?>
         <?= App\Class\Feedback::getMessage() ?>
     <div class="row">
-        <?php foreach ($form->comments as $com) {
-            echo $com->getTemplateComment();
+        <?php 
+        if(is_array($form->comments) && !empty($form->comments))
+            foreach ($form->comments as $com) {
+                echo $com->getTemplateComment();
         } ?>
     </div>
     <?php
@@ -79,28 +81,31 @@ define("PATH", "/assets/images/pictures/");
     } ?>
     <div class="row mt-5" id="pictures">
 
-        <?php foreach ($form->pictures as $picture) { ?>
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <div class="div-img">
-                            <img src="<?= PATH . $picture->path ?>" alt="Image" class="object-fit-contain mw-100 mh-100 ">
+        <?php 
+        if(!empty($form->pictures)){  
+            foreach ($form->pictures as $picture) { ?>
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div class="div-img">
+                                <img src="<?= PATH . $picture->path ?>" alt="Image" class="object-fit-contain mw-100 mh-100 ">
+                            </div>
+                            <h5 class="card-title mt-3">
+                                <?= $picture->title ?>
+                            </h5>
+                            <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="post"
+                                class="position-absolute top-0 end-0 mt-2 me-2">
+                                <input type="hidden" name="idPicture" value="<?= $picture->idPicture ?>">
+                                <button type="submit" class=" btn btn-danger btn-delete-picture " name="action"
+                                    value="deletePicture">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
                         </div>
-                        <h5 class="card-title mt-3">
-                            <?= $picture->title ?>
-                        </h5>
-                        <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="post"
-                            class="position-absolute top-0 end-0 mt-2 me-2">
-                            <input type="hidden" name="idPicture" value="<?= $picture->idPicture ?>">
-                            <button type="submit" class=" btn btn-danger btn-delete-picture " name="action"
-                                value="deletePicture">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </form>
                     </div>
                 </div>
-            </div>
-        <?php } ?>
+        <?php }}
+         ?>
         <div class="col-md-3 col-sm-6 mb-4">
             <div class="card">
                 <div class="card-body text-center">
@@ -113,11 +118,6 @@ define("PATH", "/assets/images/pictures/");
                 </div>
             </div>
         </div>
-
-
-
-
-
     </div>
     <div class="modal fade" id="ModalComs" tabindex="-1" aria-labelledby="ModalComs" aria-hidden="true">
         <div class="modal-dialog modal-lg">

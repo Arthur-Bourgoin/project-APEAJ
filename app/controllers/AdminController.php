@@ -61,19 +61,16 @@ class AdminController extends UserController
         if(!$this->verifUser($_POST)){
             Feedback::setError("Les informations de l'utilisateur ne sont pas valides.");
         }
-        
         if($_POST["action"] === "updateStudent") {
             if (in_array($_SESSION['role'], $allowed_roles)){
-            switch(true) {
-                case empty(trim($_POST['pwd'])):
+                if(empty(trim($_POST['pwd'])))
                     UserModel::updateUser($_POST);
-                    break;
-                default:
+                else{
                     if(!$this->verifPwd($_POST))
                         Feedback::setError("Le code ne respecte pas le format attendu");
                     else
                         UserModel::updateUserAndPwd($_POST);
-                    break;
+                    
                 }
             }else {
                 require("../app/views/error403.php");
@@ -81,22 +78,20 @@ class AdminController extends UserController
         }
         else {
             if($_SESSION['id']==$_POST["idUser"]){
-                switch(true) {
-                    case empty(trim($_POST['pwd'])):
+                if (in_array($_SESSION['role'], $allowed_roles)){
+                    if(empty(trim($_POST['pwd'])))
                         UserModel::updateUser($_POST);
-                        break;
-                    default:
+                    else{
                         if(!$this->verifPwd($_POST))
                             Feedback::setError("Le code ne respecte pas le format attendu");
                         else
                             UserModel::updateUserAndPwd($_POST);
-                        break;
                     }
-            }else
-                Feedback::setError("Vous navez pas les droits de modifier ce compte");    
+                }else
+                    Feedback::setError("Vous navez pas les droits de modifier ce compte");    
+            }
         }
     }
-
     public function infoSession(int $id)
     {
         $students = UserModel::getStudents(1);
@@ -126,11 +121,7 @@ class AdminController extends UserController
 
     public function closeSession() 
     {
-        if(!SessionModel::existSession($_POST["idSession"])) 
-            Feedback::setError("La session n'existe pas.");
-        else
-            SessionModel::closeSession($_POST["idSession"]);
-    
+        SessionModel::closeSession($_POST["idSession"]);
     }   
 
     public function deleteSession() 
@@ -142,19 +133,22 @@ class AdminController extends UserController
     } 
 
     public function add_commentStudent() {
-            CommentStudentModel::addComment($_POST,$_SESSION["id"]);
+        $_POST["idEducator"]=$_SESSION["id"];
+        if(!$this->verifCommentStudent($_POST)){
+            Feedback::setError("Les informations du commentaire ne sont pas valides.");
+        }else
+            CommentStudentModel::addComment($_POST);
         
     }
     public function update_commentStudent() {
-        CommentStudentModel::updateComment($_POST,$_SESSION["id"]);
+        if(!$this->verifCommentStudent($_POST)){
+            Feedback::setError("Les informations du commentaire ne sont pas valides.");
+        }else
+            CommentStudentModel::updateComment($_POST);
     
 }
     public function delete_commentStudent() {
-        if(!CommentStudentModel::existCommentForm())
-            Feedback::setError("Le commentaire n'existe pas");      
-        else
-            CommentStudentModel::deleteComment($_POST,$_SESSION["id"]);
-    
+        CommentStudentModel::deleteComment($_POST["idStudent"],$_SESSION["id"]);
         }
 
 
@@ -183,16 +177,14 @@ class AdminController extends UserController
     }
     public function update_commentForm($idStudent, $idForm) {
         $_POST["admin"] = isset($_POST["admin"]) ? true : false;
-    if(!$this->verifComment($_POST))
-        Feedback::setError("Les données du commentaire ne sont pas valides");   
-    else
-        CommentFormModel::updateComment($_POST);
+        if(!$this->verifComment($_POST)){
+            Feedback::setError("Les données du commentaire ne sont pas valides");      
+        }
+        else
+            CommentFormModel::updateComment($_POST);
     }
     public function delete_commentForm($idStudent, $idForm) {
-        if(!CommentFormModel::existCommentForm($_POST["idCommentForm"]))
-            Feedback::setError("Le commentaire n'existe pas");      
-        else
-            CommentFormModel::deleteComment($_POST["idCommentForm"]);
+        CommentFormModel::deleteComment($_POST["idCommentForm"]);
     }
 
     public function add_picture($idStudent, $idForm) {
@@ -315,7 +307,8 @@ class AdminController extends UserController
         if(
             empty($args["wording"]) ||
             empty($args["text"])  ||
-            !is_int($args["note"])
+            !ctype_digit($args["note"]) ||
+            empty($args["note"])  
         )
             return false;
         return true;
@@ -330,10 +323,29 @@ class AdminController extends UserController
     }
 
     private function verifPwd(array $args) {
-        if ($args["typePwd"] == 2 && ctype_digit($args["pwd"])) {
-            return true; // Si la chaîne représente un entier
+        if($args["pwd"]!==$args["verifPwd"]){
+            return false;
         }
-        return false; // Sinon
+        switch ($args["typePwd"]) {
+            case 2:
+                if (ctype_digit($args["pwd"])) {
+                    return true;
+                } else {
+                    return false;
+                }
+                break;
+            default:
+                return true; // Mettre d'accord sur le format mot de passe et schéma
+                break;
+            }
+    }
+
+    private function verifCommentStudent(array $args){
+        if( 
+            empty($args["text"]) 
+        )
+            return false;
+        return true;
     }
     
     private function saveProfilePicture(String $name){
@@ -385,5 +397,5 @@ class AdminController extends UserController
     private function getCurrentUser(){
         return UserModel::getUser($_SESSION['id']);
     }
-    
+
 }

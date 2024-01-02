@@ -56,7 +56,7 @@ class CommentForm {
                 <?php } ?>
             </div>
 
-            <label for = "<?= $this->idCommentForm ?>">
+            <label for = "<?= htmlentities($this->idCommentForm) ?>">
                 <?= htmlentities($this->author->lastName) ?> <?= htmlentities($this->author->firstName) ?> --- <?= htmlentities($this->wording) ?><i class="bi bi-volume-up"></i>
             </label>
             <span class = "position-absolute top-0 end-0 translate-middle z-3">
