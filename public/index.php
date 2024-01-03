@@ -32,6 +32,14 @@ if(!in_array($_SERVER["REQUEST_URI"], ["/choix-formation", "/connexion"])) {
 $router = new AltoRouter();
 //$router->setBasePath("/public/");
 
+$router->map("GET", "/[i:id]", function ($id) {
+    $forms = App\Models\FormModel::getForms($id);
+    foreach($forms as $form) {
+        var_dump($form);
+        echo "</br></br>";
+    }
+}); 
+
 $router->map("GET", "/test-export-formation", function () {
     $xls = new ExportExcel();
     $xls->exportTraining(1);  
@@ -154,7 +162,7 @@ $router->map("POST", "/etudiants/[a]-[a]-[i:id]", function ($id) {
     if(isset($_POST["action"])) {
         switch($_POST["action"]) {
             case "updateAccount":
-                $controller->update_user("infoStudent", $id,null);
+                $controller->update_user("infoStudent", $id, null);
             case "updateUser":
                 $controller->update_user("infoStudent", $id);
                 break;
@@ -224,7 +232,7 @@ $router->map("POST", "/etudiants/[a]-[a]-[i:idS]/fiche-[i:idF]", function ($idS,
                 $controller->delete_picture($idS, $idF);
                 break;
             case "updateAccount":
-                $controller->update_user("infoForm", $idS,$idF,null);
+                $controller->update_user("infoForm", $idS, $idF);
                 break;
         }
     } else {
