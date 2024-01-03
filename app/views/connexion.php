@@ -1,12 +1,16 @@
 <?php
 
 $title = "Page de connexion";
-$scripts = "<script src='/assets/js/connexion.js' type='module'></script>";
+$scripts = "<script src='/assets/js/connexion.js' type='module'></script>
+<script src='/assets/js/class/PatternLock.js'></script>";
 $bsIcons = true ?>
 
 <?php ob_start(); ?>
 
 <div class="container">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalConnexionSchema">
+    Launch demo modal
+    </button>
     <div class="row mb-4">
         <h1 class="text-center">Sélectionner un profil</h1>
         <div class="d-flex justify-content-between">
@@ -42,6 +46,22 @@ $bsIcons = true ?>
         } 
     }
     ?>
+    </div>
+</div>
+
+<!-- Modal de connexion de type "schema" -->
+<div class="modal fade" id="modalConnexionSchema" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex flex-column align-items-center">
+                <canvas id='patternLock'></canvas>
+            </div>
+        </div>
+
     </div>
 </div>
 

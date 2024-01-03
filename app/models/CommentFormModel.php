@@ -3,6 +3,8 @@ namespace App\Models;
 use Config\Database;
 use App\Models\FormModel;
 use App\Class\CommentForm;
+use App\Class\Feedback;
+
 
 class CommentFormModel {
 //verif info student
@@ -79,7 +81,7 @@ public static function getComments(int $numero, int $idStudent) {
             Database::getInstance()
                 ->prepare("DELETE FROM commentForm WHERE idCommentForm = :id")
                 ->execute(array("id" => $idCommentForm));
-            Feddback::setSuccess("Suppression du commentaire enregistrée.");
+            Feedback::setSuccess("Suppression du commentaire enregistrée.");
         } catch (\Exception $e) {
             Feedback::setError("Une erreur s'est produite lors de la suppression du commentaire.");
         }
