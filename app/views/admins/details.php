@@ -49,6 +49,9 @@ ob_start(); ?>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalModifie" data-id="<?= $student->idUser ?>">
                         Modifier les informations
                     </button>
+                    <a href="/etudiants/suivi/<?=$student->lastName?>-<?=$student->firstName?>-<?=$student->idUser?>" class="btn btn-primary">
+                        Suivi de l'étudiant
+                    </a>
                     </div>
                 </div>
                 <div class="col-12 mt-4">

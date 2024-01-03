@@ -54,26 +54,28 @@ class AdminController extends UserController
      * @param integer $id --> idSession OR idStudent OR null (depending on the page to display)
      *                    --> != $_POST["idUser"]
      */
-    public function update_user(string $page, ?int $id, ?int $id2)
-    {  
+    public function update_user(string $page, ?int $idStudent, ?int $idForm)
+    {   
         $allowed_roles = array('educator-admin', 'educator', 'CIP', 'super-admin');
-        $this->saveProfilePicture('picture');
         if(!$this->verifUser($_POST)){
             Feedback::setError("Les informations de l'utilisateur ne sont pas valides.");
+            return;
         }
+        $this->saveProfilePicture('picture');
         if($_POST["action"] === "updateStudent") {
             if (in_array($_SESSION['role'], $allowed_roles)){
-                if(empty(trim($_POST['pwd'])))
+                if( isset($_POST["pwd"]) && empty(trim($_POST['pwd']))) 
                     UserModel::updateUser($_POST);
                 else{
-                    if(!$this->verifPwd($_POST))
+                    if(!$this->verifPwd($_POST)){
                         Feedback::setError("Le code ne respecte pas le format attendu");
+                       
+                    }
                     else
                         UserModel::updateUserAndPwd($_POST);
-                    
                 }
             }else {
-                require("../app/views/error403.php");
+                Feedback::setError("Vous ne possedez pas les droits");
             }
         }
         else {
@@ -167,7 +169,7 @@ class AdminController extends UserController
     public function deleteForm() {}
 
     public function add_commentForm($idStudent, $idForm) {
-        $_POST["admin"] = isset($_POST["admin"]) ? true : false;
+        $_POST["admin"] = isset($_POST["admin"]);
         $_POST["idAuthor"] = $_SESSION['id'];
         if(!$this->verifComment($_POST)){
             Feedback::setError("Les données du commentaire ne sont pas valides");      
@@ -176,7 +178,7 @@ class AdminController extends UserController
             CommentFormModel::addComment($_POST,$_SESSION["id"]);
     }
     public function update_commentForm($idStudent, $idForm) {
-        $_POST["admin"] = isset($_POST["admin"]) ? true : false;
+        $_POST["admin"] = isset($_POST["admin"]);
         if(!$this->verifComment($_POST)){
             Feedback::setError("Les données du commentaire ne sont pas valides");      
         }
@@ -188,17 +190,17 @@ class AdminController extends UserController
     }
 
     public function add_picture($idStudent, $idForm) {
-        $idAuthor = $_SESSION['id'];
         $_POST['numero'] = $idForm;
         $_POST['idStudent'] = $idStudent;
         $_POST['idAuthor']= $_SESSION['id'];
-        $this->saveFormPicture('path');
         if(!$this->verifPicture($_POST))
             Feedback::setError("Les informations de la photo ne sont pas bonnes");
-        elseif(empty($_POST['path']))
+        elseif(empty($_FILES["path"]["name"]))
             Feedback::setError("Vous n'avez pas renseigné de photo");
-        else
+        else{
+            $this->saveFormPicture('path');
             PictureModel::addPicture($_POST);
+        }
            
     }
      
@@ -220,6 +222,21 @@ class AdminController extends UserController
     
     }
 
+    public function statStudent($id){
+        $student = UserModel::getUser($id);
+        $forms = FormModel::getForms($id);
+        $currentUser=$this->getCurrentUser();
+        $tabLevels=[];
+        $tabNotes=[]; 
+        $tablink=[];
+        foreach($forms as $form){
+            $dateFormatted = date('d/m/Y', strtotime($form->form->creationDate));
+            $tabLevels[$dateFormatted] = $form->avgLevels;
+            $tabNotes[$dateFormatted] = $form->avgNotes;
+            $tablink[$dateFormatted] = "/etudiants/{$student->lastName}-{$student->firstName}-{$student->idUser}/fiche-{$form->form->numero}";
+        } 
+        require("../app/views/admins/statStudent.php");
+    }
     public function chooseTemplate($id){
         $student = UserModel::getUser($id);
         $formTemplates = FormModel::getForms(1000);
@@ -297,8 +314,7 @@ class AdminController extends UserController
         if(
             empty($args["idUser"]) ||
             empty($args["lastName"]) ||
-            empty($args["firstName"]) ||
-            empty($args["picture"]) 
+            empty($args["firstName"]) 
         )
             return false;
         return true;
@@ -307,8 +323,8 @@ class AdminController extends UserController
         if(
             empty($args["wording"]) ||
             empty($args["text"])  ||
-            !ctype_digit($args["note"]) ||
-            empty($args["note"])  
+            empty($args["note"])  ||
+            !ctype_digit($args["note"]) 
         )
             return false;
         return true;
@@ -326,18 +342,9 @@ class AdminController extends UserController
         if($args["pwd"]!==$args["verifPwd"]){
             return false;
         }
-        switch ($args["typePwd"]) {
-            case 2:
-                if (ctype_digit($args["pwd"])) {
-                    return true;
-                } else {
-                    return false;
-                }
-                break;
-            default:
-                return true; // Mettre d'accord sur le format mot de passe et schéma
-                break;
-            }
+        if( $args["pwd"] === 2 )
+            return ctype_digit($args["pwd"]);
+        return true;
     }
 
     private function verifCommentStudent(array $args){
@@ -353,7 +360,7 @@ class AdminController extends UserController
         if (isset($_FILES[$name]) && $_FILES[$name]['error'] === UPLOAD_ERR_OK) { 
             $uploadFile = $uploadDir . basename($_FILES[$name]['name']); 
             if (move_uploaded_file($_FILES[$name]['tmp_name'], $uploadFile)) {
-                $_POST['picture'] = basename($_FILES[$name]['name']);
+                $_POST['picture'] = strtolower(basename($_FILES[$name]['name']));
             } else {
                 $_POST['picture'] = str_replace($uploadDir, '', UserModel::getUser($_POST['idUser'])->picture);
                 $_POST['picture'] = ltrim($_POST['picture'], '/');
@@ -376,7 +383,7 @@ class AdminController extends UserController
     
             // Vérification que les données sont une image
             if (@imagecreatefromstring($imageData)) {
-                $extension = pathinfo($_FILES[$name]['name'], PATHINFO_EXTENSION);
+                $extension = strtolower(pathinfo($_FILES[$name]['name'], PATHINFO_EXTENSION));
                 $photoCount = PictureModel::getNbPictures();
                 $uploadFile = $uploadDir . ($photoCount + 1) . '.' . $extension;
     
@@ -388,7 +395,6 @@ class AdminController extends UserController
                 }
             } else { 
                 Feedback::setError("Le fichier envoyé n'est pas une image");
-                exit();
             }
         } else {
             Feedback::setError("Le fichier n'est pas une image ou rencontre un problème");

@@ -1,8 +1,7 @@
 <?php
-
 namespace App\Class;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-
+use App\Models\FormModel;
 
 class Form {
 
@@ -14,8 +13,10 @@ class Form {
    public $session;
    public $student;
    public $educator;
+   public $avgLevels;
+   public $avgNotes;
 
-    public function __construct(object $form,?array $comments,?array $pictures,?array $elements,?array $materials,?object $session,?object $student,?object $educator) {
+    public function __construct(object $form, ?array $comments, ?array $pictures, ?array $elements, ?array $materials, ?object $session, ?object $student, ?object $educator , ?bool $stats) {
         $this->form = $form;
         $this->comments = $comments;
         $this->pictures = $pictures;
@@ -24,6 +25,13 @@ class Form {
         $this->session = $session;
         $this->student = $student;
         $this->educator = $educator;
+        if($stats) {
+            $this->avgLevels = FormModel::avgLevelElements($this->form->numero, $this->form->idStudent);
+            $this->avgNotes = FormModel::avgNoteComments($this->form->numero, $this->form->idStudent);
+        } else {
+            $this->avgLevels = null;
+            $this->avgNotes = null;
+        }
     }
 
     public function setLineXLS(Worksheet $sheet, int $line){

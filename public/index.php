@@ -151,6 +151,11 @@ $router->map("GET", "/etudiants/[a]-[a]-[i:id]", function ($id) {
     $controller = new AdminController();
     $controller->infoStudent($id);
 });
+
+$router->map("GET", "/etudiants/suivi/[a]-[a]-[i:id]", function ($id) {
+    $controller = new AdminController();
+    $controller->statStudent($id);
+}); 
 $router->map("POST", "/etudiants/[a]-[a]-[i:id]", function ($id) {
     $controller = new AdminController();
     if(isset($_POST["action"])) {

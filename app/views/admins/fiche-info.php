@@ -2,7 +2,8 @@
 $title = "Page Information fiche";
 $bsIcons = true;
 $scripts = "<script src='/assets/js/admin/fiche-info.js' type='module'></script>
-<script src='/assets/js/account.js' type='module'></script>";
+<script src='/assets/js/account.js' type='module'></script>
+<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>";
 define("PATH", "/assets/images/pictures/");
 ?>
 
@@ -37,9 +38,9 @@ define("PATH", "/assets/images/pictures/");
             <div class="row align-items-center">
                 <div class="col-12 my-2">
                     <h4>
-                        <?= !empty($form) ? htmlentities($form->session->wording) : "" ?> -
-                        <?= !empty($student) ? htmlentities($student->lastName) : "" ?>
-                        <?= !empty($student) ? htmlentities($student->firstName) : ""?>
+                        <?= !empty($form->session->wording) ? htmlentities($form->session->wording) : "" ?> -
+                        <?= !empty($student->lastName) ? htmlentities($student->lastName) : "" ?>
+                        <?= !empty($student->firstName) ? htmlentities($student->firstName) : ""?>
                     </h4>
                 </div>
                 <div class="col-12 mt-2">
@@ -53,7 +54,7 @@ define("PATH", "/assets/images/pictures/");
             </div>
         </div>
     </div>
-    <?php if(!empty($form) && $form->form->finish == 0){ ?>
+    <?php if(!empty($form->form) && $form->form->finish == 0){ ?>
     <div class="mb-2" >
         <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
             <button type="submit" class="btn btn-primary btn-finish-form "> <i class="bi bi-x-lg"></i>Marquer la fiche comme finie</button>
@@ -67,7 +68,7 @@ define("PATH", "/assets/images/pictures/");
         <?= App\Class\Feedback::getMessage() ?>
     <div class="row">
         <?php 
-        if(is_array($form->comments) && !empty($form->comments))
+        if(!empty($form->comments) && is_array($form->comments))
             foreach ($form->comments as $com) {
                 echo $com->getTemplateComment();
         } ?>
@@ -259,7 +260,6 @@ define("PATH", "/assets/images/pictures/");
         const commentsTab = <?= json_encode($form->comments) ?>;
         console.log(commentsTab);
     </script>
-
     <?php $content = ob_get_clean();
     require("../app/views/layout.php");
     ?>
