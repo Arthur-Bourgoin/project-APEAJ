@@ -54,7 +54,7 @@ class AdminController extends UserController
      * @param integer $id --> idSession OR idStudent OR null (depending on the page to display)
      *                    --> != $_POST["idUser"]
      */
-    public function update_user(string $page, ?int $idStudent, ?int $idForm)
+    public function update_user(string $page)
     {   
         $allowed_roles = array('educator-admin', 'educator', 'CIP', 'super-admin');
         if(!$this->verifUser($_POST)){
