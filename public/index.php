@@ -116,7 +116,7 @@ $router->map("GET", "/fiche-[i:id]", function ($id) {
     $controller = new StudentController();
     $controller->infoForm($id);
 });
-$router->map("GET", "/fiche-[i:id]", function ($id) {
+$router->map("POST", "/fiche-[i:id]", function ($id) {
     $controller = new StudentController();
     if(isset($_POST["action"])) {
         switch($_POST["action"]) {
@@ -129,7 +129,14 @@ $router->map("GET", "/fiche-[i:id]", function ($id) {
             case "deleteComment":
                 $controller->delete_comment();
                 break;
+            case "addPicture":
+                $controller->add_picture($id);
+                break;
+            case "deletePicture":
+                $controller->delete_picture($id);
+                break;
         }
+    header("Location: " . $_SERVER["REQUEST_URI"]);
     } else {
         $controller->infoForm($id);
     }
@@ -287,7 +294,7 @@ $router->map("POST", "/formation-[i:id]", function ($id) {
                 $controller->delete_user();
                 break;
         }
-        header("Location: " . $_SERVER["REQUEST_URI"]);
+         
     } else {
         $controller->infoTraining($id);
     }

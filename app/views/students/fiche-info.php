@@ -48,6 +48,7 @@ define("PATH", "/assets/images/pictures/");
         </div>
     </div>
     <?php
+    /*
     switch ($error) {
         case 1:
             echo "<div class = 'alert alert-danger'> Les données ne sont pas valides </div>";
@@ -94,23 +95,30 @@ define("PATH", "/assets/images/pictures/");
             echo "<div class = 'alert alert-success'> Suprression de la photo réussi </div>";
             break;
     }
+    */
     ?>
-    <div class = "row">
-        <?php foreach ($form->comments as $com) {
-            if ($com->admin===0){
-                echo $com->getTemplateComment();
-            }
-        } ?>
-    </div>
-    <?php
-    if (!in_array($_SESSION["id"], array_column($form->comments, "idAuthor"))) { ?>
-        <button type = "button" class="btn btn-primary mt-3" data-bs-toggle = "modal" data-bs-target="#ModalComs">
-            <i class = "bi bi-chat-left-text me-2"></i> Ajouter un commentaire
-        </button>
-        <?php
-    } ?>
-    <div class = "row mt-5" id = "pictures">
 
+    
+    <?= App\Class\Feedback::getMessage() ?>
+    <?php if(!empty($form->comments)) { ?>
+        <div class = "row">
+            <?php foreach ($form->comments as $com) {
+                if ($com->admin===0){
+                    echo $com->getTemplateComment();
+                }
+            } ?>
+        </div>
+    <?php
+        if (!in_array($_SESSION["id"], array_column($form->comments, "idAuthor"))) { ?>
+            <button type = "button" class="btn btn-primary mt-3" data-bs-toggle = "modal" data-bs-target="#ModalComs">
+                <i class = "bi bi-chat-left-text me-2"></i> Ajouter un commentaire
+            </button>
+            <?php
+        }
+    } ?>
+
+    <?php if(!empty($form->pictures)) { ?>
+    <div class = "row mt-5" id = "pictures">
         <?php foreach ($form->pictures as $picture) { ?>
             <div class = "col-md-3 col-sm-6 mb-4">
                 <div class = "card">
@@ -147,12 +155,8 @@ define("PATH", "/assets/images/pictures/");
                 </div>
             </div>
         </div>
-
-
-
-
-
     </div>
+    <?php } ?>
     <div class = "modal fade" id = "ModalComs" tabindex = "-1" aria-labelledby = "ModalComs" aria-hidden = "true">
         <div class = "modal-dialog modal-lg">
             <div class = "modal-content">
@@ -179,14 +183,6 @@ define("PATH", "/assets/images/pictures/");
                             <label for = "formNote" class = "form-label pe-none">Note:</label>
                             <input class = " form-control" id = "formNote" name = "note" pattern = "[0-9]|1[0-9]|20"></input>
                         </div>
-                        <div class = "form-check form-switch">
-                            <input class = "form-check-input" type = "checkbox" role = "switch" id = "admin" name = "admin">
-                            <label class = "form-check-label" for = "flexSwitchCheckDefault">Visible uniquement par l'équipe
-                                pédagogique
-                                </input></label>
-                        </div>
-
-
 
                 </div>
                 <div class = "modal-footer">

@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "pattern-lock-js": "^1.0.1"
+  }
+}
