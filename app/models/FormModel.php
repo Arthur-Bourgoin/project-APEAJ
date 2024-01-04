@@ -48,7 +48,7 @@ class FormModel {
             while ($form = $res->fetch()) {
                 $session = SessionModel::getSession($form->idSession);
                 $student = UserModel::getUser($form->idStudent);
-                $forms[] = new Form($form, null, null, null, null, $session, $student, null);
+                $forms[] = new Form($form, null, null, null, null, $session, $student, null, null);
             }
             return $forms;
         } catch (\Exception $e) {
@@ -70,7 +70,7 @@ class FormModel {
             $form = $res->fetch();
             $session = SessionModel::getSession($form->idSession);
             $student = UserModel::getUser($form->idStudent);
-            return new Form($form, null, null, null, null, $session, $student, null);
+            return new Form($form, null, null, null, null, $session, $student, null, null);
         } catch (\Exception $e) {
             Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
         } finally {
@@ -89,7 +89,7 @@ class FormModel {
                 return;
             }
             while ($form = $res->fetch())
-                $forms[] = new Form($form, null, null, null, null, null, UserModel::getUser($form->idStudent), null);
+                $forms[] = new Form($form, null, null, null, null, null, UserModel::getUser($form->idStudent), null, null);
             return $forms;
         } catch (\Exception $e) {
             Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
@@ -141,7 +141,7 @@ class FormModel {
                 Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
                 return;
             }
-            return new Form($form, $comments, $pictures, $elements, $materials, $session, $student, $educator);
+            return new Form($form, $comments, $pictures, $elements, $materials, $session, $student, $educator,null);
         } catch (\Exception $e) {
             Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
         } finally {

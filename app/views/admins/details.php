@@ -49,48 +49,18 @@ ob_start(); ?>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalModifie" data-id="<?= $student->idUser ?>">
                         Modifier les informations
                     </button>
+                    <a href="/etudiants/suivi/<?=$student->lastName?>-<?=$student->firstName?>-<?=$student->idUser?>" class="btn btn-primary">
+                        Suivi de l'étudiant
+                    </a>
                     </div>
                 </div>
                 <div class="col-12 mt-4">
-                    <?php
-
-                    switch ($error) {
-                        case 501:
-                            echo "<div class = 'alert alert-danger'> Les données ne sont pas valides.</div>";
-                            break;
-                        case 2:
-                            echo "<div class = 'alert alert-danger'> Une erreur s'est produite lors de l'affichage.</div>";
-                            break;
-                        case 3:
-                            echo "<div class = 'alert alert-danger'> Une erreur s'est produite lors de l'affichage.</div>";
-                            break;
-                        case 707:
-                            echo "<div class = 'alert alert-danger'> Vous ne pouvez pas modifier un profil qui n'est pas le votre.</div>";
-                            break;
-                    }
-                    switch ($success) {
-                        case 1:
-                            echo "<div class = 'alert alert-success'> Modification de l'étudiant réussie !</div>";
-                            break;
-                        case 2:
-                            echo "<div class = 'alert alert-success'> Suppression du commentaire réussie !  </div>";
-                            break;
-                        case 3:
-                            echo "<div class = 'alert alert-success'>Ajout d'un commentaire réussi ! </div>";
-                            break;
-                        case 4:
-                            echo "<div class = 'alert alert-success'>Modification d'un commentaire réussie ! </div>";
-                            break;
-                        case 12:
-                            echo "<div class = 'alert alert-success'> Modification profil réussie ! </div>";
-                            break;
-                    }
-                    ?>
-
+                    <?= App\Class\Feedback::getMessage() ?>
                 </div>
             </div>
         </div>
     </div>
+    <?php if (!empty($comments) && is_array($comments)){ ?>
     <div class="row">
         <h2>Commentaires</h2>
         <?php
@@ -103,7 +73,10 @@ ob_start(); ?>
         }
         ?>
     </div>
-
+    <?php 
+    }else
+        $foundId = false;
+     ?>
     <?php if (!$foundId) { ?>
         <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#ModalComs">
             <i class="bi bi-chat-left-text me-2"></i> Ajouter un commentaire
@@ -118,7 +91,8 @@ ob_start(); ?>
             </h2>
         </div>
     </div>
-    <div class="row border border-5 my-3 ">
+    <?php if (!empty($currentForm)){ ?>
+    <div class="row">
         <div class="row mb-3">
             <div class="col-3">
                 <h5>Session courante</h5>
@@ -127,40 +101,43 @@ ob_start(); ?>
             </div>
             <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-3">
                 <a
-                    href="/etudiants/<?= htmlentities($student->lastName) ?>-<?= htmlentities($student->firstName) ?>-<?= $currentForm->form->idStudent ?>/fiche-<?= $currentForm->form->numero ?>"><i
+                    href="/etudiants/<?= htmlentities($student->lastName) ?>-<?= htmlentities($student->firstName) ?>-<?= htmlentities($currentForm->form->idStudent) ?>/fiche-<?= htmlentities($currentForm->form->numero) ?>"><i
                         class="bi bi-file-earmark-text" style="font-size: 5rem"></i></a>
                 <div class="col">
-                    <?= $currentForm->session->wording ?>
+                    <?= htmlentities($currentForm->session->wording) ?>
                 </div>
             </div>
 
         </div>
-        <div class="row">
-            <div class="col-3">
-                <h5>Sessions terminées</h5>
-            </div>
-            <div class="col-9">
-            </div>
-            <?php
-            foreach ($finishedForms as $finishedForm) { ?>
-                <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-3">
-                    <a
-                        href="/etudiants/<?= htmlentities($student->lastName) ?>-<?= htmlentities($student->firstName) ?>-<?= htmlentities($finishedForm->form->idStudent) ?>/fiche-<?= htmlentities($finishedForm->form->numero) ?>"><i
-                            class="bi bi-file-earmark-text" style="font-size: 5rem"></i></a>
-
-                    <div>
-                        <?= $finishedForm->session->wording ?>
-                    </div>
+        <?php } 
+        if (!empty($finishedForms && is_array($finishedForms))){ ?>
+            <div class="row">
+                <div class="col-3">
+                    <h5>Sessions terminées</h5>
+                </div>
+                <div class="col-9">
                 </div>
                 <?php
-            }
-            ?>
-        </div>
+                foreach ($finishedForms as $finishedForm) { ?>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-3">
+                        <a
+                            href="/etudiants/<?= htmlentities($student->lastName) ?>-<?= htmlentities($student->firstName) ?>-<?= htmlentities($finishedForm->form->idStudent) ?>/fiche-<?= htmlentities($finishedForm->form->numero) ?>"><i
+                                class="bi bi-file-earmark-text" style="font-size: 5rem"></i></a>
+
+                        <div>
+                            <?= $finishedForm->session->wording ?>
+                        </div>
+                    </div>
+                    <?php
+                }
+                ?>
+            </div>
+        <?php } ?>
     </div>
 </div>
 <!-- Modal update utilisateur-->
 <div class="modal fade" id="ModalModifie" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="UpdateUserLabel" aria-hidden="true" data-type-pwd="<?= $student->typePwd ?>">
+    aria-labelledby="UpdateUserLabel" aria-hidden="true" data-type-pwd="<?= htmlentities($student->typePwd) ?>">
     <div class="modal-dialog">
         <form enctype="multipart/form-data" action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
             <input type="hidden" id="idUser" name="idUser" value=<?= $student->idUser ?> />
@@ -187,7 +164,7 @@ ob_start(); ?>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
                                     <input id="inputLastName" type="text" class="form-control" name="lastName"
-                                        value="<?= $student->lastName ?>">
+                                        value="<?= htmlentities($student->lastName) ?>">
                                 </div>
                             </div>
 
@@ -196,7 +173,7 @@ ob_start(); ?>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
                                     <input id="inputFirstName" type="text" class="form-control" name="firstName"
-                                        value="<?= $student->firstName ?>">
+                                        value="<?= htmlentities($student->firstName) ?>">
                                 </div>
                             </div>
                         </div>

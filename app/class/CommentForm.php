@@ -37,7 +37,7 @@ class CommentForm {
         <div class= "col-12 mb-4 p-0 form-floating w-100">
             <div class= "form-control comment-container h-auto position-relative" id = "<?= $this->idCommentForm ?>">
                 <p class= "comment-text">
-                    <?= $this->text ?>
+                    <?= htmlentities($this->text) ?>
                 </p>
                 <?php if($_SESSION['id'] == $this->idAuthor){?>
                 <div class="d-flex justify-content-end ">
@@ -56,13 +56,19 @@ class CommentForm {
                 <?php } ?>
             </div>
 
-            <label for = "<?= $this->idCommentForm ?>">
-                <?= $this->author->lastName ?> <?= $this->author->firstName ?> --- <?= $this->wording ?><i class="bi bi-volume-up"></i>
+            <label for = "<?= htmlentities($this->idCommentForm) ?>">
+                <?= htmlentities($this->author->lastName) ?> <?= htmlentities($this->author->firstName) ?> --- <?= htmlentities($this->wording) ?><i class="bi bi-volume-up"></i>
             </label>
             <span class = "position-absolute top-0 end-0 translate-middle z-3">
                 <i class = "bi <?= self::TAB_ICONS[ceil($this->note-0.1) / 4 ] ?>"
                     style = "font-size: 1.8rem; margin-right: -18px;"></i>
             </span>
+            <?php 
+            if ($this->admin == 1){ ?>
+                <span class = "position-absolute top-0 end-0 translate-middle z-3">
+                <i class="bi bi-incognito" style = "font-size: 1.8rem; margin-right: 10px;"></i>
+                </span>
+            <?php } ?>
         </div>
         <?php
         return ob_get_clean();

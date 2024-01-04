@@ -101,10 +101,12 @@ $router->map("GET", "/accueil", function () {
 $router->map("POST", "/", function () {
     $controller = new UserController();
     $controller->homePOST();
+    header("Location: " . $_SERVER["REQUEST_URI"]);
 });
 $router->map("POST", "/accueil", function () {
     $controller = new UserController();
     $controller->homePOST();
+    header("Location: " . $_SERVER["REQUEST_URI"]);
 });
 
 /*######################################################################################
@@ -157,6 +159,11 @@ $router->map("GET", "/etudiants/[a]-[a]-[i:id]", function ($id) {
     $controller = new AdminController();
     $controller->infoStudent($id);
 });
+
+$router->map("GET", "/etudiants/suivi/[a]-[a]-[i:id]", function ($id) {
+    $controller = new AdminController();
+    $controller->statStudent($id);
+}); 
 $router->map("POST", "/etudiants/[a]-[a]-[i:id]", function ($id) {
     $controller = new AdminController();
     if(isset($_POST["action"])) {
@@ -176,6 +183,7 @@ $router->map("POST", "/etudiants/[a]-[a]-[i:id]", function ($id) {
                 $controller->delete_commentStudent();
                 break;
         }
+        header("Location: " . $_SERVER["REQUEST_URI"]);
     } else {
         $controller->infoStudent($id);
     }
@@ -197,7 +205,11 @@ $router->map("POST", "/sessions/[i:id]", function ($id) {
             case "closeSession":
                 $controller->closeSession();
                 break;
+            case "deleteSession":
+                $controller->deleteSession();
+                break;
         }
+        header("Location: " . $_SERVER["REQUEST_URI"]);
     } else {
         $controller->infoSession($id);
     }
@@ -235,6 +247,7 @@ $router->map("POST", "/etudiants/[a]-[a]-[i:idS]/fiche-[i:idF]", function ($idS,
                 $controller->update_user("infoForm", $idS, $idF);
                 break;
         }
+        header("Location: " . $_SERVER["REQUEST_URI"]);
     } else {
         $controller->infoForm($idS, $idF);
     }

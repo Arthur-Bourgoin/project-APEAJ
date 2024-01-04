@@ -7,7 +7,7 @@ ob_start(); ?>
 <div class="container">
     <div class="row">
         <h2 class="text-center mt-3">
-            <?= $training->wording ?>
+           <?= !empty($training) ? htmlentities($training->wording) : "" ?>
         </h2>
         <div class="d-flex justify-content-between align-items-center">
             <button type="button" class="btn btn-primary my-3 btn-account" data-bs-toggle="modal" data-bs-target="#ModalAjouterSession">
@@ -21,37 +21,7 @@ ob_start(); ?>
             </div>
         </div>
     </div>
-
-    <?php
-    switch ($error) {
-        case 501:
-            echo "<div class='alert alert-danger'> Les données ne sont pas valides </div>";
-            break;
-        case 2:
-            echo "<div class='alert alert-danger'> Une erreur s'est produite lors de l'affichage </div>";
-            break;
-        case 3:
-            echo "<div class='alert alert-danger'>  </div>";
-            break;
-        case 707:
-            echo "<div class = 'alert alert-danger'> Vous ne pouvez pas modifier un profil qui n'est pas le vôtre </div>";
-            break;
-    }
-    switch ($success) {
-        case 1:
-            echo "<div class='alert alert-success'> Création de la session réussie ! </div>";
-            break;
-        case 2:
-            echo "<div class='alert alert-success'> Modification de l'utilisateur réussie ! </div>";
-            break;
-        case 3:
-            echo "<div class='alert alert-success'>  </div>";
-            break;
-        case 12:
-            echo "<div class = 'alert alert-success'> Modification profil réussie ! </div>";
-            break;
-    }
-    ?>
+    <?= App\Class\Feedback::getMessage() ?>
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="sessions-tab" data-bs-toggle="tab" data-bs-target="#sessions"
@@ -73,6 +43,7 @@ ob_start(); ?>
                 </thead>
                 <tbody>
                     <?php
+                    if(!empty($sessions) && is_array($sessions)){
                     foreach ($sessions as $session) {
                         ?>
                         <tr>
@@ -82,6 +53,9 @@ ob_start(); ?>
                             <td><a href="sessions/<?= $session->idSession ?>"><i class='bi bi-eye text-black'></i></a></td>
                         </tr>
                         <?php
+                    } }
+                    else{
+                        echo "Aucune session n'est associée à cette formation";
                     }
                     ?>
 
@@ -91,6 +65,7 @@ ob_start(); ?>
         <div class="tab-pane fade mt-3" id="eleves" role="tabpanel" aria-labelledby="eleves-tab">
             <div class="row mb-3 align-items-center user-container">
                 <?php
+                if(!empty($students) && is_array($students)){
                 foreach ($students as $student) { ?>
                     <div class="col-lg-3 col-md-4 col-6 ">
                         <div class="card mb-4">
@@ -111,7 +86,10 @@ ob_start(); ?>
                             </div>
                         </div>
                     </div>
-                <?php } ?>
+                <?php }}
+                else    
+                    echo "Aucun étudiant n'est associé à cette session"
+                 ?>
             </div>
         </div>
     </div>
