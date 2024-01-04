@@ -6,10 +6,11 @@ ob_start(); ?>
 
 <div class="container">
     <div class="row">
+        <?php if(!empty($student)){ ?>
         <h2 class="text-center mt-3">
            Suivi de l'étudiant <?=htmlentities($student->lastName)?> <?=htmlentities($student->firstName)?> 
         </h2>
-
+        <?php } ?>
         <div class="d-flex justify-content-end align-items-center">
             <div class="d-flex align-items-center ">
                 <a href="/disconnect"><button class="btn btn-danger"><i class="bi bi-power me-2"></i>Se déconnecter</button></a> 
@@ -25,6 +26,7 @@ ob_start(); ?>
         </div>
         <div class="col-9">
             <div class="row mt-3 ms-3 align-items">
+            <?php if (!empty($student)) { ?>
                 <div class="col-12 my-3">
                     <h2>
                         <?= htmlentities($student->lastName) ?>
@@ -37,6 +39,7 @@ ob_start(); ?>
                         <?= htmlentities($student->login) ?>
                     </h5>
                 </div>
+                <?php } ?>
                 <div class="col-12 mt-4">
                     <?= App\Class\Feedback::getMessage() ?>
                 </div>

@@ -38,23 +38,33 @@ define("PATH", "/assets/images/pictures/");
             <div class="row align-items-center">
                 <div class="col-12 my-2">
                     <h4>
-                        <?= !empty($form->session->wording) ? htmlentities($form->session->wording) : "" ?> -
-                        <?= !empty($student->lastName) ? htmlentities($student->lastName) : "" ?>
-                        <?= !empty($student->firstName) ? htmlentities($student->firstName) : ""?>
+                        <?php
+                        if (!empty($form) && !empty($form->session) && !empty($form->session->wording)) {
+                                echo htmlentities($form->session->wording);
+                        } else {
+                            echo "La fiche n'a pas de contenu.";
+                        }
+                        ?>
+                        <?= !empty($student) ? htmlentities($student->lastName) : "" ?>
+                        <?= !empty($student) ? htmlentities($student->firstName) : ""?>
                     </h4>
                 </div>
                 <div class="col-12 mt-2">
                     <h4> Création :
-                        <?php
-                        $date = new DateTime($form->form->creationDate);
-                        echo $date->format('d m Y H:i');
+                    <?php
+                        if (!empty($form) && !empty($form->form) && !empty($form->form->creationDate)) {
+                            $date = new DateTime($form->form->creationDate);
+                            echo $date->format('d m Y H:i');
+                        } else {
+                            echo "La date de création est absente.";
+                        }
                         ?>
                     </h4>
                 </div>
             </div>
         </div>
     </div>
-    <?php if(!empty($form->form) && $form->form->finish == 0){ ?>
+    <?php if(!empty($form) && !empty($form->form) && $form->form->finish == 0){ ?>
     <div class="mb-2" >
         <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
             <button type="submit" class="btn btn-primary btn-finish-form "> <i class="bi bi-x-lg"></i>Marquer la fiche comme finie</button>

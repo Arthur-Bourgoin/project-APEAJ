@@ -62,14 +62,13 @@ class AdminController extends UserController
             return;
         }
         $this->saveProfilePicture('picture');
-        if($_POST["action"] === "updateStudent") {
+        
             if (in_array($_SESSION['role'], $allowed_roles)){
                 if( isset($_POST["pwd"]) && empty(trim($_POST['pwd']))) 
                     UserModel::updateUser($_POST);
                 else{
                     if(!$this->verifPwd($_POST)){
                         Feedback::setError("Le code ne respecte pas le format attendu");
-                       
                     }
                     else
                         UserModel::updateUserAndPwd($_POST);
@@ -77,22 +76,7 @@ class AdminController extends UserController
             }else {
                 Feedback::setError("Vous ne possedez pas les droits");
             }
-        }
-        else {
-            if($_SESSION['id']==$_POST["idUser"]){
-                if (in_array($_SESSION['role'], $allowed_roles)){
-                    if(empty(trim($_POST['pwd'])))
-                        UserModel::updateUser($_POST);
-                    else{
-                        if(!$this->verifPwd($_POST))
-                            Feedback::setError("Le code ne respecte pas le format attendu");
-                        else
-                            UserModel::updateUserAndPwd($_POST);
-                    }
-                }else
-                    Feedback::setError("Vous navez pas les droits de modifier ce compte");    
-            }
-        }
+        
     }
     public function infoSession(int $id)
     {
@@ -173,7 +157,7 @@ class AdminController extends UserController
     
     public function deleteForm() {}
 
-    public function add_commentForm($idStudent, $idForm) {
+    public function add_commentForm() {
         $_POST["admin"] = isset($_POST["admin"]);
         $_POST["idAuthor"] = $_SESSION['id'];
         if(!$this->verifComment($_POST)){
@@ -182,7 +166,7 @@ class AdminController extends UserController
         else
             CommentFormModel::addComment($_POST,$_SESSION["id"]);
     }
-    public function update_commentForm($idStudent, $idForm) {
+    public function update_commentForm() {
         $_POST["admin"] = isset($_POST["admin"]);
         if(!$this->verifComment($_POST)){
             Feedback::setError("Les données du commentaire ne sont pas valides");      
@@ -190,7 +174,7 @@ class AdminController extends UserController
         else
             CommentFormModel::updateComment($_POST);
     }
-    public function delete_commentForm($idStudent, $idForm) {
+    public function delete_commentForm() {
         CommentFormModel::deleteComment($_POST["idCommentForm"]);
     }
 
@@ -300,47 +284,29 @@ class AdminController extends UserController
     }
     
     private function verifSession(array $args){
-        if(
-            empty($args["wording"]) ||
-            empty($args["theme"]) ||
-            empty($args["description"]) ||
-            empty($args["timeBegin"]) ||
-            empty($args["idTraining"]) 
-        )
-            return false;
-        return true;
+            return (!empty($args["wording"]) ||
+            !empty($args["theme"]) ||
+            !empty($args["description"]) ||
+            !empty($args["timeBegin"]) ||
+            !empty($args["idTraining"]) );
     }
     private function verifClosingSession(array $args){
-        if($args["timeBegin"]>$args["timeEnd"])
-            return false;
-        return true;
+        return ($args["timeBegin"]<$args["timeEnd"]);
     }
     private function verifUser(array $args){
-        if(
-            empty($args["idUser"]) ||
-            empty($args["lastName"]) ||
-            empty($args["firstName"]) 
-        )
-            return false;
-        return true;
+            return (!empty($args["idUser"]) ||
+            !empty($args["lastName"]) ||
+            !empty($args["firstName"]));
     }
     private function verifComment(array $args){
-        if(
-            empty($args["wording"]) ||
-            empty($args["text"])  ||
-            empty($args["note"])  ||
-            !ctype_digit($args["note"]) 
-        )
-            return false;
-        return true;
+        return (!empty($args["wording"]) ||
+            !empty($args["text"])  ||
+            !empty($args["note"])  ||
+            ctype_digit($args["note"]) );
     }
 
     private function verifPicture(array $args){
-        if(
-            empty($args["title"]) 
-        )
-            return false;
-        return true;
+        return !empty($args["title"]);
     }
 
     private function verifPwd(array $args) {
@@ -353,11 +319,7 @@ class AdminController extends UserController
     }
 
     private function verifCommentStudent(array $args){
-        if( 
-            empty($args["text"]) 
-        )
-            return false;
-        return true;
+        return !empty($args["text"]);
     }
     
     private function saveProfilePicture(String $name){

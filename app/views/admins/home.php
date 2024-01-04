@@ -79,9 +79,11 @@ ob_start(); ?>
                                 </p>
                                 <div class="d-flex justify-content-evenly">
                                     <a href="etudiants/<?= $student->lastName ?>-<?= $student->firstName ?>-<?= $student->idUser ?>" class="btn btn-primary"><i class="bi bi-info-circle"></i></a>
-                                    <button type="button" class="btn btn-primary button-update" data-bs-toggle="modal" data-bs-target="#ModalModifie" data-id="<?= $student->idUser ?>">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
+                                    <?php if(isset($_SESSION["role"]) && in_array($_SESSION["role"], ['educator-admin', 'super-admin'])) { ?>
+                                        <button type="button" class="btn btn-primary button-update" data-bs-toggle="modal" data-bs-target="#ModalModifie" data-id="<?= $student->idUser ?>">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                    <?php } ?>
                                 </div>
                             </div>
                         </div>
