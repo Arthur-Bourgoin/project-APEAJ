@@ -134,6 +134,11 @@ class AdminController extends UserController
     
     } 
 
+    public function delete_session() {
+        // vérifier que les $_POST["idSession"] existe
+        // appel au model
+    }
+
     public function add_commentStudent() {
         $_POST["idEducator"]=$_SESSION["id"];
         if(!$this->verifCommentStudent($_POST)){

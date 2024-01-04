@@ -69,7 +69,7 @@ CREATE TABLE Form(
     PRIMARY KEY(idStudent, numero),
     FOREIGN KEY(idStudent) REFERENCES Users(idUser),
     FOREIGN KEY(idEducator) REFERENCES Users(idUser),
-    FOREIGN KEY(idSession) REFERENCES Session(idSession)
+    FOREIGN KEY(idSession) REFERENCES Session(idSession) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE CommentForm(
@@ -84,7 +84,7 @@ CREATE TABLE CommentForm(
     numero INT NOT NULL,
     idStudent INT NOT NULL,
     PRIMARY KEY(idCommentForm),
-    FOREIGN KEY(idStudent, numero) REFERENCES Form(idStudent, numero),
+    FOREIGN KEY(idStudent, numero) REFERENCES Form(idStudent, numero) ON DELETE CASCADE,
     FOREIGN KEY(idAuthor) REFERENCES Users(idUser)
 ) ENGINE = InnoDB;
 
@@ -97,7 +97,7 @@ CREATE TABLE Picture(
     numero INT NOT NULL,
     PRIMARY KEY(idPicture),
     FOREIGN KEY(idAuthor) REFERENCES Users(idUser),
-    FOREIGN KEY(idStudent, numero) REFERENCES Form(idStudent, numero)
+    FOREIGN KEY(idStudent, numero) REFERENCES Form(idStudent, numero) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE Pictogram(
@@ -135,7 +135,7 @@ CREATE TABLE Display(
     textToSpeechText TEXT,
     PRIMARY KEY(idElementForm, idStudent, numero),
     FOREIGN KEY(idElementForm) REFERENCES ElementForm(idElementForm),
-    FOREIGN KEY(idStudent, numero) REFERENCES Form(idStudent, numero)
+    FOREIGN KEY(idStudent, numero) REFERENCES Form(idStudent, numero) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE Used(
@@ -143,7 +143,7 @@ CREATE TABLE Used(
     numero INT,
     idMaterial INT,
     PRIMARY KEY(idStudent, numero, idMaterial),
-    FOREIGN KEY(idStudent, numero) REFERENCES Form(idStudent, numero),
+    FOREIGN KEY(idStudent, numero) REFERENCES Form(idStudent, numero) ON DELETE CASCADE,
     FOREIGN KEY(idMaterial) REFERENCES Material(idMaterial)
 ) ENGINE = InnoDB;
 
