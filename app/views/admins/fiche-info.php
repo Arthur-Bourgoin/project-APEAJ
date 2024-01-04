@@ -2,7 +2,8 @@
 $title = "Page Information fiche";
 $bsIcons = true;
 $scripts = "<script src='/assets/js/admin/fiche-info.js' type='module'></script>
-<script src='/assets/js/account.js' type='module'></script>";
+<script src='/assets/js/account.js' type='module'></script>
+<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>";
 define("PATH", "/assets/images/pictures/");
 ?>
 
@@ -37,9 +38,9 @@ define("PATH", "/assets/images/pictures/");
             <div class="row align-items-center">
                 <div class="col-12 my-2">
                     <h4>
-                        <?= $form->session->wording ?> -
-                        <?= $student->lastName ?>
-                        <?= $student->firstName ?>
+                        <?= !empty($form->session->wording) ? htmlentities($form->session->wording) : "" ?> -
+                        <?= !empty($student->lastName) ? htmlentities($student->lastName) : "" ?>
+                        <?= !empty($student->firstName) ? htmlentities($student->firstName) : ""?>
                     </h4>
                 </div>
                 <div class="col-12 mt-2">
@@ -50,71 +51,26 @@ define("PATH", "/assets/images/pictures/");
                         ?>
                     </h4>
                 </div>
-                <!---<div class="col-12 my-2">
-                    <h4> Dernière modification :
-                    </h4>
-                </div>
-                ---->
             </div>
         </div>
     </div>
-    <?php
-    switch ($error) {
-        case 501:
-            echo "<div class = 'alert alert-danger'> Les données ne sont pas valides </div>";
-            break;
-        case 2:
-            echo "<div class = 'alert alert-danger'> Une erreur s'est produite lors de l'affichage </div>";
-            break;
-        case 3:
-            echo "<div class = 'alert alert-danger'> Vous ne pouvez modifier ou supprimer que les commentaires dont vous êtes l'auteur </div>";
-            break;
-        case 4:
-            echo "<div class = 'alert alert-danger'> Informations de la photo incorrectes </div>";
-            break;
-        case 5:
-            echo "<div class = 'alert alert-danger'> Photo non renseignée </div>";
-            break;
-        case 6:
-            echo "<div class = 'alert alert-danger'> Erreur lors de la suppression!  </div>";
-            break;
-        case 7:
-            echo "<div class = 'alert alert-danger'> Erreur: fichier à supprimer non trouvé  </div>";
-            break;
-        case 10:
-            echo "<div class = 'alert alert-danger'> Erreur lors du téléchargement du fichier  </div>";
-            break;
-        case 102:
-            echo "<div class = 'alert alert-danger'> L'image n'est pas renseignée ou le fichier n'est pas une image ! </div>";
-            break;
-        case 707:
-            echo "<div class = 'alert alert-danger'> Vous ne pouvez pas modifier un profil qui n'est pas le votre </div>";
-            break;
-    }
-    switch ($success) {
-        case 1:
-            echo "<div class = 'alert alert-success'> Ajout du commentaire réussi </div>";
-            break;
-        case 2:
-            echo "<div class = 'alert alert-success'> Modification du commentaire réussi </div>";
-            break;
-        case 3:
-            echo "<div class = 'alert alert-success'> Supression du commenttaire réussi </div>";
-            break;
-        case 4:
-            echo "<div class = 'alert alert-success'> Ajout d'une photo réussi </div>";
-            break;
-        case 5:
-            echo "<div class = 'alert alert-success'> Suprression de la photo réussi </div>";
-            break;
-        case 12:
-            echo "<div class = 'alert alert-success'> Modification profil réussie ! </div>";
-            break;
-    }
+    <?php if(!empty($form->form) && $form->form->finish == 0){ ?>
+    <div class="mb-2" >
+        <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
+            <button type="submit" class="btn btn-primary btn-finish-form "> <i class="bi bi-x-lg"></i>Marquer la fiche comme finie</button>
+            <input type="hidden" name="action" value="finishForm">
+            <input type="hidden" name="idStudent" value="<?= $student->idUser ?>">
+            <input type="hidden" name="numero" value="<?= $form->form->numero ?>">
+        </form>
+    </div>
+    <?php }
     ?>
+        <?= App\Class\Feedback::getMessage() ?>
     <div class="row">
-        <?php foreach ($form->comments as $com) {
-            echo $com->getTemplateComment();
+        <?php 
+        if(!empty($form->comments) && is_array($form->comments))
+            foreach ($form->comments as $com) {
+                echo $com->getTemplateComment();
         } ?>
     </div>
     <?php
@@ -126,28 +82,31 @@ define("PATH", "/assets/images/pictures/");
     } ?>
     <div class="row mt-5" id="pictures">
 
-        <?php foreach ($form->pictures as $picture) { ?>
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <div class="div-img">
-                            <img src="<?= PATH . $picture->path ?>" alt="Image" class="object-fit-contain mw-100 mh-100 ">
+        <?php 
+        if(!empty($form->pictures)){  
+            foreach ($form->pictures as $picture) { ?>
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div class="div-img">
+                                <img src="<?= PATH . $picture->path ?>" alt="Image" class="object-fit-contain mw-100 mh-100 ">
+                            </div>
+                            <h5 class="card-title mt-3">
+                                <?= $picture->title ?>
+                            </h5>
+                            <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="post"
+                                class="position-absolute top-0 end-0 mt-2 me-2">
+                                <input type="hidden" name="idPicture" value="<?= $picture->idPicture ?>">
+                                <button type="submit" class=" btn btn-danger btn-delete-picture " name="action"
+                                    value="deletePicture">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
                         </div>
-                        <h5 class="card-title mt-3">
-                            <?= $picture->title ?>
-                        </h5>
-                        <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="post"
-                            class="position-absolute top-0 end-0 mt-2 me-2">
-                            <input type="hidden" name="idPicture" value="<?= $picture->idPicture ?>">
-                            <button type="submit" class=" btn btn-danger btn-delete-picture " name="action"
-                                value="deletePicture">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </form>
                     </div>
                 </div>
-            </div>
-        <?php } ?>
+        <?php }}
+         ?>
         <div class="col-md-3 col-sm-6 mb-4">
             <div class="card">
                 <div class="card-body text-center">
@@ -160,11 +119,6 @@ define("PATH", "/assets/images/pictures/");
                 </div>
             </div>
         </div>
-
-
-
-
-
     </div>
     <div class="modal fade" id="ModalComs" tabindex="-1" aria-labelledby="ModalComs" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -306,7 +260,6 @@ define("PATH", "/assets/images/pictures/");
         const commentsTab = <?= json_encode($form->comments) ?>;
         console.log(commentsTab);
     </script>
-
     <?php $content = ob_get_clean();
     require("../app/views/layout.php");
     ?>

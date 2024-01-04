@@ -4,7 +4,6 @@ use Config\Database;
 use App\Models\FormModel;
 use App\Class\Feedback;
 
-
 class PictureModel {
 
     public static function getPictures(int $numero, int $idStudent) {
@@ -51,6 +50,7 @@ class PictureModel {
                 ->execute(array_intersect_key($args, array_flip(["idAuthor", "path", "title", "numero", "idStudent"])));
             Feedback::setSuccess("Ajout de la photo enregistré.");
         } catch (\Exception $e) {
+            throw($e);
             Feedback::setError("Une erreur s'est produite lors de l'ajout de la photo.");
         }
     } 

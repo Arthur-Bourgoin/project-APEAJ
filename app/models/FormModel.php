@@ -7,7 +7,10 @@ use App\Models\ {
     CommentFormModel,
     PictureModel
 };
-use App\Class\Form;
+use App\Class\ {
+    Form,
+    Feedback
+};
 
 class FormModel {
 
@@ -22,7 +25,7 @@ class FormModel {
             }
             while ($form = $res->fetch()) {
                 $comments = CommentFormModel::getComments($form->numero, $form->idStudent);
-                $forms[] = new Form($form, $comments, null, null, null, null, null, null);
+                $forms[] = new Form($form, $comments, null, null, null, null, null, null, true);
             }
             return $forms;
         } catch (\Exception $e) {
@@ -45,7 +48,7 @@ class FormModel {
             while ($form = $res->fetch()) {
                 $session = SessionModel::getSession($form->idSession);
                 $student = UserModel::getUser($form->idStudent);
-                $forms[] = new Form($form, null, null, null, null, $session, $student, null);
+                $forms[] = new Form($form, null, null, null, null, $session, $student, null, null);
             }
             return $forms;
         } catch (\Exception $e) {
@@ -67,7 +70,7 @@ class FormModel {
             $form = $res->fetch();
             $session = SessionModel::getSession($form->idSession);
             $student = UserModel::getUser($form->idStudent);
-            return new Form($form, null, null, null, null, $session, $student, null);
+            return new Form($form, null, null, null, null, $session, $student, null, null);
         } catch (\Exception $e) {
             Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
         } finally {
@@ -86,7 +89,7 @@ class FormModel {
                 return;
             }
             while ($form = $res->fetch())
-                $forms[] = new Form($form, null, null, null, null, null, UserModel::getUser($form->idStudent), null);
+                $forms[] = new Form($form, null, null, null, null, null, UserModel::getUser($form->idStudent), null, null);
             return $forms;
         } catch (\Exception $e) {
             Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
@@ -138,7 +141,7 @@ class FormModel {
                 Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
                 return;
             }
-            return new Form($form, $comments, $pictures, $elements, $materials, $session, $student, $educator);
+            return new Form($form, $comments, $pictures, $elements, $materials, $session, $student, $educator,null);
         } catch (\Exception $e) {
             Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
         } finally {
@@ -159,6 +162,26 @@ class FormModel {
             Feedback::setSuccess("Mise à jour de la fiche enregistrée.");
         } catch (\Exception $e) {
             Feedback::setError("Une erreur s'est produite lors de la mise à jour de la fiche.");
+        }
+    }
+
+    public static function avgLevelElements(int $numero, int $idStudent) {
+        try {
+            $res = Database::getInstance()->prepare("SELECT avg(level) as avg FROM display WHERE numero = :numero AND idStudent = :idStudent");
+            $res->execute(array("numero" => $numero, "idStudent" => $idStudent));
+            return $res->fetch()->avg;
+        } catch(\Exception $e) {
+            Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
+        }
+    }
+
+    public static function avgNoteComments(int $numero, int $idStudent) {
+        try {
+            $res = Database::getInstance()->prepare("SELECT avg(note) as avg FROM commentForm WHERE numero = :numero AND idStudent = :idStudent");
+            $res->execute(array("numero" => $numero, "idStudent" => $idStudent));
+            return $res->fetch()->avg;
+        } catch(\Exception $e) {
+            Feedback::setError("Une erreur s'est produite lors du chargement de la page.");
         }
     }
 

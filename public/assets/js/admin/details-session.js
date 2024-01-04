@@ -10,10 +10,19 @@ document.querySelectorAll("#NewFormForStudent .tr-body").forEach(tr => {
 });
 helpers.removeDivFeedback(".alert");
 
-document.querySelectorAll(".btn-delete-close-session").forEach(form => {
+document.querySelectorAll(".btn-close-session").forEach(form => {
     form.addEventListener("click", e => {
         e.stopPropagation();
         if(!window.confirm("Voulez vous fermer cette session ?"))
             e.preventDefault();
     });
 });
+
+document.querySelectorAll(".btn-delete-session").forEach(form => {
+    form.addEventListener("click", e => {
+        e.stopPropagation();
+        if(!window.confirm("Voulez vous suprrimer cette session ?"))
+            e.preventDefault();
+    });
+});
+
