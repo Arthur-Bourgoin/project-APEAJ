@@ -64,7 +64,7 @@ define("PATH", "/assets/images/pictures/");
             </div>
         </div>
     </div>
-    <?php if(!empty($form) && !empty($form->form) && $form->form->finish == 0){ ?>
+    <?php if(!empty($form) && !empty($form->form) && !$form->form->finish ){ ?>
     <div class="mb-2" >
         <form action="<?= $_SERVER["REQUEST_URI"] ?>" method="POST">
             <button type="submit" class="btn btn-primary btn-finish-form "> <i class="bi bi-x-lg"></i>Marquer la fiche comme finie</button>

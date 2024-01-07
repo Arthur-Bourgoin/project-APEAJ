@@ -66,7 +66,7 @@ $scripts = "<script src = '/assets/js/admin/details-session.js' type = 'module'>
 </div>
 <div class="row">
     <?php 
-    if( !empty($forms) && $forms !== NULL){
+    if( !empty($forms)){
         foreach ($forms as $form) { ?>
             <div class="col-6 col-lg-3 col-md-4 col-sm-6 mb-4">
                 <div class="card">

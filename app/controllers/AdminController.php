@@ -55,8 +55,11 @@ class AdminController extends UserController
      *                    --> != $_POST["idUser"]
      */
     public function update_user(string $page)
-    {   
-        $allowed_roles = array('educator-admin', 'educator', 'CIP', 'super-admin');
+    {   if($_POST["action"]==="updateAccount"){
+            $allowed_roles = array('educator-admin', 'educator', 'CIP', 'super-admin');
+        }else{
+            $allowed_roles = array('educator-admin', 'super-admin');
+        }
         if(!$this->verifUser($_POST)){
             Feedback::setError("Les informations de l'utilisateur ne sont pas valides.");
             return;
@@ -64,14 +67,15 @@ class AdminController extends UserController
         $this->saveProfilePicture('picture');
         
             if (in_array($_SESSION['role'], $allowed_roles)){
-                if( isset($_POST["pwd"]) && empty(trim($_POST['pwd']))) 
-                    UserModel::updateUser($_POST);
+                if( isset($_POST["pwd"]) && empty(trim($_POST['pwd']))) {
+                    UserModel::updateUser($_POST);}
                 else{
                     if(!$this->verifPwd($_POST)){
                         Feedback::setError("Le code ne respecte pas le format attendu");
                     }
-                    else
+                    else{
                         UserModel::updateUserAndPwd($_POST);
+                    }
                 }
             }else {
                 Feedback::setError("Vous ne possedez pas les droits");
@@ -88,59 +92,75 @@ class AdminController extends UserController
     }
 
     public function add_session()
-    {   
-        if(!$this->verifSession($_POST)){
-            Feedback::setError("Les informations de la session ne sont pas valides.");
-        }
-        else
-            SessionModel::addSession($_POST);
+    {   if (in_array($_SESSION['role'], array('educator-admin', 'educator', 'CIP', 'super-admin'))) {
+            if(!$this->verifSession($_POST)){
+                Feedback::setError("Les informations de la session ne sont pas valides.");
+            }
+            else
+                SessionModel::addSession($_POST);
+        }else {
+            Feedback::setError("Vous ne possedez pas les droits");
+        }   
     }
 
     public function update_session()
-    {
-        if(!$this->verifSession($_POST)){
-            Feedback::setError("Les informations de la session ne sont pas valides.");
+    {   if (in_array($_SESSION['role'], array('educator-admin', 'educator', 'CIP', 'super-admin'))) {
+            if(!$this->verifSession($_POST)){
+                Feedback::setError("Les informations de la session ne sont pas valides.");
+            }
+            else
+                SessionModel::updateSession($_POST);
+        }else {
+            Feedback::setError("Vous ne possedez pas les droits");
         }
-        else
-            SessionModel::updateSession($_POST);
     }
 
     public function closeSession() 
-    {
-        SessionModel::closeSession($_POST["idSession"]);
+    {   if (in_array($_SESSION['role'], array('educator-admin', 'educator', 'CIP', 'super-admin'))) {
+            SessionModel::closeSession($_POST["idSession"]);
+        }else {
+            Feedback::setError("Vous ne possedez pas les droits");
+        }
     }   
 
     public function deleteSession() 
-    {  
-        SessionModel::deleteSession($_POST["idSession"]);
-        header("Location: /");
-        exit();
-    
+    {   if (in_array($_SESSION['role'], array('educator-admin','super-admin'))) {
+            SessionModel::deleteSession($_POST["idSession"]);
+            header("Location: /");
+            exit();
+        }else {
+            Feedback::setError("Vous ne possedez pas les droits");
+        }
     } 
 
-    public function delete_session() {
-        // vérifier que les $_POST["idSession"] existe
-        // appel au model
-    }
-
     public function add_commentStudent() {
-        $_POST["idEducator"]=$_SESSION["id"];
-        if(!$this->verifCommentStudent($_POST)){
-            Feedback::setError("Les informations du commentaire ne sont pas valides.");
-        }else
-            CommentStudentModel::addComment($_POST);
-        
+        if (in_array($_SESSION['role'], array('educator-admin', 'educator', 'CIP', 'super-admin'))) {
+            $_POST["idEducator"]=$_SESSION["id"];
+            if(!$this->verifCommentStudent($_POST)){
+                Feedback::setError("Les informations du commentaire ne sont pas valides.");
+            }else
+                CommentStudentModel::addComment($_POST);
+        }else {
+            Feedback::setError("Vous ne possedez pas les droits");
+        }
     }
     public function update_commentStudent() {
-        if(!$this->verifCommentStudent($_POST)){
-            Feedback::setError("Les informations du commentaire ne sont pas valides.");
-        }else
-            CommentStudentModel::updateComment($_POST);
-    
-}
-    public function delete_commentStudent() {
-        CommentStudentModel::deleteComment($_POST["idStudent"],$_SESSION["id"]);
+        if (in_array($_SESSION['role'], array('educator-admin', 'educator', 'CIP', 'super-admin'))) {
+            if(!$this->verifCommentStudent($_POST)){
+                Feedback::setError("Les informations du commentaire ne sont pas valides.");
+            }else
+                CommentStudentModel::updateComment($_POST);
+        }else {
+            Feedback::setError("Vous ne possedez pas les droits");
         }
+    }
+    public function delete_commentStudent() {
+        if (in_array($_SESSION['role'], array('educator-admin', 'educator', 'CIP', 'super-admin'))) {
+            CommentStudentModel::deleteComment($_POST["idStudent"],$_SESSION["id"]);
+        }else {
+            Feedback::setError("Vous ne possedez pas les droits");
+        }
+    }
 
 
     public function infoForm(int $idStudent, int $idForm)
@@ -152,7 +172,11 @@ class AdminController extends UserController
     }
 
     public function finishForm() {
-        FormModel::finishForm($_POST["numero"],$_POST["idStudent"]);
+        if (in_array($_SESSION['role'], array('educator-admin', 'educator', 'CIP', 'super-admin'))) {
+            FormModel::finishForm($_POST["numero"],$_POST["idStudent"]);
+        }else {
+            Feedback::setError("Vous ne possedez pas les droits");
+        }
     }
     
     public function deleteForm() {}
@@ -284,24 +308,24 @@ class AdminController extends UserController
     }
     
     private function verifSession(array $args){
-            return (!empty($args["wording"]) ||
-            !empty($args["theme"]) ||
-            !empty($args["description"]) ||
-            !empty($args["timeBegin"]) ||
+            return (!empty($args["wording"]) &&
+            !empty($args["theme"]) &&
+            !empty($args["description"]) &&
+            !empty($args["timeBegin"]) &&
             !empty($args["idTraining"]) );
     }
     private function verifClosingSession(array $args){
         return ($args["timeBegin"]<$args["timeEnd"]);
     }
     private function verifUser(array $args){
-            return (!empty($args["idUser"]) ||
-            !empty($args["lastName"]) ||
+            return (!empty($args["idUser"]) &&
+            !empty($args["lastName"]) &&
             !empty($args["firstName"]));
     }
     private function verifComment(array $args){
-        return (!empty($args["wording"]) ||
-            !empty($args["text"])  ||
-            !empty($args["note"])  ||
+        return (!empty($args["wording"]) &&
+            !empty($args["text"])  &&
+            !empty($args["note"])  &&
             ctype_digit($args["note"]) );
     }
 
@@ -311,10 +335,10 @@ class AdminController extends UserController
 
     private function verifPwd(array $args) {
         if($args["pwd"]!==$args["verifPwd"]){
-            return false;
+            return false;  
         }
-        if( $args["pwd"] === 2 )
-            return ctype_digit($args["pwd"]);
+        if($args["typePwd"] === "2" ){
+            return ctype_digit($args["pwd"]);}
         return true;
     }
 
