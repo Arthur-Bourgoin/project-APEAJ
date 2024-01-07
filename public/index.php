@@ -230,19 +230,19 @@ $router->map("POST", "/etudiants/[a]-[a]-[i:idS]/fiche-[i:idF]", function ($idS,
     if(isset($_POST["action"])) {
         switch($_POST["action"]) {
             case "finishForm":
-                $controller->finishForm($idS, $idF);
+                $controller->finishForm();
                 break;
             case "deleteForm":
-                $controller->delete_form($idS, $idF);
+                $controller->delete_form();
                 break;
             case "addComment":
-                $controller->add_commentForm($idS, $idF);
+                $controller->add_commentForm();
                 break;
             case "updateComment":
-                $controller->update_commentForm($idS, $idF);
+                $controller->update_commentForm();
                 break;
             case "deleteComment":
-                $controller->delete_commentForm($idS, $idF);
+                $controller->delete_commentForm();
                 break;
             case "addPicture":
                 $controller->add_picture($idS, $idF);
@@ -251,7 +251,7 @@ $router->map("POST", "/etudiants/[a]-[a]-[i:idS]/fiche-[i:idF]", function ($idS,
                 $controller->delete_picture($idS, $idF);
                 break;
             case "updateAccount":
-                $controller->update_user("infoForm", $idS, $idF);
+                $controller->update_user("infoForm");
                 break;
         }
         header("Location: " . $_SERVER["REQUEST_URI"]);

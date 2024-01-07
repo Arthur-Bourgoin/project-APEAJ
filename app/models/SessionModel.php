@@ -88,7 +88,7 @@ class SessionModel {
                 ->execute(array("id" => $idSession));
             Feedback::setSuccess("Suppression de la session enregistrée.");
         } catch (\Exception $e) {
-            Feedback::setError("Une erreur s'est produite lors de la suppression de la formation.");
+            Feedback::setError("Une erreur s'est produite lors de la suppression de la session.");
         }
     }
 

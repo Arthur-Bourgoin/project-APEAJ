@@ -24,10 +24,13 @@ ob_start(); ?>
     </div>
     <div class="row">
         <div class="col-3 mt-3 mr-3 ">
-            <img src="<?= $student->picture ?>" class="img-thumbnail" alt="Photo de l\'étudiant 1">
+        <?php if (!empty($student)) { ?>
+            <img src="<?= $student->picture ?>" class="img-thumbnail" alt="Photo de l'étudiant 1"> 
+        <?php } ?>
         </div>
         <div class="col-9">
             <div class="row mt-3 ms-3 align-items">
+                <?php if (!empty($student)) { ?>
                 <div class="col-12 my-3">
                     <h2>
                         <?= htmlentities($student->lastName) ?>
@@ -40,17 +43,19 @@ ob_start(); ?>
                         <?= htmlentities($student->login) ?>
                     </h5>
                 </div>
-
+                <?php } ?>
                 <div class = "row">
                     <div class = "col-12 col-sm-12 col-md-12">
                     <button type="button" class="btn btn-primary me-3" data-bs-toggle="modal" data-bs-target="#createFormModal">
-                        Créer une nouvelle fiche
+                        <i class="bi bi-file-earmark-plus"> </i>Créer une nouvelle fiche
                     </button>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalModifie" data-id="<?= $student->idUser ?>">
-                        Modifier les informations
-                    </button>
-                    <a href="/etudiants/suivi/<?=$student->lastName?>-<?=$student->firstName?>-<?=$student->idUser?>" class="btn btn-primary">
-                        Suivi de l'étudiant
+                    <?php if(isset($_SESSION["role"]) && in_array($_SESSION["role"], ['educator-admin', 'super-admin'])) { ?>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalModifie" data-id="<?= $student->idUser ?>">
+                            <i class="bi bi-pencil"></i> Modifier les informations
+                        </button>
+                    <?php } ?>
+                    <a href="/etudiants/suivi/<?=htmlentities($student->lastName)?>-<?=htmlentities($student->firstName)?>-<?=htmlentities($student->idUser)?>" class="btn btn-primary">
+                    <i class="bi bi-bar-chart"></i> Suivi de l'étudiant
                     </a>
                     </div>
                 </div>
